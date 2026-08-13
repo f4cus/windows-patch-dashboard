@@ -13,7 +13,7 @@
         "channel": "ESU",
         "displayName": "Windows Server 2012 (ESU)"
       },
-      "updateType": "esu",
+      "updateType": "security",
       "releaseDate": "2026-08-11",
       "changesSummary": "Monthly Rollup ESU de agosto 2026; correcciones de seguridad del ciclo MSRC y ampliación del targeting de dispositivos elegibles para recibir automáticamente los nuevos certificados de Secure Boot.",
       "resolvedIssuesSummary": "No se documentan bugs específicos adicionales respecto de julio; el cambio destacado es la ampliación del despliegue de certificados Secure Boot.",
@@ -30,7 +30,7 @@
         "channel": "ESU",
         "displayName": "Windows Server 2012 R2 (ESU)"
       },
-      "updateType": "esu",
+      "updateType": "security",
       "releaseDate": "2026-08-11",
       "changesSummary": "Monthly Rollup ESU de agosto 2026; incorpora correcciones de seguridad y amplía la cobertura de dispositivos elegibles para recibir automáticamente nuevos certificados de Secure Boot.",
       "resolvedIssuesSummary": "No se documentan bugs específicos adicionales respecto de KB5099444 de julio; se actualiza principalmente el targeting de Secure Boot.",

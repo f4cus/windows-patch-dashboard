@@ -18,7 +18,29 @@ def test_monthly_and_oob_records_coexist_with_explicit_supersedence(
 ) -> None:
     monthly = make_update(
         kb="KB5000001",
-        known_issues_status="oob",
+        known_issues_status="open",
+        superseded_by="KB5000002",
+    )
+    oob = make_update(
+        kb="KB5000002",
+        release_date="2026-08-15",
+        update_type="oob",
+        known_issues_status="resolved",
+    )
+
+    validate_document(make_report([monthly, oob]), schema)
+
+
+@pytest.mark.parametrize("known_issues_status", ["open", "resolved", "none", "unknown"])
+def test_supersedence_is_independent_from_known_issue_state(
+    known_issues_status: str,
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    monthly = make_update(
+        kb="KB5000001",
+        known_issues_status=known_issues_status,
         superseded_by="KB5000002",
     )
     oob = make_update(
@@ -38,7 +60,7 @@ def test_superseded_by_must_resolve_to_oob_record_in_same_report(
 ) -> None:
     monthly = make_update(
         kb="KB5000001",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
 
@@ -64,30 +86,13 @@ def test_supersedence_cannot_point_to_a_regular_update(
 ) -> None:
     monthly = make_update(
         kb="KB5000001",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
     target = make_update(kb="KB5000002", release_date="2026-08-15")
 
     with pytest.raises(ReportValidationError, match="out-of-band update"):
         validate_document(make_report([monthly, target]), schema)
-
-
-def test_superseded_record_uses_oob_known_issue_status(
-    schema: dict[str, Any],
-    make_update: UpdateFactory,
-    make_report: ReportFactory,
-) -> None:
-    monthly = make_update(kb="KB5000001", superseded_by="KB5000002")
-    oob = make_update(
-        kb="KB5000002",
-        release_date="2026-08-15",
-        update_type="oob",
-        known_issues_status="resolved",
-    )
-
-    with pytest.raises(ReportValidationError):
-        validate_document(make_report([monthly, oob]), schema)
 
 
 def test_supersedence_cannot_cross_os_identities(
@@ -98,7 +103,7 @@ def test_supersedence_cannot_cross_os_identities(
     monthly = make_update(
         kb="KB5000001",
         display_name="Windows Server 2022",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
     oob = make_update(
@@ -120,7 +125,7 @@ def test_superseding_oob_update_must_be_later(
 ) -> None:
     monthly = make_update(
         kb="KB5000001",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
     oob = make_update(
@@ -141,7 +146,7 @@ def test_supersedence_target_must_be_unambiguous(
 ) -> None:
     monthly = make_update(
         kb="KB5000001",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
     first_oob = make_update(
@@ -165,14 +170,14 @@ def test_supersedence_cycles_are_rejected(
     first_oob = make_update(
         kb="KB5000001",
         update_type="oob",
-        known_issues_status="oob",
+        known_issues_status="open",
         superseded_by="KB5000002",
     )
     second_oob = make_update(
         kb="KB5000002",
         release_date="2026-08-15",
         update_type="oob",
-        known_issues_status="oob",
+        known_issues_status="resolved",
         superseded_by="KB5000001",
     )
 

@@ -14,6 +14,8 @@ import { sortMonthlyReport } from "./sortUpdates";
 
 const REPORT_MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/u;
 const DATE_PATTERN = /^\d{4}-(0[1-9]|1[0-2])-([012]\d|3[01])$/u;
+const DATE_TIME_PATTERN =
+  /^\d{4}-(0[1-9]|1[0-2])-([012]\d|3[01])T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-]([01]\d|2[0-3]):[0-5]\d)$/u;
 const KB_PATTERN = /^(KB\d+|NO PUBLICADO)$/u;
 const SUPERSEDENCE_PATTERN = /^KB\d+$/u;
 const WINDOWS_11_VERSION_PATTERN = /^\d{2}H[12](?:\/\d{2}H[12])*$/u;
@@ -28,6 +30,7 @@ const SERVER_IDENTITIES = new Map<
   ["Windows Server 2016", { version: "2016", channel: null }],
   ["Windows Server 2019", { version: "2019", channel: null }],
   ["Windows Server 2022", { version: "2022", channel: null }],
+  ["Windows Server, version 23H2", { version: "23H2", channel: null }],
   ["Windows Server 2025", { version: "2025", channel: null }],
 ]);
 
@@ -101,7 +104,10 @@ function readDate(value: unknown, path: string): string {
 
 function readDateTime(value: unknown, path: string): string {
   const candidate = readString(value, path);
-  if (Number.isNaN(Date.parse(candidate))) {
+  if (
+    !DATE_TIME_PATTERN.test(candidate) ||
+    Number.isNaN(Date.parse(candidate))
+  ) {
     return fail(path, "an ISO date-time");
   }
 
@@ -176,11 +182,21 @@ function readOs(value: unknown, path: string): OperatingSystem {
   return { family, displayName, version, channel };
 }
 
-function readSource(value: unknown, path: string): ReportSource {
+function readSource(
+  value: unknown,
+  path: string,
+  reportStatus: ReportStatus,
+): ReportSource {
   const source = readObject(value, path);
   const type = readEnum(source.type, SOURCE_TYPES, `${path}.type`);
   const url = readString(source.url, `${path}.url`);
   const retrievedAt = readOptionalNullableDateTime(source, "retrievedAt", path);
+  if (
+    reportStatus !== "manual-golden-fixture" &&
+    (retrievedAt === undefined || retrievedAt === null)
+  ) {
+    return fail(`${path}.retrievedAt`, "a non-null ISO date-time");
+  }
 
   let parsedUrl: URL;
   try {
@@ -245,14 +261,6 @@ function readUpdate(
     return fail(`${path}.knownIssuesStatus`, "a published-update status");
   }
 
-  if ((knownIssuesStatus === "oob") !== (supersededBy !== null)) {
-    return fail(path, "matching oob status and supersededBy fields");
-  }
-
-  if (updateType === "esu" && os.channel !== "ESU") {
-    return fail(`${path}.updateType`, "esu only for an ESU operating system");
-  }
-
   const rawSources = update.sources;
   if (rawSources === undefined && reportStatus === "manual-golden-fixture") {
     // The single manual golden fixture predates source capture; normalize omission.
@@ -284,7 +292,7 @@ function readUpdate(
     knownIssuesStatus,
     supersededBy,
     sources: sources.map((source, sourceIndex) =>
-      readSource(source, `${path}.sources[${sourceIndex}]`),
+      readSource(source, `${path}.sources[${sourceIndex}]`, reportStatus),
     ),
   };
 }
@@ -301,11 +309,10 @@ export function loadMonthlyReport(rawReport: unknown): MonthlyReport {
     return fail("reportMonth", "YYYY-MM");
   }
 
-  const generatedAt = readOptionalNullableDateTime(
-    report,
-    "generatedAt",
-    "report",
-  );
+  const generatedAt =
+    report.generatedAt === null
+      ? null
+      : readDateTime(report.generatedAt, "report.generatedAt");
   const patchTuesdayDate = readDate(
     report.patchTuesdayDate,
     "patchTuesdayDate",
@@ -318,6 +325,9 @@ export function loadMonthlyReport(rawReport: unknown): MonthlyReport {
       generatedAt !== null)
   ) {
     return fail("report", "the declared August 2026 golden-fixture identity");
+  }
+  if (status !== "manual-golden-fixture" && generatedAt === null) {
+    return fail("report.generatedAt", "a non-null ISO date-time");
   }
 
   if (!Array.isArray(report.updates)) {

@@ -6,7 +6,8 @@ const SERVER_ORDER = new Map<string, number>([
   ["Windows Server 2016", 2],
   ["Windows Server 2019", 3],
   ["Windows Server 2022", 4],
-  ["Windows Server 2025", 5],
+  ["Windows Server, version 23H2", 5],
+  ["Windows Server 2025", 6],
 ]);
 
 interface SortableUpdate {

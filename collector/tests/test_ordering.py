@@ -21,6 +21,7 @@ def test_canonical_os_order_is_server_then_oldest_windows_11_branch(
         "Windows Server 2012 R2 (ESU)",
         "Windows 11 24H2/25H2",
         "Windows Server 2025",
+        "Windows Server, version 23H2",
         "Windows Server 2012 (ESU)",
         "Windows Server 2019",
         "Windows 11 23H2",
@@ -36,6 +37,12 @@ def test_canonical_os_order_is_server_then_oldest_windows_11_branch(
         "Windows 11 24H2/25H2",
         "Windows 11 26H1",
     ]
+
+    assert (
+        CANONICAL_SERVER_ORDER.index("Windows Server 2022")
+        < (CANONICAL_SERVER_ORDER.index("Windows Server, version 23H2"))
+        < CANONICAL_SERVER_ORDER.index("Windows Server 2025")
+    )
 
 
 def test_sort_updates_is_deterministic_without_mutating_input(

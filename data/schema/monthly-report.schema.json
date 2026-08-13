@@ -7,6 +7,7 @@
     "schemaVersion",
     "reportMonth",
     "patchTuesdayDate",
+    "generatedAt",
     "status",
     "updates"
   ],
@@ -64,6 +65,10 @@
       },
       "then": {
         "properties": {
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "updates": {
             "items": {
               "required": [
@@ -71,7 +76,25 @@
               ],
               "properties": {
                 "sources": {
-                  "minItems": 1
+                  "minItems": 1,
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/source"
+                      },
+                      {
+                        "required": [
+                          "retrievedAt"
+                        ],
+                        "properties": {
+                          "retrievedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -317,6 +340,22 @@
               "const": "Windows Server"
             },
             "version": {
+              "const": "23H2"
+            },
+            "channel": {
+              "const": null
+            },
+            "displayName": {
+              "const": "Windows Server, version 23H2"
+            }
+          }
+        },
+        {
+          "properties": {
+            "family": {
+              "const": "Windows Server"
+            },
+            "version": {
               "const": "2025"
             },
             "channel": {
@@ -373,7 +412,6 @@
             "security",
             "oob",
             "preview",
-            "esu",
             "unknown"
           ]
         },
@@ -402,7 +440,6 @@
             "none",
             "open",
             "resolved",
-            "oob",
             "not-published",
             "unknown"
           ]
@@ -456,68 +493,6 @@
               "knownIssuesStatus": {
                 "not": {
                   "const": "not-published"
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "knownIssuesStatus": {
-                "const": "oob"
-              }
-            },
-            "required": [
-              "knownIssuesStatus"
-            ]
-          },
-          "then": {
-            "properties": {
-              "supersededBy": {
-                "type": "string",
-                "pattern": "^KB[0-9]+$"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "supersededBy": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "supersededBy"
-            ]
-          },
-          "then": {
-            "properties": {
-              "knownIssuesStatus": {
-                "const": "oob"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "updateType": {
-                "const": "esu"
-              }
-            },
-            "required": [
-              "updateType"
-            ]
-          },
-          "then": {
-            "properties": {
-              "os": {
-                "properties": {
-                  "channel": {
-                    "const": "ESU"
-                  }
                 }
               }
             }

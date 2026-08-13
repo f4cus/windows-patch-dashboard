@@ -69,8 +69,8 @@ On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`. The n
 
 `data/schema/monthly-report.schema.json` is the report contract. The validator checks every JSON document under `data/fixtures/` and `data/reports/`. The August 2026 file is a manual golden fixture used for development and tests; it is not evidence that a future collector is correct.
 
-Production reports must retain official Microsoft provenance. Missing or unverifiable data remains explicit and must never be rewritten as "no known issues" or supplied with an inferred KB number. See `AGENTS.md` and `docs/decisions.md` before changing data behavior.
+Production reports must retain official Microsoft provenance, including non-null ISO date-times in report-level `generatedAt` and every source-level `retrievedAt`. The manual golden fixture alone uses `generatedAt: null`. Known-issue state is independent from OOB supersedence, and ESU is represented by `os.channel: "ESU"`, not an update type. Missing or unverifiable data remains explicit and must never be rewritten as "no known issues" or supplied with an inferred KB number. See `AGENTS.md` and `docs/decisions.md` before changing data behavior.
 
 ## License
 
-This project is available under the MIT License. See `LICENSE`.
+This project is available under the MIT License. See `LICENSE`. Notices for vendored third-party material are listed in `THIRD_PARTY_NOTICES.md`.

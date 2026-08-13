@@ -18,14 +18,14 @@ Read `docs/product-brief.md`, `docs/decisions.md`, `data/schema/monthly-report.s
 Use this trust order:
 
 1. Official Microsoft Support KB articles.
-2. MSRC CVRF and official Microsoft security data.
+2. MSRC structured security data and other official Microsoft security data.
 3. Microsoft Release Health or other official Microsoft documentation when appropriate.
 
 Never let a third-party source silently override official Microsoft facts. Every generated or production report record must include official-source provenance. The manual August 2026 golden fixture may omit sources because it is test input, not generated production data.
 
 Never invent or infer a KB number, release date, change, resolved issue, known issue, or supersedence relationship. A KB is either the verified `KB<number>` value or `NO PUBLICADO`. Do not convert missing, unavailable, or unverifiable information into `knownIssuesStatus: "none"`. Expected Windows Server 2012 or 2012 R2 ESU data that is not published must remain representable as `NO PUBLICADO` and `not-published`.
 
-Keep the canonical report order deterministic: Windows Server 2012 (ESU), Windows Server 2012 R2 (ESU), Windows Server 2016, Windows Server 2019, Windows Server 2022, Windows Server 2025, then supported Windows 11 branches from oldest to newest for that report month.
+Keep the canonical report order deterministic: Windows Server 2012 (ESU), Windows Server 2012 R2 (ESU), Windows Server 2016, Windows Server 2019, Windows Server 2022, Windows Server, version 23H2, Windows Server 2025, then supported Windows 11 branches from oldest to newest for that report month.
 
 ## Scope boundaries
 

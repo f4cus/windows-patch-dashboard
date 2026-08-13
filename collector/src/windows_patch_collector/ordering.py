@@ -12,6 +12,7 @@ CANONICAL_SERVER_ORDER = (
     "Windows Server 2016",
     "Windows Server 2019",
     "Windows Server 2022",
+    "Windows Server, version 23H2",
     "Windows Server 2025",
 )
 

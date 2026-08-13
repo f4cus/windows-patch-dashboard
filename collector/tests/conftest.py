@@ -41,6 +41,7 @@ def make_update() -> Iterator[Any]:
             "Windows Server 2016": ("Windows Server", "2016", None),
             "Windows Server 2019": ("Windows Server", "2019", None),
             "Windows Server 2022": ("Windows Server", "2022", None),
+            "Windows Server, version 23H2": ("Windows Server", "23H2", None),
             "Windows Server 2025": ("Windows Server", "2025", None),
         }
         if display_name.startswith("Windows 11 "):
@@ -86,7 +87,7 @@ def make_report() -> Iterator[Any]:
             "schemaVersion": "1.0.0",
             "reportMonth": "2026-08",
             "patchTuesdayDate": "2026-08-11",
-            "generatedAt": None,
+            "generatedAt": (None if status == "manual-golden-fixture" else "2026-08-12T12:00:00Z"),
             "status": status,
             "updates": updates,
         }

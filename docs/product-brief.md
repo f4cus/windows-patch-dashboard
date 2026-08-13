@@ -19,6 +19,8 @@ Cover only:
 - Windows Server 2025
 - Windows 11 supported branches relevant to the selected month
 
+The data contract also preserves the historical normalized identity `Windows Server, version 23H2`; it is not required in every monthly fixture.
+
 The canonical report columns are:
 1. KB
 2. OS
@@ -32,7 +34,7 @@ The UI may add metadata/status indicators outside those five canonical report co
 - Windows Server 2012/2012 R2: include only ESU updates; if expected but not published, still render a row with `NO PUBLICADO`.
 - Do not show CVE counts by severity.
 - Summaries should be concise and operational, not marketing copy.
-- Known Issues must distinguish `none`, `open`, and unresolved/unknown data.
+- Known Issues must distinguish `none`, `open`, `resolved`, `not-published`, and `unknown` data independently from OOB/supersedence state.
 - OOB updates must be representable without overwriting history.
 
 ## Non-goals for V1

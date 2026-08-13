@@ -30,7 +30,7 @@ def test_no_publicado_is_valid_only_with_explicit_missing_semantics(
         kb="NO PUBLICADO",
         display_name="Windows Server 2012 (ESU)",
         release_date=None,
-        update_type="esu",
+        update_type="security",
         known_issues_status="not-published",
     )
 
@@ -57,7 +57,7 @@ def test_no_publicado_cannot_claim_no_known_issues(
         kb="NO PUBLICADO",
         display_name="Windows Server 2012 (ESU)",
         release_date=None,
-        update_type="esu",
+        update_type="security",
         known_issues_status="none",
     )
 
@@ -80,7 +80,7 @@ def test_no_publicado_cannot_claim_published_update_metadata(
         kb="NO PUBLICADO",
         display_name="Windows Server 2012 (ESU)",
         release_date=None,
-        update_type="esu",
+        update_type="security",
         known_issues_status="not-published",
     )
     update[field] = value
@@ -110,7 +110,7 @@ def test_unknown_known_issue_state_remains_representable(
     validate_document(make_report([update]), schema)
 
 
-def test_oob_status_requires_a_superseding_kb(
+def test_oob_is_not_a_known_issue_status(
     schema: dict[str, Any],
     make_update: UpdateFactory,
     make_report: ReportFactory,
@@ -160,6 +160,52 @@ def test_non_manual_reports_accept_official_provenance(
     validate_document(make_report([update], status=status), schema)
 
 
+@pytest.mark.parametrize("status", ["generated", "partial", "verified"])
+@pytest.mark.parametrize("generated_at", [None, "not-a-date-time", "2026-08-12"])
+def test_production_reports_require_non_null_iso_generated_at(
+    status: str,
+    generated_at: str | None,
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    report = make_report([make_update(include_sources=True)], status=status)
+    report["generatedAt"] = generated_at
+
+    with pytest.raises(ReportValidationError):
+        validate_document(report, schema)
+
+
+@pytest.mark.parametrize("status", ["generated", "partial", "verified"])
+@pytest.mark.parametrize("retrieved_at", [None, "omitted", "not-a-date-time"])
+def test_production_sources_require_non_null_iso_retrieved_at(
+    status: str,
+    retrieved_at: str | None,
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    update = make_update(include_sources=True)
+    if retrieved_at == "omitted":
+        del update["sources"][0]["retrievedAt"]
+    else:
+        update["sources"][0]["retrievedAt"] = retrieved_at
+
+    with pytest.raises(ReportValidationError):
+        validate_document(make_report([update], status=status), schema)
+
+
+def test_manual_source_may_omit_retrieved_at(
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    update = make_update(include_sources=True)
+    del update["sources"][0]["retrievedAt"]
+
+    validate_document(make_report([update]), schema)
+
+
 def test_source_type_cannot_disguise_a_third_party_url(
     schema: dict[str, Any],
     make_update: UpdateFactory,
@@ -194,12 +240,15 @@ def test_manual_golden_fixture_metadata_is_fixed(
         validate_document(report, schema)
 
 
-def test_manual_golden_fixture_requires_null_generated_at(
+@pytest.mark.parametrize("status", ["manual-golden-fixture", "generated", "partial", "verified"])
+def test_every_report_requires_generated_at(
+    status: str,
     schema: dict[str, Any],
     make_update: UpdateFactory,
     make_report: ReportFactory,
 ) -> None:
-    report = make_report([make_update()])
+    update = make_update(include_sources=status != "manual-golden-fixture")
+    report = make_report([update], status=status)
     del report["generatedAt"]
 
     with pytest.raises(ReportValidationError):
@@ -245,12 +294,32 @@ def test_windows_11_channel_must_be_null(
         validate_document(make_report([update]), schema)
 
 
-def test_esu_update_type_requires_an_esu_os(
+def test_esu_channel_uses_security_update_type(
     schema: dict[str, Any],
     make_update: UpdateFactory,
     make_report: ReportFactory,
 ) -> None:
-    update = make_update(display_name="Windows Server 2022", update_type="esu")
+    update = make_update(display_name="Windows Server 2012 (ESU)", update_type="security")
+
+    validate_document(make_report([update]), schema)
+
+
+def test_esu_is_not_an_update_type(
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    update = make_update(display_name="Windows Server 2012 (ESU)", update_type="esu")
 
     with pytest.raises(ReportValidationError):
         validate_document(make_report([update]), schema)
+
+
+def test_historical_windows_server_version_23h2_is_representable(
+    schema: dict[str, Any],
+    make_update: UpdateFactory,
+    make_report: ReportFactory,
+) -> None:
+    update = make_update(display_name="Windows Server, version 23H2")
+
+    validate_document(make_report([update]), schema)

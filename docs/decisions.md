@@ -13,8 +13,8 @@ Purpose: transform public Microsoft Windows security-update information into a c
 - Collector: Python 3.
 - HTTP: httpx.
 - Parsing: BeautifulSoup and/or lxml.
-- Security data: Microsoft MSRC CVRF.
-- KB article data: official Microsoft Support articles.
+- Security data for Phase 3 evaluation: MSRC CSAF is the candidate preferred structured source. MSRC CVRF remains a fallback/complementary source until Phase 3 evaluation determines final behavior.
+- KB article data: official Microsoft Support articles remain authoritative for KB highlights, fixes, and known issues.
 - Persistence: versioned JSON committed to Git.
 - Tests: pytest for collector/data; frontend test tooling may be added when justified.
 - CI/CD and scheduler: GitHub Actions.
@@ -42,7 +42,7 @@ Purpose: transform public Microsoft Windows security-update information into a c
 
 ## Data trust hierarchy
 1. Official Microsoft Support KB article.
-2. MSRC CVRF / official Microsoft security data.
+2. MSRC CSAF, MSRC CVRF, and other official Microsoft security data.
 3. Microsoft Release Health / official Microsoft documentation when used.
 4. No third-party source may silently override Microsoft data.
 
@@ -55,15 +55,17 @@ Two modes:
 - `none`: Microsoft reports no known issues.
 - `open`: at least one known issue remains open.
 - `resolved`: a previously known issue is resolved by a later update.
-- `oob`: an out-of-band update exists/replaces or materially updates the normal monthly state.
 - `not-published`: expected monthly update was not published / not available.
 - `unknown`: collector cannot verify the state; must not be converted into `none`.
 
+OOB is an update type, not a known-issue status. `supersededBy` records supersedence independently from known-issue state.
+
 ## Phase 1 data-contract refinements
-- The pre-production `1.0.0` schema now requires normalized `os.version`, `os.channel`, and
+- The pre-production `1.0.0` schema requires normalized `os.version`, `os.channel`, and
   `supersededBy` fields. Supported Windows Server identities are exact tuples; Windows 11
-  versions use ordered `<year>H<half>` labels and may combine branches with `/`. The August
-  fixture already satisfied these requirements, so its source prose and values were not changed.
+  versions use ordered `<year>H<half>` labels and may combine branches with `/`. Phase 1.1 keeps
+  the August fixture prose unchanged while normalizing its two ESU records to
+  `updateType: security`.
 - `NO PUBLICADO` is valid only with a null release date, null supersedence, and
   `knownIssuesStatus: not-published`. Conversely, a published KB cannot use `not-published`.
   This prevents missing data from being presented as `none`.
@@ -72,8 +74,10 @@ Two modes:
   test input rather than collector output. Source types are coupled to their official Microsoft
   domains so a third-party URL cannot be mislabeled as authoritative provenance.
 - OOB history is additive: the monthly record points to a same-report OOB record through
-  `supersededBy`; the target must have `updateType: oob`. Standalone or dangling OOB links fail
-  semantic validation.
+  `supersededBy`; the target must have `updateType: oob`. `knownIssuesStatus` records only
+  known-issue state and is independent from supersedence, so a superseded update may still be
+  `open`, `resolved`, `none`, or `unknown`. Standalone or dangling OOB links fail semantic
+  validation.
 - Persisted updates must use canonical server-first order. Windows 11 records follow from the
   oldest branch represented in their version label to the newest, with deterministic tie-breakers.
 - These refinements retain schema version `1.0.0` because the original file was an unimplemented
@@ -82,9 +86,23 @@ Two modes:
   Patch Tuesday date, and null generation timestamp are fixed by the schema. Files at any other
   fixture or report path must use a production status and preserve official provenance.
 - Windows 11 display names are derived from their normalized version, combined branches must be
-  unique and ordered oldest-to-newest, and the V1 channel is null. The `esu` update type is valid
-  only for an OS whose normalized channel is `ESU`.
+  unique and ordered oldest-to-newest, and the V1 channel is null. ESU is an OS-channel property,
+  not an update type; ESU monthly updates use `updateType: security` and `os.channel: ESU`.
+- The schema can represent the historical normalized identity `Windows Server, version 23H2`.
+  Canonical server order places it after Windows Server 2022 and before Windows Server 2025; the
+  August 2026 golden fixture does not need a record for it.
 - Supersedence resolves to one later OOB record with the same normalized OS identity. Cross-OS,
   ambiguous, cyclic, and backward-dated links are invalid, as are duplicate OS-and-KB records.
 - Report completeness remains future collector policy. Phase 1 deliberately does not impose an
   `updates` minimum or infer that a structurally valid report covers every supported branch.
+- Every report carries `generatedAt`: it is exactly null only for the manual August golden fixture
+  and a non-null ISO date-time for generated, partial, and verified reports. Every production
+  source record likewise carries a non-null ISO `retrievedAt`, while official-domain validation
+  continues to bind source type to the corresponding Microsoft host.
+
+## Phase 3 source evaluation boundary
+- No Microsoft collection is implemented in Phase 1.1.
+- MSRC CSAF is the candidate preferred structured security source to evaluate in Phase 3.
+- MSRC CVRF remains available as a fallback or complementary source until that evaluation defines
+  final collection and reconciliation behavior.
+- Microsoft Support remains authoritative for KB article highlights, fixes, and known issues.

@@ -5,19 +5,12 @@ export const REPORT_STATUSES = [
   "verified",
 ] as const;
 
-export const UPDATE_TYPES = [
-  "security",
-  "oob",
-  "preview",
-  "esu",
-  "unknown",
-] as const;
+export const UPDATE_TYPES = ["security", "oob", "preview", "unknown"] as const;
 
 export const KNOWN_ISSUES_STATUSES = [
   "none",
   "open",
   "resolved",
-  "oob",
   "not-published",
   "unknown",
 ] as const;
@@ -64,7 +57,7 @@ export interface MonthlyReport {
   readonly schemaVersion: "1.0.0";
   readonly reportMonth: string;
   readonly patchTuesdayDate: string;
-  readonly generatedAt?: string | null;
+  readonly generatedAt: string | null;
   readonly status: ReportStatus;
   readonly updates: readonly UpdateRecord[];
 }
