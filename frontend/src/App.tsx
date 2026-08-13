@@ -1,76 +1,323 @@
-import { loadAugustReport } from "./data/augustReport";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MonthlyReport } from "./data/model";
+import { localReports } from "./data/reportCatalog";
+import { exportReportAsPng } from "./exportReport";
+import { ReportSurface } from "./ReportSurface";
+import { formatReportMonth } from "./reportPresentation";
+import { useTheme } from "./useTheme";
 import "./styles.css";
 
-type ReportState =
-  | { readonly status: "ready"; readonly report: MonthlyReport }
-  | { readonly status: "error"; readonly message: string };
+type ViewMode = "interactive" | "report";
+type ExportState = "idle" | "exporting" | "error";
 
-function createReportState(): ReportState {
-  try {
-    return { status: "ready", report: loadAugustReport() };
-  } catch (error: unknown) {
-    return {
-      status: "error",
-      message:
-        error instanceof Error
-          ? error.message
-          : "The fixture could not be validated.",
-    };
-  }
+export type ReportExporter = (
+  reportElement: HTMLElement,
+  filenameBase: string,
+) => Promise<void>;
+
+interface AppProps {
+  readonly reports?: readonly MonthlyReport[];
+  readonly exporter?: ReportExporter;
+  readonly renderedAt?: Date;
 }
 
-const reportState = createReportState();
+const LEGEND_ITEMS = [
+  { status: "none", label: "Sin problemas conocidos", symbol: "—" },
+  { status: "open", label: "Abierto", symbol: "!" },
+  { status: "resolved", label: "Resuelto", symbol: "✓" },
+  { status: "not-published", label: "No publicado", symbol: "—" },
+  { status: "unknown", label: "Desconocido", symbol: "?" },
+] as const;
 
-export default function App() {
-  if (reportState.status === "error") {
+export default function App({
+  reports = localReports,
+  exporter = exportReportAsPng,
+  renderedAt,
+}: AppProps) {
+  const [selectedMonth, setSelectedMonth] = useState(
+    () => reports[0]?.reportMonth ?? "",
+  );
+  const [osSelections, setOsSelections] = useState<
+    Readonly<Record<string, readonly string[]>>
+  >({});
+  const [mode, setMode] = useState<ViewMode>("interactive");
+  const [exportState, setExportState] = useState<ExportState>("idle");
+  const [reportRenderedAt] = useState(() => renderedAt ?? new Date());
+  const reportRef = useRef<HTMLElement>(null);
+  const { theme, toggleTheme } = useTheme();
+
+  const report = useMemo(
+    () => reports.find((candidate) => candidate.reportMonth === selectedMonth),
+    [reports, selectedMonth],
+  );
+
+  const availableOperatingSystems = useMemo(
+    () =>
+      report === undefined
+        ? []
+        : [...new Set(report.updates.map((update) => update.os.displayName))],
+    [report],
+  );
+
+  const selectedOperatingSystems =
+    osSelections[selectedMonth] ?? availableOperatingSystems;
+  const selectedOperatingSystemSet = useMemo(
+    () => new Set(selectedOperatingSystems),
+    [selectedOperatingSystems],
+  );
+
+  const updates = useMemo(
+    () =>
+      report?.updates.filter((update) =>
+        selectedOperatingSystemSet.has(update.os.displayName),
+      ) ?? [],
+    [report, selectedOperatingSystemSet],
+  );
+
+  useEffect(() => {
+    if (mode !== "report") {
+      return undefined;
+    }
+
+    const exitReportMode = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMode("interactive");
+      }
+    };
+
+    window.addEventListener("keydown", exitReportMode);
+    return () => window.removeEventListener("keydown", exitReportMode);
+  }, [mode]);
+
+  if (report === undefined) {
     return (
-      <main className="report-shell">
+      <main className="load-error">
         <h1>Windows Patch Dashboard</h1>
-        <p role="alert">
-          No se pudo cargar el reporte de desarrollo: {reportState.message}
-        </p>
+        <p role="alert">No hay informes disponibles.</p>
       </main>
     );
   }
 
-  const { report } = reportState;
+  const currentReport = report;
+  const allOperatingSystemsSelected =
+    selectedOperatingSystems.length === availableOperatingSystems.length;
+  const scopeLabel = allOperatingSystemsSelected
+    ? "Todos los sistemas operativos"
+    : selectedOperatingSystems.length === 1
+      ? selectedOperatingSystems[0]
+      : selectedOperatingSystems.length === 0
+        ? "Sin sistemas seleccionados"
+        : `${selectedOperatingSystems.length} de ${availableOperatingSystems.length} sistemas operativos`;
+
+  function setOperatingSystems(operatingSystems: readonly string[]) {
+    setOsSelections((currentSelections) => ({
+      ...currentSelections,
+      [selectedMonth]: operatingSystems,
+    }));
+  }
+
+  function toggleOperatingSystem(operatingSystem: string) {
+    setOperatingSystems(
+      selectedOperatingSystemSet.has(operatingSystem)
+        ? selectedOperatingSystems.filter(
+            (selected) => selected !== operatingSystem,
+          )
+        : availableOperatingSystems.filter(
+            (available) =>
+              selectedOperatingSystemSet.has(available) ||
+              available === operatingSystem,
+          ),
+    );
+  }
+
+  async function handleExport() {
+    if (
+      reportRef.current === null ||
+      exportState === "exporting" ||
+      updates.length === 0
+    ) {
+      return;
+    }
+
+    setExportState("exporting");
+    try {
+      await exporter(
+        reportRef.current,
+        `microsoft-patch-tuesday-${currentReport.reportMonth}`,
+      );
+      setExportState("idle");
+    } catch {
+      setExportState("error");
+    }
+  }
+
+  if (mode === "report") {
+    return (
+      <main className="report-mode-shell">
+        <p className="sr-only" role="status">
+          Modo informe activo. Presione Escape para volver al modo interactivo.
+        </p>
+        <div className="report-viewport">
+          <ReportSurface
+            ref={reportRef}
+            report={currentReport}
+            updates={updates}
+            scopeLabel={scopeLabel}
+            interactive={false}
+            renderedAt={reportRenderedAt}
+            theme={theme}
+          />
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <main className="report-shell">
-      <header>
-        <h1>Windows Patch Dashboard</h1>
-        <p>
-          Mes del reporte: <strong>{report.reportMonth}</strong>
-          {" · "}
-          Actualizaciones: <strong>{report.updates.length}</strong>
-        </p>
+    <div className="interactive-shell">
+      <header className="app-nav" aria-label="Cabecera de la aplicación">
+        <div className="wordmark">
+          <span>Windows Patch Dashboard</span>
+          <small>Lectura editorial de Patch Tuesday</small>
+        </div>
+        <div className="app-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            role="switch"
+            aria-checked={theme === "dark"}
+            aria-label={
+              theme === "dark"
+                ? "Cambiar a tema claro"
+                : "Cambiar a tema oscuro"
+            }
+            onClick={toggleTheme}
+          >
+            <span className="theme-toggle__track" aria-hidden="true">
+              <span className="theme-toggle__thumb" />
+            </span>
+            <span>{theme === "dark" ? "Oscuro" : "Claro"}</span>
+          </button>
+          <button
+            className="button button--primary"
+            type="button"
+            onClick={() => setMode("report")}
+          >
+            Modo informe
+          </button>
+        </div>
       </header>
 
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">KB</th>
-              <th scope="col">OS</th>
-              <th scope="col">Vulnerabilidades / Cambios Clave</th>
-              <th scope="col">Issues Resueltos</th>
-              <th scope="col">Problemas Conocidos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {report.updates.map((update, index) => (
-              <tr key={`${update.os.displayName}-${update.kb}-${index}`}>
-                <td>{update.kb}</td>
-                <td>{update.os.displayName}</td>
-                <td>{update.changesSummary}</td>
-                <td>{update.resolvedIssuesSummary}</td>
-                <td>{update.knownIssuesSummary}</td>
-              </tr>
+      <main className="app-main">
+        <section className="operator-bar" aria-label="Controles del informe">
+          <div className="control-group">
+            <label htmlFor="report-month">Mes del informe</label>
+            <select
+              id="report-month"
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(event.target.value)}
+            >
+              {reports.map((candidate) => (
+                <option
+                  key={candidate.reportMonth}
+                  value={candidate.reportMonth}
+                >
+                  {formatReportMonth(candidate.reportMonth)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <details className="os-filter">
+            <summary
+              aria-label={`Sistemas operativos: ${selectedOperatingSystems.length} de ${availableOperatingSystems.length} seleccionados`}
+            >
+              <span>Sistemas operativos</span>
+              <strong>
+                {selectedOperatingSystems.length}/
+                {availableOperatingSystems.length}
+              </strong>
+            </summary>
+            <div className="os-filter__panel">
+              <div className="os-filter__actions">
+                <button
+                  type="button"
+                  disabled={allOperatingSystemsSelected}
+                  onClick={() => setOperatingSystems(availableOperatingSystems)}
+                >
+                  Seleccionar todos
+                </button>
+                <button
+                  type="button"
+                  disabled={selectedOperatingSystems.length === 0}
+                  onClick={() => setOperatingSystems([])}
+                >
+                  Limpiar
+                </button>
+              </div>
+              <fieldset>
+                <legend className="sr-only">
+                  Seleccionar sistemas operativos
+                </legend>
+                {availableOperatingSystems.map((operatingSystem) => (
+                  <label key={operatingSystem}>
+                    <input
+                      type="checkbox"
+                      checked={selectedOperatingSystemSet.has(operatingSystem)}
+                      onChange={() => toggleOperatingSystem(operatingSystem)}
+                    />
+                    <span>{operatingSystem}</span>
+                  </label>
+                ))}
+              </fieldset>
+            </div>
+          </details>
+
+          <div className="export-action">
+            <button
+              className="button button--secondary"
+              type="button"
+              disabled={exportState === "exporting" || updates.length === 0}
+              aria-disabled={
+                exportState === "exporting" || updates.length === 0
+              }
+              onClick={() => void handleExport()}
+            >
+              {exportState === "exporting" ? "Preparando PNG…" : "Exportar PNG"}
+            </button>
+            <span className="export-message" aria-live="polite">
+              {exportState === "error"
+                ? "No se pudo generar el PNG. Intente nuevamente."
+                : updates.length === 0
+                  ? "Seleccione al menos un sistema operativo."
+                  : "Alta resolución · superficie completa"}
+            </span>
+          </div>
+        </section>
+
+        <section className="status-legend" aria-labelledby="legend-title">
+          <h2 id="legend-title">Estados de problemas conocidos</h2>
+          <ul>
+            {LEGEND_ITEMS.map((item) => (
+              <li key={item.status} data-status={item.status}>
+                <span aria-hidden="true">{item.symbol}</span>
+                {item.label}
+              </li>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </main>
+          </ul>
+        </section>
+
+        <div className="report-viewport">
+          <ReportSurface
+            ref={reportRef}
+            report={currentReport}
+            updates={updates}
+            scopeLabel={scopeLabel}
+            interactive={true}
+            renderedAt={reportRenderedAt}
+            theme={theme}
+          />
+        </div>
+      </main>
+    </div>
   );
 }

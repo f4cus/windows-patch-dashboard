@@ -1,0 +1,129 @@
+/* Hallmark · macrostructure: Workbench · tone: technical-editorial · anchor hue: cobalt */
+:root {
+  --color-paper: oklch(98.5% 0.004 250);
+  --color-paper-2: oklch(96.5% 0.007 250);
+  --color-paper-3: oklch(93.5% 0.01 250);
+  --color-ink: oklch(22% 0.02 258);
+  --color-ink-2: oklch(32% 0.018 257);
+  --color-neutral: oklch(45% 0.015 256);
+  --color-muted: oklch(39% 0.014 256);
+  --color-rule: oklch(84% 0.012 252);
+  --color-rule-2: oklch(72% 0.016 254);
+  --color-graphite: oklch(23% 0.02 258);
+  --color-graphite-ink: oklch(98.5% 0.004 250);
+  --color-accent: oklch(48% 0.2 256);
+  --color-accent-fill: oklch(48% 0.2 256);
+  --color-accent-ink: oklch(98.5% 0.004 250);
+  --color-focus: oklch(10% 0.02 260);
+  --color-open: oklch(45% 0.16 31);
+  --color-open-surface: oklch(95% 0.025 31);
+  --color-resolved: oklch(39% 0.11 153);
+  --color-resolved-surface: oklch(95% 0.025 153);
+  --color-unknown: oklch(40% 0.02 256);
+  --color-unknown-surface: oklch(94% 0.009 256);
+  --color-oob: oklch(43% 0.16 285);
+  --color-oob-surface: oklch(95% 0.025 285);
+  --color-error: oklch(45% 0.17 25);
+
+  --font-display:
+    "Space Grotesk Variable", "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-body: "Source Sans 3 Variable", "Segoe UI", ui-sans-serif, sans-serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", ui-monospace, monospace;
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 9rem;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.5625rem;
+  --text-xl: 1.9531rem;
+  --text-2xl: 2.4414rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 200ms;
+  --dur-long: 400ms;
+
+  --rule-thin: 1px;
+  --rule-strong: 2px;
+  --radius-control: 0.375rem;
+  --radius-surface: 0.625rem;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+}
+
+[data-theme="dark"] {
+  --color-paper: oklch(16% 0.012 258);
+  --color-paper-2: oklch(13% 0.012 258);
+  --color-paper-3: oklch(20% 0.014 258);
+  --color-ink: oklch(95% 0.008 250);
+  --color-ink-2: oklch(86% 0.01 252);
+  --color-neutral: oklch(75% 0.012 254);
+  --color-muted: oklch(69% 0.012 254);
+  --color-rule: oklch(32% 0.015 256);
+  --color-rule-2: oklch(48% 0.018 256);
+  --color-graphite: oklch(9.5% 0.015 260);
+  --color-graphite-ink: oklch(95% 0.008 250);
+  --color-accent: oklch(78% 0.14 256);
+  --color-accent-fill: oklch(42% 0.18 256);
+  --color-accent-ink: oklch(98% 0.006 250);
+  --color-focus: oklch(92% 0.04 256);
+  --color-open: oklch(79% 0.12 31);
+  --color-open-surface: oklch(24% 0.04 31);
+  --color-resolved: oklch(78% 0.1 153);
+  --color-resolved-surface: oklch(23% 0.035 153);
+  --color-unknown: oklch(78% 0.02 256);
+  --color-unknown-surface: oklch(24% 0.014 256);
+  --color-oob: oklch(80% 0.1 285);
+  --color-oob-surface: oklch(24% 0.035 285);
+  --color-error: oklch(79% 0.12 25);
+}
+
+@media print {
+  :root,
+  [data-theme] {
+    color-scheme: light;
+    --color-paper: oklch(98.5% 0.004 250);
+    --color-paper-2: oklch(96.5% 0.007 250);
+    --color-paper-3: oklch(93.5% 0.01 250);
+    --color-ink: oklch(22% 0.02 258);
+    --color-ink-2: oklch(32% 0.018 257);
+    --color-neutral: oklch(45% 0.015 256);
+    --color-muted: oklch(39% 0.014 256);
+    --color-rule: oklch(84% 0.012 252);
+    --color-rule-2: oklch(72% 0.016 254);
+    --color-graphite: oklch(23% 0.02 258);
+    --color-graphite-ink: oklch(98.5% 0.004 250);
+    --color-accent: oklch(48% 0.2 256);
+    --color-accent-fill: oklch(48% 0.2 256);
+    --color-accent-ink: oklch(98.5% 0.004 250);
+    --color-focus: oklch(10% 0.02 260);
+    --color-open: oklch(45% 0.16 31);
+    --color-open-surface: oklch(95% 0.025 31);
+    --color-resolved: oklch(39% 0.11 153);
+    --color-resolved-surface: oklch(95% 0.025 153);
+    --color-unknown: oklch(40% 0.02 256);
+    --color-unknown-surface: oklch(94% 0.009 256);
+    --color-oob: oklch(43% 0.16 285);
+    --color-oob-surface: oklch(95% 0.025 285);
+    --color-error: oklch(45% 0.17 25);
+  }
+}

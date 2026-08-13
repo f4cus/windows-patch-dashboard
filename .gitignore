@@ -16,6 +16,7 @@ frontend/dist/
 
 # Local configuration
 .tools/
+.hallmark/
 .env
 .env.*
 !.env.example

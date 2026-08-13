@@ -2,7 +2,7 @@
 
 Windows Patch Dashboard turns public Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. The repository is intentionally static: a Python collector will produce versioned JSON, while a React application reads that data without a database, persistent API, Azure service, or runtime AI dependency.
 
-Phase 0 and Phase 1 provide the project foundation, validate the monthly-report contract, and render the manually reviewed August 2026 golden fixture. They do not collect data from Microsoft or implement the final dashboard design.
+Phase 0 and Phase 1 provide the project foundation and monthly-report contract. Phase 2 implements the final static V1 reading and report experience over locally bundled JSON. It does not collect data from Microsoft and introduces no API, backend, database, cloud service, or runtime AI dependency.
 
 ## Prerequisites
 
@@ -34,6 +34,7 @@ npm ci
 npm run lint
 npm run format:check
 npm run typecheck
+npm test
 npm run build
 ```
 
@@ -44,7 +45,15 @@ cd frontend
 npm run dev
 ```
 
-Vite prints the local URL. The development page reads `data/fixtures/2026-08.json` at build time; it makes no browser request to Microsoft.
+Vite prints the local URL. The application discovers monthly JSON files under `data/fixtures/` and `data/reports/` at build time. A generated report for a month takes precedence over a fixture for the same month. The browser makes no request to Microsoft.
+
+## V1 report experience
+
+Interactive Mode provides a locally derived month selector, an operating-system checklist based on the current report, a light/dark theme toggle, a known-issue status legend, per-update official source links when present, Report Mode, and client-side PNG export. All operating systems are selected initially; individual selection, select-all, and clear actions filter the interactive table, Report Mode, and export consistently.
+
+Report Mode is the primary artifact. It hides application controls and provenance disclosures while preserving the active theme, the four public metadata fields (Patch Tuesday, Generado, Alcance, and Registros), and exactly five canonical columns: KB, OS, Vulnerabilidades / Cambios Clave, Issues Resueltos, and Problemas Conocidos. `Generado` is the date on which the application rendered the visual report. Press `Escape` to return to Interactive Mode.
+
+`Exportar PNG` captures the filtered report surface in the active theme at 2× pixel density. The export is generated locally in the browser with bundled fonts and no external rendering service. Export is disabled when no operating system is selected. `NO PUBLICADO`, known-issue status, and independent OOB supersedence indicators remain visible in the exported artifact.
 
 On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`. The npm commands are unchanged.
 

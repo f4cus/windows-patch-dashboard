@@ -1,26 +1,87 @@
-# Visual Direction
+# Phase 2 visual and report contract
 
-The dashboard should feel like a carefully edited technical bulletin: trustworthy, information-dense, and immediately scannable, with enough visual character to stand apart in a portfolio. The August 2026 spreadsheet reference establishes the useful five-column hierarchy, compact row rhythm, and single-image report density; it is a functional reference, not a visual template to clone.
+Windows Patch Dashboard is a technical-editorial workbench for infrastructure,
+security, DevOps, systems administration, patch management, and vulnerability
+management professionals. Its primary artifact is the monthly Report Mode
+surface: a dense, deterministic bulletin that can be read, verified, shared,
+and exported as one high-resolution PNG.
 
-## Principles
+The August 2026 spreadsheet reference establishes the useful five-column
+hierarchy, compact row rhythm, and single-image density. It is a functional
+reference, not a visual template to clone.
 
-- Use a strong editorial grid, compact typography, restrained rules, and clear alignment to make long operational text readable.
-- Make the desktop report surface the primary composition. Interactive Mode may reflow responsively and add filters, month selection, source links, and details without changing facts.
-- Preserve the five canonical report columns in Report Mode: KB, OS, Vulnerabilidades / Cambios Clave, Issues Resueltos, and Problemas Conocidos.
-- Use status color only to communicate meaning such as open, resolved, unknown, OOB, or not published. Never use it as ambient decoration, and always pair it with text.
-- Favor neutral, high-contrast surfaces and one disciplined accent family. Typography, spacing, and hierarchy should provide most of the identity.
-- Keep Report Mode stable, dense, and free of navigation or non-essential effects so it exports cleanly to one readable PNG.
+## Hallmark system
+
+- Genre: modern-minimal.
+- Macrostructure: Workbench. The product artifact itself leads; marketing
+  sections, dashboards, and decorative cards do not.
+- Theme: Cobalt. Cool engineered paper, graphite ink, ruler-like rules, tight
+  radii, and one cobalt interaction accent.
+- Navigation: N9 edge-aligned minimal. Wordmark left; the single Report Mode
+  action right. Operational controls sit in a separate workbench bar.
+- Footer: Ft2 inline rule. One compact provenance and runtime statement.
+- Enrichment: none. Typography and report structure carry the experience.
+- Type: Space Grotesk Variable for display and Source Sans 3 Variable for body,
+  both bundled locally. Cascadia Mono or platform mono is reserved for small
+  metadata.
+- Motion: button state feedback only. Report content remains composed and
+  static; reduced-motion users receive immediate state changes.
+
+The Cobalt marketing patterns for code heroes and command palettes are not part
+of this application. They would add unrelated functionality and conflict with
+the fixed Phase 2 scope.
+
+## Information architecture
+
+Interactive Mode follows this order:
+
+1. Minimal product header and Report Mode action.
+2. Locally derived month selector, optional OS-family filter, and PNG export.
+3. Known-issue status legend, with OOB supersedence explained separately.
+4. The canonical report surface.
+5. Inline provenance/source disclosures per update.
+6. Compact static-runtime footer.
+
+Report Mode renders only the canonical report surface. Escape returns to
+Interactive Mode. Navigation, selectors, status legend, source disclosures, and
+application footer are absent.
+
+## Canonical report surface
+
+The report header always includes the report title, month, Patch Tuesday date,
+generated date, report status, selected scope, and record count. The table has
+exactly these five columns, in this order:
+
+1. KB
+2. OS
+3. Vulnerabilidades / Cambios Clave
+4. Issues Resueltos
+5. Problemas Conocidos
+
+`NO PUBLICADO` remains explicit. Known-issue status is a text-and-symbol label,
+never color alone. `supersededBy` is rendered as an independent OOB label so an
+update can simultaneously show an open, resolved, none, or unknown known-issue
+state. Fixture prose is rendered verbatim.
+
+The table uses a fixed canonical minimum width. Narrow viewports scroll the
+report horizontally inside its own region; the surrounding document does not
+overflow. This is intentional because collapsing long operational prose into
+cards would destroy the report artifact and the five-column contract.
+
+## Export behavior
+
+PNG export runs entirely in the browser against the report element itself. The
+export temporarily removes Interactive Mode-only source disclosures, waits for
+bundled fonts to settle, and renders the full report at 2× pixel density on a
+stable 1600 CSS-pixel surface. It does not call an external service.
 
 ## Explicitly avoid
 
-- Generic SaaS dashboards made from repetitive cards.
-- Excessive gradients, glassmorphism, glow, or translucent layers.
-- Fake AI-agent aesthetics, chat metaphors, or ornamental automation cues.
-- Decorative effects inside Report Mode.
-- Low-density layouts that increase scrolling or make the full report harder to capture.
-
-Canvas UI, if later justified, is limited to one or two decorative, non-essential effects outside Report Mode. Gooey is optional only for small micro-interactions. Neither may carry information or interfere with deterministic export.
-
-## Hallmark preparation
-
-Hallmark is installed at project scope under `.codex/skills/hallmark`. Because skills installed during a Codex turn become active on the next turn, this Phase 0/1 brief records the supplied visual requirements and reference analysis without starting UI design. Phase 2 should activate Hallmark to refine this document and define the report/interactive-mode system before implementation.
+- Generic SaaS dashboard cards, charts, or KPI tiles.
+- Gradients, glassmorphism, glow, ambient illustration, or fake application
+  chrome.
+- AI-agent, chat, or automation metaphors.
+- Decorative effects or controls inside Report Mode.
+- Rewriting fixture facts or prose for visual convenience.
+- Runtime network requests, collection, backend services, databases, or cloud
+  dependencies.
