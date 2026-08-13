@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportMonth": "2026-08",
+  "patchTuesdayDate": "2026-08-11",
+  "generatedAt": null,
+  "status": "manual-golden-fixture",
+  "updates": [
+    {
+      "kb": "KB5120386",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 (ESU)"
+      },
+      "updateType": "esu",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Monthly Rollup ESU de agosto 2026; correcciones de seguridad del ciclo MSRC y ampliación del targeting de dispositivos elegibles para recibir automáticamente los nuevos certificados de Secure Boot.",
+      "resolvedIssuesSummary": "No se documentan bugs específicos adicionales respecto de julio; el cambio destacado es la ampliación del despliegue de certificados Secure Boot.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos para este Monthly Rollup.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120385",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012 R2",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 R2 (ESU)"
+      },
+      "updateType": "esu",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Monthly Rollup ESU de agosto 2026; incorpora correcciones de seguridad y amplía la cobertura de dispositivos elegibles para recibir automáticamente nuevos certificados de Secure Boot.",
+      "resolvedIssuesSummary": "No se documentan bugs específicos adicionales respecto de KB5099444 de julio; se actualiza principalmente el targeting de Secure Boot.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120418",
+      "os": {
+        "family": "Windows Server",
+        "version": "2016",
+        "channel": null,
+        "displayName": "Windows Server 2016"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; mejora el despliegue automático de los nuevos certificados de Secure Boot mediante datos de targeting de alta confianza.",
+      "resolvedIssuesSummary": "Corrige File History cuando los backups automáticos hacia shares SMB fallaban con un falso error de credenciales inválidas y los backups programados no copiaban archivos.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120238",
+      "os": {
+        "family": "Windows Server",
+        "version": "2019",
+        "channel": null,
+        "displayName": "Windows Server 2019"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; amplía la cobertura para distribución automática de nuevos certificados Secure Boot.",
+      "resolvedIssuesSummary": "Corrige File History: los backups automáticos hacia shares SMB podían fallar indicando incorrectamente credenciales inválidas e impedir la copia programada de archivos.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120242",
+      "os": {
+        "family": "Windows Server",
+        "version": "2022",
+        "channel": null,
+        "displayName": "Windows Server 2022"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; incorpora mejoras de seguridad de agosto y amplía el targeting para la distribución automática de los nuevos certificados Secure Boot.",
+      "resolvedIssuesSummary": "No se documentan bugs nuevos específicos respecto de KB5099540 de julio; el cambio de calidad destacado es la ampliación del targeting de Secure Boot.",
+      "knownIssuesSummary": "WSUS no muestra los detalles de errores de sincronización después de KB5070884 o posteriores; Microsoft retiró temporalmente esa funcionalidad como mitigación de una vulnerabilidad RCE.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120233",
+      "os": {
+        "family": "Windows Server",
+        "version": "2025",
+        "channel": null,
+        "displayName": "Windows Server 2025"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; mejoras en File Explorer sobre unidades DFS, soporte para certificados de criptografía post-cuántica (PQC), targeting de nuevos certificados Secure Boot y nuevo proveedor GIPHY para el panel de emojis.",
+      "resolvedIssuesSummary": "Corrige problemas de previews/copias de archivos en unidades DFS después de reconectar la red; restaura opciones PQC durante la configuración de Certificate Authority y permite enrolamiento con nuevos templates PQC; restaura GIF del panel de emojis mediante GIPHY.",
+      "knownIssuesSummary": "WSUS no muestra los detalles de errores de sincronización después de KB5070881 o posteriores; la funcionalidad permanece temporalmente retirada como mitigación de una vulnerabilidad RCE.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5120240",
+      "os": {
+        "family": "Windows 11",
+        "version": "23H2",
+        "channel": null,
+        "displayName": "Windows 11 23H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; actualiza el perfil COSA de SolNet-Mobile, mejora resiliencia de equipos MDM ante expiración del certificado MDM, mejora File History sobre SMB, amplía targeting de Secure Boot y migra los GIF del panel de emojis a GIPHY.",
+      "resolvedIssuesSummary": "Corrige problemas de backups File History hacia shares SMB y mejora el funcionamiento de dispositivos administrados cuando expira un certificado MDM; restaura la funcionalidad GIF del panel de emojis mediante GIPHY.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5121003",
+      "os": {
+        "family": "Windows 11",
+        "version": "24H2/25H2",
+        "channel": null,
+        "displayName": "Windows 11 24H2/25H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; amplía targeting de nuevos certificados Secure Boot y consolida mejoras del preview de julio: File Explorer y Search, Windows Hello ESS con sensores de huella externos, Voice Access, energía/batería, red, Windows Update y confiabilidad general; actualiza componentes de IA en equipos compatibles.",
+      "resolvedIssuesSummary": "Corrige archivos DFS tratados erróneamente como provenientes de Internet; File History hacia SMB con falso error de credenciales; estabilidad de Office en entornos virtualizados; confiabilidad de explorer.exe, DHCP y portapapeles en RDP/AVD; incorpora además el fix OOB para cambios de rendimiento/consumo/comportamiento en determinados dispositivos con Intel IPF.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    },
+    {
+      "kb": "KB5121000",
+      "os": {
+        "family": "Windows 11",
+        "version": "26H1",
+        "channel": null,
+        "displayName": "Windows 11 26H1"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-08-11",
+      "changesSummary": "Actualización acumulativa de seguridad; mejora el reporte de mantenimiento del TPM, amplía el targeting para nuevos certificados Secure Boot y actualiza componentes de IA compatibles.",
+      "resolvedIssuesSummary": "Corrige el reporte del estado del certificado Endorsement Key (EK) del TPM para que sea informado correctamente.",
+      "knownIssuesSummary": "Microsoft no reporta problemas conocidos.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": []
+    }
+  ]
+}
