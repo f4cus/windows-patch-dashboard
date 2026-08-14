@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+from datetime import date
+
 import pytest
 
-from windows_patch_collector.calendar import msrc_document_id, patch_tuesday
+from windows_patch_collector.calendar import (
+    most_recent_patch_tuesday_month,
+    msrc_document_id,
+    patch_tuesday,
+    resolve_report_month,
+)
 from windows_patch_collector.products import (
     WINDOWS_SERVER_23H2,
     WINDOWS_SERVER_2012,
@@ -24,6 +31,31 @@ def test_month_format_is_strict() -> None:
     with pytest.raises(ValueError, match="YYYY-MM"):
         patch_tuesday("2026-8")
     assert msrc_document_id("2026-08") == "2026-Aug"
+
+
+@pytest.mark.parametrize(
+    ("today", "expected"),
+    [
+        (date(2026, 8, 10), "2026-07"),
+        (date(2026, 8, 11), "2026-08"),
+        (date(2026, 8, 13), "2026-08"),
+        (date(2026, 8, 31), "2026-08"),
+        (date(2026, 9, 3), "2026-08"),
+        (date(2026, 9, 8), "2026-09"),
+        (date(2027, 1, 1), "2026-12"),
+    ],
+)
+def test_automatic_month_uses_latest_occurred_patch_tuesday(today: date, expected: str) -> None:
+    assert most_recent_patch_tuesday_month(today) == expected
+
+
+def test_manual_month_overrides_automatic_month() -> None:
+    assert resolve_report_month(date(2026, 8, 1), "2025-02") == "2025-02"
+
+
+def test_manual_month_is_strictly_validated() -> None:
+    with pytest.raises(ValueError, match="YYYY-MM"):
+        resolve_report_month(date(2026, 8, 13), "2026-8")
 
 
 @pytest.mark.parametrize(
