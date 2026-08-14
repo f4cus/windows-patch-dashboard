@@ -13,7 +13,7 @@ Purpose: transform public Microsoft Windows security-update information into a c
 - Collector: Python 3.
 - HTTP: httpx.
 - Parsing: BeautifulSoup and/or lxml.
-- Security data for Phase 3 evaluation: MSRC CSAF is the candidate preferred structured source. MSRC CVRF remains a fallback/complementary source until Phase 3 evaluation determines final behavior.
+- Security data: MSRC CVRF is the V1 monthly discovery source. MSRC CSAF remains a tested, complementary structured-source boundary.
 - KB article data: official Microsoft Support articles remain authoritative for KB highlights, fixes, and known issues.
 - Persistence: versioned JSON committed to Git.
 - Tests: pytest for collector/data; frontend test tooling may be added when justified.
@@ -27,6 +27,8 @@ Purpose: transform public Microsoft Windows security-update information into a c
 - Thinking Orbs: not in V1.
 - Gooey: optional only for small micro-interactions.
 - Export: PNG is primary; CSV is secondary.
+- Automation: GitHub Actions performs daily/manual collection and semantic report comparison.
+- Deployment: GitHub Pages receives only the Vite production artifact through official Pages actions.
 
 ## Core principles
 1. Microsoft is the source of truth.
@@ -126,3 +128,20 @@ OOB is an update type, not a known-issue status. `supersededBy` records supersed
 - OOB records and links are supported when an official structured remediation explicitly labels
   the update out-of-band and provides its date and superseded KB. V1 does not infer OOB status from
   a later date and does not attempt brittle generalized OOB discovery.
+
+## Phase 4 automation and deployment boundary
+
+- Normal pushes to `main` validate repository data, build Vite, and deploy without performing live
+  Microsoft collection. Daily and manual refreshes collect on the default branch, validate first,
+  and deploy the exact resulting commit in the same workflow run.
+- An omitted manual month resolves to the latest month whose deterministic Patch Tuesday has
+  occurred. An explicit month must use strict `YYYY-MM` form.
+- Automated change detection ignores only report `generatedAt` and source `retrievedAt`. When all
+  other contract data is equal, the committed report is restored and no commit is created.
+  Meaningful changes stage only `data/reports/YYYY-MM.json` and use the built-in `GITHUB_TOKEN`.
+- GitHub Pages is published with the official configure, artifact-upload, and deploy actions. Vite
+  receives the Pages base path during CI; local development retains `/`. The artifact is limited to
+  `frontend/dist`, and no `gh-pages` branch or external deployment secret is used.
+- Refresh and deployment use separate non-cancelling concurrency groups. A collection, schema, or
+  build failure prevents deployment; successful data commits are not rolled back if Pages itself
+  later fails.

@@ -1,99 +1,95 @@
 # Windows Patch Dashboard
 
-Windows Patch Dashboard turns public Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. The repository is intentionally static: a Python collector produces versioned JSON, while a React application reads that data without a database, persistent API, Azure service, or runtime AI dependency.
+## Product
 
-Phase 3 adds the local Microsoft collector. It uses official public sources over regular HTTP and writes validated reports directly into the static data catalog; no secret, account, browser automation, backend, database, cloud service, or runtime AI dependency is involved.
+Windows Patch Dashboard turns official Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. A deterministic Python collector produces validated, versioned JSON; a static React application presents it without a database, backend API, or runtime AI dependency.
 
-## Prerequisites
+## Screenshot / usage
 
-- Python 3.12
-- Node.js 22 with npm
+Interactive Mode provides month selection, individual operating-system selection, official provenance links, light/dark mode, and client-side PNG export. Report Mode is the primary shareable artifact: it removes application controls and presents the filtered report in exactly five canonical columns. The active OS selection and theme carry into Report Mode and the exported PNG; export is disabled for an empty selection.
 
-Run commands from the repository root. On Windows PowerShell, create the environment and install the collector's development dependencies with:
+All fonts and report rendering are local to the browser. No external screenshot or rendering service receives the report.
+
+## Data sources
+
+Production reports use only official Microsoft content:
+
+- Microsoft Security Response Center CVRF for monthly update discovery and KB-to-product relationships;
+- MSRC CSAF as a tested, complementary structured-source boundary;
+- official Microsoft Support KB articles for highlights, fixes, and known issues.
+
+Microsoft Support `es-ES` content is preferred per KB, with the official `en-US` article used only when Spanish content cannot be retrieved and parsed reliably. No third-party content populates production reports. The source evaluation and August comparison are documented in [docs/phase-3-source-evaluation.md](docs/phase-3-source-evaluation.md) and [docs/phase-3-august-2026-comparison.md](docs/phase-3-august-2026-comparison.md).
+
+## Architecture
+
+```text
+MSRC + Microsoft Support
+          →
+Python collector
+          →
+validated JSON in Git
+          →
+React + Vite
+          →
+GitHub Pages
+```
+
+The frontend bundles the validated report catalog at build time and never calls or scrapes Microsoft. Git history is the audit trail for production report changes.
+
+## Local development
+
+Prerequisites are Python 3.12 and Node.js 22 with npm. From the repository root on Windows PowerShell:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\python -m pip install -e "collector[dev]"
-```
-
-Run the Python tests, lint, type checks, and JSON/schema validation with:
-
-```powershell
 .venv\Scripts\python -m pytest collector/tests
 .venv\Scripts\python -m ruff check collector
 .venv\Scripts\python -m ruff format --check collector
 .venv\Scripts\python -m mypy collector/src
 .venv\Scripts\python -m windows_patch_collector.validation
+
+cd frontend
+npm ci
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run dev
 ```
 
-## Collect a monthly report
+Vite prints the local URL and serves from `/`. On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`; npm commands are unchanged.
 
-From the repository root, with the collector installed in `.venv`, run:
+## Collector
+
+Run one explicit month from the repository root:
 
 ```powershell
 .venv\Scripts\python -m windows_patch_collector collect --month 2026-08
 ```
 
-The month is strict `YYYY-MM`. The collector calculates that month's second Tuesday, discovers supported normal security updates in the official monthly MSRC CVRF document, and then reads each verified KB's Microsoft Support article. It validates and atomically writes `data/reports/YYYY-MM.json`; an existing report remains intact if collection or validation fails. Generated reports take precedence over fixtures in the frontend catalog.
+The month format is strict `YYYY-MM`. The collector validates and atomically writes `data/reports/YYYY-MM.json`; an existing valid report remains intact if collection or validation fails. Generated reports take precedence over same-month fixtures in the frontend catalog.
 
-CVRF is the V1 monthly discovery source because it provides one official monthly document with the required KB-to-product relationships. Microsoft Support is authoritative for article changes, documented fixes, and known issues. The public MSRC CSAF distribution was evaluated and has a tested parser boundary, but its per-CVE advisory layout is complementary rather than the V1 monthly discovery path. See `docs/phase-3-source-evaluation.md` for evidence and limitations.
+## Automation
 
-Normal unit tests are offline and use minimal captured-shape responses or HTTP mocks. A live collection can fail because Microsoft is unavailable, a public response is transiently throttled, official sources conflict, or source markup changes. HTTP requests use bounded retries for transient failures. A per-article Support failure produces an explicit `unknown`/unavailable partial report when the contract permits; a structured-source failure, official date conflict, ambiguous monthly KB, or validation failure stops the run without replacing the output file.
+`.github/workflows/pages.yml` deploys a validated frontend artifact on every push to `main` without performing live collection. It also runs daily at 20:17 UTC and supports manual dispatch with an optional `YYYY-MM` input. Scheduled or month-less manual runs select the most recent Patch Tuesday that has already occurred, so dates before the current month's Patch Tuesday continue to refresh the preceding report.
 
-Install and verify the frontend with:
+Refresh runs collect and validate first, then compare reports while ignoring only `generatedAt` and source `retrievedAt`. Timestamp-only refreshes restore the committed file and create no commit. Meaningful changes stage only the expected monthly report, commit with `github-actions[bot]` using `GITHUB_TOKEN`, and build/deploy that exact commit in the same workflow run. The Pages artifact contains only `frontend/dist`; no `gh-pages` branch is used.
 
-```powershell
-cd frontend
-npm ci
-npm run lint
-npm run format:check
-npm run typecheck
-npm test
-npm run build
-```
+To enable deployment, set the repository Pages source to **GitHub Actions** and allow workflow **Read and write permissions** for `GITHUB_TOKEN`. If `main` is protected, its rules must also permit the Actions bot's narrowly scoped report commit or the scheduled refresh will fail safely before deployment. GitHub may disable scheduled workflows on inactive public repositories; they can be re-enabled in the Actions tab.
 
-For local development, after installing dependencies:
+## Trust / limitations
 
-```powershell
-cd frontend
-npm run dev
-```
+- Official Microsoft sources only; provenance is retained per production record.
+- KB numbers, dates, fixes, issues, and supersedence are never inferred.
+- Missing or ambiguous evidence remains `unknown` or `not-published`, never silently becomes `none`.
+- Extraction and aggregation are deterministic; Spanish Support is preferred with official English fallback.
+- Generalized OOB discovery is intentionally conservative and requires explicit official evidence.
+- The static V1 provides report reading and export, not device inventory, patch compliance, accounts, analytics, or a vulnerability-management backend.
 
-Vite prints the local URL. The application discovers monthly JSON files under `data/fixtures/` and `data/reports/` at build time. A generated report for a month takes precedence over a fixture for the same month. The browser makes no request to Microsoft.
-
-## V1 report experience
-
-Interactive Mode provides a locally derived month selector, an operating-system checklist based on the current report, a light/dark theme toggle, a known-issue status legend, per-update official source links when present, Report Mode, and client-side PNG export. All operating systems are selected initially; individual selection, select-all, and clear actions filter the interactive table, Report Mode, and export consistently.
-
-Report Mode is the primary artifact. It hides application controls and provenance disclosures while preserving the active theme, the four public metadata fields (Patch Tuesday, Generado, Alcance, and Registros), and exactly five canonical columns: KB, OS, Vulnerabilidades / Cambios Clave, Issues Resueltos, and Problemas Conocidos. `Generado` is the date on which the application rendered the visual report. Press `Escape` to return to Interactive Mode.
-
-`Exportar PNG` captures the filtered report surface in the active theme at 2× pixel density. The export is generated locally in the browser with bundled fonts and no external rendering service. Export is disabled when no operating system is selected. `NO PUBLICADO`, known-issue status, and independent OOB supersedence indicators remain visible in the exported artifact.
-
-On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`. The npm commands are unchanged.
-
-## Repository layout
-
-```text
-.
-|-- frontend/              React, Vite, and TypeScript application
-|-- collector/             Microsoft collector, normalization, validation, and tests
-|   |-- src/
-|   `-- tests/
-|-- data/
-|   |-- fixtures/          Manually reviewed development inputs
-|   |-- reports/           Generated monthly reports
-|   `-- schema/            JSON Schema contract
-|-- design/                Visual direction and references
-|-- docs/                  Product and architecture decisions
-`-- .github/workflows/     Continuous integration
-```
-
-## Data contract
-
-`data/schema/monthly-report.schema.json` is the report contract. The validator checks every JSON document under `data/fixtures/` and `data/reports/`. The August 2026 file is a manual golden fixture used for development and tests; it is not evidence that a future collector is correct.
-
-Production reports must retain official Microsoft provenance, including non-null ISO date-times in report-level `generatedAt` and every source-level `retrievedAt`. The manual golden fixture alone uses `generatedAt: null`. Known-issue state is independent from OOB supersedence, and ESU is represented by `os.channel: "ESU"`, not an update type. Missing or unverifiable data remains explicit and must never be rewritten as "no known issues" or supplied with an inferred KB number. See `AGENTS.md` and `docs/decisions.md` before changing data behavior.
+The contract is [data/schema/monthly-report.schema.json](data/schema/monthly-report.schema.json). The August fixture is a manual test input, not production-source evidence. See [AGENTS.md](AGENTS.md) and [docs/decisions.md](docs/decisions.md) before changing data behavior.
 
 ## License
 
-This project is available under the MIT License. See `LICENSE`. Notices for vendored third-party material are listed in `THIRD_PARTY_NOTICES.md`.
+The project is licensed under the [MIT License](LICENSE). Bundled font and vendored-tool notices are preserved separately in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

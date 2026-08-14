@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import calendar
 import re
-from datetime import date
+from datetime import date, timedelta
 
 _MONTH_PATTERN = re.compile(r"^(?P<year>[0-9]{4})-(?P<month>0[1-9]|1[0-2])$")
 
@@ -32,3 +32,23 @@ def msrc_document_id(value: str) -> str:
 
     year, month = parse_report_month(value)
     return f"{year}-{calendar.month_abbr[month]}"
+
+
+def most_recent_patch_tuesday_month(today: date) -> str:
+    """Return the latest report month whose Patch Tuesday has occurred."""
+
+    current_month = today.strftime("%Y-%m")
+    if today >= patch_tuesday(current_month):
+        return current_month
+
+    previous_month = today.replace(day=1) - timedelta(days=1)
+    return previous_month.strftime("%Y-%m")
+
+
+def resolve_report_month(today: date, manual_month: str | None = None) -> str:
+    """Validate an explicit month or calculate the latest eligible month."""
+
+    if manual_month is not None:
+        parse_report_month(manual_month)
+        return manual_month
+    return most_recent_patch_tuesday_month(today)

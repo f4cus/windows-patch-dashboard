@@ -8,7 +8,7 @@ Read `docs/product-brief.md`, `docs/decisions.md`, `data/schema/monthly-report.s
 - Keep collection and normalization in the Python 3 package. The frontend only reads normalized, versioned JSON and must never scrape or call Microsoft directly.
 - Use `httpx` for HTTP work and BeautifulSoup/lxml for Microsoft Support parsing. Keep official-source adapters isolated from report normalization.
 - Persist reports as JSON in Git. Do not add a database, persistent backend/API, Azure dependency, or runtime AI/LLM service.
-- Use pytest for collector and data tests, GitHub Actions for CI, and GitHub Pages for eventual hosting.
+- Use pytest for collector and data tests, GitHub Actions for CI/refresh, and GitHub Pages for hosting.
 - Keep normalization independent from rendering. Presentation may summarize layout, but it must never alter source facts.
 - Preserve monthly history. Represent out-of-band updates and supersedence explicitly instead of overwriting the original monthly record.
 - Keep Report Mode deterministic and suitable for PNG export. CSV is secondary. TanStack Charts and Thinking Orbs are outside V1; Gooey is limited to optional micro-interactions, and Canvas UI is limited to at most two non-essential decorative effects.
@@ -29,7 +29,7 @@ Keep the canonical report order deterministic: Windows Server 2012 (ESU), Window
 
 ## Scope boundaries
 
-Phase 3 implements the local Microsoft collector. Do not add scheduling, production deployment, accounts, device inventory, compliance features, analytics, or runtime AI as part of collector work. Do not edit fixture prose to make generated reports match it.
+V1 includes the static report experience, local Microsoft collector, scheduled/manual report refresh, and GitHub Pages deployment. Do not add accounts, device inventory, compliance features, analytics, a database, persistent backend, external deployment platform, or runtime AI. Do not edit fixture prose to make generated reports match it.
 
 Document any deliberate architecture deviation in `docs/decisions.md`. If a schema change breaks existing data, update affected fixtures and record the reason in the same change.
 
@@ -50,6 +50,7 @@ npm ci
 npm run lint
 npm run format:check
 npm run typecheck
+npm test
 npm run build
 ```
 
