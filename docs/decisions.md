@@ -101,8 +101,28 @@ OOB is an update type, not a known-issue status. `supersededBy` records supersed
   continues to bind source type to the corresponding Microsoft host.
 
 ## Phase 3 source evaluation boundary
-- No Microsoft collection is implemented in Phase 1.1.
-- MSRC CSAF is the candidate preferred structured security source to evaluate in Phase 3.
-- MSRC CVRF remains available as a fallback or complementary source until that evaluation defines
-  final collection and reconciliation behavior.
-- Microsoft Support remains authoritative for KB article highlights, fixes, and known issues.
+- Phase 3 evaluated the live August 2026 MSRC CSAF and CVRF publications. CVRF is the V1 primary
+  discovery source: its single monthly document provided the release metadata and repeated, exact
+  KB-to-product remediation relationships needed by this report. Product and remediation parsing
+  remains isolated in `sources/msrc_cvrf.py`.
+- CSAF supplied detailed product trees and vendor-fix remediation links in individual CVE advisory
+  documents. Its public advisory index did not provide a month-level KB/product manifest, so using
+  it for complete monthly discovery would require retrieving and reconciling a large set of
+  per-CVE documents. The tested `sources/msrc_csaf.py` adapter is retained as a complementary
+  boundary, not silently used as report provenance.
+- Microsoft Support remains authoritative for KB article changes, fixes, and known issues. Only a
+  successfully parsed article is recorded as Support provenance. Missing or changed known-issue
+  markup maps to `unknown`, and an official date conflict stops collection.
+- Support collection requests official `es-ES` content first and falls back per KB to `en-US` when
+  Spanish content is unavailable or cannot be parsed reliably; provenance records only the
+  canonical locale URL whose content was actually used.
+- CVRF may expose normal LCUs and hotpatch-only packages with the same generic `Security Update`
+  subtype. The V1 collector verifies each CVRF KB through Microsoft Support and excludes a package
+  only when the canonical official article resolves under Microsoft's `/hotpatch/` publication
+  path. It does not choose between competing KB numbers by sequence or proximity.
+- CVRF is required for V1 collection; the collector does not fall back to a bulk CSAF crawl. A
+  CVRF failure is fatal. Individual Support failures remain explicit and yield a schema-valid
+  partial report when possible.
+- OOB records and links are supported when an official structured remediation explicitly labels
+  the update out-of-band and provides its date and superseded KB. V1 does not infer OOB status from
+  a later date and does not attempt brittle generalized OOB discovery.
