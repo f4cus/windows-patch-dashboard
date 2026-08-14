@@ -1,8 +1,8 @@
 # Windows Patch Dashboard
 
-Windows Patch Dashboard turns public Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. The repository is intentionally static: a Python collector will produce versioned JSON, while a React application reads that data without a database, persistent API, Azure service, or runtime AI dependency.
+Windows Patch Dashboard turns public Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. The repository is intentionally static: a Python collector produces versioned JSON, while a React application reads that data without a database, persistent API, Azure service, or runtime AI dependency.
 
-Phase 0 and Phase 1 provide the project foundation and monthly-report contract. Phase 2 implements the final static V1 reading and report experience over locally bundled JSON. It does not collect data from Microsoft and introduces no API, backend, database, cloud service, or runtime AI dependency.
+Phase 3 adds the local Microsoft collector. It uses official public sources over regular HTTP and writes validated reports directly into the static data catalog; no secret, account, browser automation, backend, database, cloud service, or runtime AI dependency is involved.
 
 ## Prerequisites
 
@@ -25,6 +25,20 @@ Run the Python tests, lint, type checks, and JSON/schema validation with:
 .venv\Scripts\python -m mypy collector/src
 .venv\Scripts\python -m windows_patch_collector.validation
 ```
+
+## Collect a monthly report
+
+From the repository root, with the collector installed in `.venv`, run:
+
+```powershell
+.venv\Scripts\python -m windows_patch_collector collect --month 2026-08
+```
+
+The month is strict `YYYY-MM`. The collector calculates that month's second Tuesday, discovers supported normal security updates in the official monthly MSRC CVRF document, and then reads each verified KB's Microsoft Support article. It validates and atomically writes `data/reports/YYYY-MM.json`; an existing report remains intact if collection or validation fails. Generated reports take precedence over fixtures in the frontend catalog.
+
+CVRF is the V1 monthly discovery source because it provides one official monthly document with the required KB-to-product relationships. Microsoft Support is authoritative for article changes, documented fixes, and known issues. The public MSRC CSAF distribution was evaluated and has a tested parser boundary, but its per-CVE advisory layout is complementary rather than the V1 monthly discovery path. See `docs/phase-3-source-evaluation.md` for evidence and limitations.
+
+Normal unit tests are offline and use minimal captured-shape responses or HTTP mocks. A live collection can fail because Microsoft is unavailable, a public response is transiently throttled, official sources conflict, or source markup changes. HTTP requests use bounded retries for transient failures. A per-article Support failure produces an explicit `unknown`/unavailable partial report when the contract permits; a structured-source failure, official date conflict, ambiguous monthly KB, or validation failure stops the run without replacing the output file.
 
 Install and verify the frontend with:
 
@@ -62,12 +76,12 @@ On macOS or Linux, replace `.venv\Scripts\python` with `.venv/bin/python`. The n
 ```text
 .
 |-- frontend/              React, Vite, and TypeScript application
-|-- collector/             Python package and tests
+|-- collector/             Microsoft collector, normalization, validation, and tests
 |   |-- src/
 |   `-- tests/
 |-- data/
 |   |-- fixtures/          Manually reviewed development inputs
-|   |-- reports/           Future generated monthly reports
+|   |-- reports/           Generated monthly reports
 |   `-- schema/            JSON Schema contract
 |-- design/                Visual direction and references
 |-- docs/                  Product and architecture decisions

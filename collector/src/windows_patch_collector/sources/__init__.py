@@ -1,0 +1,1 @@
+"""Official Microsoft source adapters."""

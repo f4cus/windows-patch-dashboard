@@ -1,5 +1,5 @@
-"""Run repository data validation with ``python -m windows_patch_collector``."""
+"""Run the Windows Patch Dashboard collector command-line interface."""
 
-from windows_patch_collector.validation import main
+from windows_patch_collector.cli import main
 
 raise SystemExit(main())

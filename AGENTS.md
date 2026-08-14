@@ -6,7 +6,7 @@ Read `docs/product-brief.md`, `docs/decisions.md`, `data/schema/monthly-report.s
 
 - Keep the V1 frontend on React, Vite, and TypeScript.
 - Keep collection and normalization in the Python 3 package. The frontend only reads normalized, versioned JSON and must never scrape or call Microsoft directly.
-- Use `httpx` for future HTTP work and BeautifulSoup and/or lxml for future parsing. Microsoft collection is outside Phase 0/1.
+- Use `httpx` for HTTP work and BeautifulSoup/lxml for Microsoft Support parsing. Keep official-source adapters isolated from report normalization.
 - Persist reports as JSON in Git. Do not add a database, persistent backend/API, Azure dependency, or runtime AI/LLM service.
 - Use pytest for collector and data tests, GitHub Actions for CI, and GitHub Pages for eventual hosting.
 - Keep normalization independent from rendering. Presentation may summarize layout, but it must never alter source facts.
@@ -29,7 +29,7 @@ Keep the canonical report order deterministic: Windows Server 2012 (ESU), Window
 
 ## Scope boundaries
 
-Phase 0/1 establishes tooling, validates the data contract and golden fixture, and renders only a minimal proof page with the five canonical columns. Do not add Microsoft collection or scraping, scheduling, a final dashboard UI, production deployment, accounts, device inventory, compliance features, analytics, or runtime AI as part of this phase. Do not edit fixture prose based on assumptions or fetch Microsoft to "correct" the August fixture.
+Phase 3 implements the local Microsoft collector. Do not add scheduling, production deployment, accounts, device inventory, compliance features, analytics, or runtime AI as part of collector work. Do not edit fixture prose to make generated reports match it.
 
 Document any deliberate architecture deviation in `docs/decisions.md`. If a schema change breaks existing data, update affected fixtures and record the reason in the same change.
 

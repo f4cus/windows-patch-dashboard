@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "windows-patch-collector"
 version = "0.1.0"
-description = "Validation and normalization foundation for Windows Patch Dashboard data"
+description = "Official Microsoft collector and validator for Windows Patch Dashboard data"
 requires-python = ">=3.11"
 dependencies = [
   "beautifulsoup4>=4.12,<5",
