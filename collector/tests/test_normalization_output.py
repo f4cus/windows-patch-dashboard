@@ -7,7 +7,12 @@ from pathlib import Path
 import pytest
 
 from windows_patch_collector.errors import CollectionConflictError
-from windows_patch_collector.models import StructuredResult, StructuredUpdate, SupportArticle
+from windows_patch_collector.models import (
+    OsIdentity,
+    StructuredResult,
+    StructuredUpdate,
+    SupportArticle,
+)
 from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.output import write_report_atomic
 from windows_patch_collector.products import WINDOWS_SERVER_2022
@@ -16,6 +21,7 @@ from windows_patch_collector.validation import ReportValidationError, load_schem
 MSRC_URL = "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug"
 SUPPORT_URL = "https://support.microsoft.com/en-us/help/5120242/article"
 STAMP = datetime(2026, 8, 13, 12, tzinfo=UTC)
+WINDOWS_11_23H2 = OsIdentity("Windows 11", "23H2", None, "Windows 11 23H2")
 
 
 def _update(
@@ -25,10 +31,11 @@ def _update(
     update_type: str = "security",
     subtype: str = "Security Update",
     supersedes: str | None = None,
+    identity: OsIdentity = WINDOWS_SERVER_2022,
 ) -> StructuredUpdate:
     return StructuredUpdate(  # type: ignore[arg-type]
         kb,
-        WINDOWS_SERVER_2022,
+        identity,
         release,
         update_type,
         MSRC_URL,
@@ -75,7 +82,7 @@ def test_normalization_emits_no_publicado_and_provenance(schema: dict[str, objec
     assert all(source["retrievedAt"] == "2026-08-13T12:00:00Z" for source in published["sources"])
 
 
-def test_missing_support_is_unknown_and_does_not_claim_unused_provenance() -> None:
+def test_single_monthly_candidate_with_missing_support_preserves_partial_output() -> None:
     result = normalize_report(
         month="2026-08",
         structured=StructuredResult((_update(),), MSRC_URL, STAMP),
@@ -87,6 +94,59 @@ def test_missing_support_is_unknown_and_does_not_claim_unused_provenance() -> No
     assert row["knownIssuesStatus"] == "unknown"
     assert [source["type"] for source in row["sources"]] == ["msrc"]
     assert result.document["status"] == "partial"
+
+
+def test_multiple_monthly_candidates_selects_only_support_verified_candidate() -> None:
+    verified = _update("KB5120240", identity=WINDOWS_11_23H2)
+    unverified = _update("KB5122880", identity=WINDOWS_11_23H2)
+
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((verified, unverified), MSRC_URL, STAMP),
+        support_articles={verified.kb: _article(verified.kb, verified.release_date)},
+        support_failures={unverified.kb: "HTTP 404"},
+        generated_at=STAMP,
+    )
+
+    emitted_kbs = {row["kb"] for row in result.document["updates"]}
+    assert verified.kb in emitted_kbs
+    assert unverified.kb not in emitted_kbs
+    assert any(
+        "selected Support-verified KB5120240" in warning
+        and "unverified monthly candidates: KB5122880" in warning
+        for warning in result.warnings
+    )
+
+
+def test_multiple_monthly_candidates_with_both_support_verified_conflicts() -> None:
+    first = _update("KB5120240", identity=WINDOWS_11_23H2)
+    second = _update("KB5122880", identity=WINDOWS_11_23H2)
+
+    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((first, second), MSRC_URL, STAMP),
+            support_articles={
+                first.kb: _article(first.kb, first.release_date),
+                second.kb: _article(second.kb, second.release_date),
+            },
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+
+def test_multiple_monthly_candidates_with_neither_support_verified_conflicts() -> None:
+    first = _update("KB5120240", identity=WINDOWS_11_23H2)
+    second = _update("KB5122880", identity=WINDOWS_11_23H2)
+
+    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((first, second), MSRC_URL, STAMP),
+            support_articles={},
+            support_failures={first.kb: "HTTP 404", second.kb: "HTTP 404"},
+            generated_at=STAMP,
+        )
 
 
 def test_duplicate_conflict_is_rejected() -> None:
@@ -101,7 +161,9 @@ def test_duplicate_conflict_is_rejected() -> None:
         )
 
 
-def test_explicit_oob_relationship_is_represented_and_validated(schema: dict[str, object]) -> None:
+def test_oob_candidate_does_not_cause_monthly_duplicate_conflict(
+    schema: dict[str, object],
+) -> None:
     monthly = _update()
     oob = _update(
         "KB5120999",
