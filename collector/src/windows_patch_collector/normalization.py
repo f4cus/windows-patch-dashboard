@@ -65,7 +65,11 @@ def _source(source_type: str, url: str, retrieved_at: datetime) -> dict[str, str
 
 
 def _select_updates(
-    structured: StructuredResult, month: str, excluded_kbs: frozenset[str]
+    structured: StructuredResult,
+    month: str,
+    excluded_kbs: frozenset[str],
+    support_articles: Mapping[str, SupportArticle],
+    support_failures: Mapping[str, str],
 ) -> tuple[list[StructuredUpdate], list[str]]:
     expected_release = patch_tuesday(month)
     unique: dict[tuple[OsIdentity, str], StructuredUpdate] = {}
@@ -94,6 +98,19 @@ def _select_updates(
     for identity, updates in monthly_by_os.items():
         distinct_kbs = {update.kb for update in updates}
         if len(distinct_kbs) > 1:
+            verified_kbs = {
+                kb for kb in distinct_kbs if kb in support_articles and kb not in support_failures
+            }
+            if len(verified_kbs) == 1:
+                selected_kb = next(iter(verified_kbs))
+                unverified_kbs = sorted(distinct_kbs - verified_kbs)
+                for kb in unverified_kbs:
+                    unique.pop((identity, kb), None)
+                warnings.append(
+                    f"{identity.display_name}: selected Support-verified {selected_kb}; "
+                    "CVRF also listed unverified monthly candidates: " + ", ".join(unverified_kbs)
+                )
+                continue
             raise CollectionConflictError(
                 f"Multiple normal monthly KBs found for {identity.display_name}: "
                 + ", ".join(sorted(distinct_kbs))
@@ -112,7 +129,9 @@ def normalize_report(
 ) -> NormalizedReport:
     """Build a schema-shaped report from source-specific parsed evidence."""
 
-    selected, warnings = _select_updates(structured, month, excluded_kbs)
+    selected, warnings = _select_updates(
+        structured, month, excluded_kbs, support_articles, support_failures
+    )
     incomplete = bool(structured.warnings or support_failures)
     present_monthly = {update.os for update in selected if update.update_type == "security"}
 
