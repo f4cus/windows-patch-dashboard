@@ -208,8 +208,11 @@ export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
         </div>
 
         <footer className="report-footer">
+          <span className="report-footer__project">
+            Windows Patch Dashboard · f4cus.github.io/windows-patch-dashboard
+          </span>
           <span>
-            Windows Patch Dashboard · {formatReportMonth(report.reportMonth)}
+            Desarrollado por Facu Villagra · linkedin.com/in/fvillagra
           </span>
         </footer>
       </article>

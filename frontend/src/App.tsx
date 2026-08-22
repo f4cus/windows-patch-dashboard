@@ -21,6 +21,10 @@ interface AppProps {
   readonly renderedAt?: Date;
 }
 
+const PROJECT_URL = "https://f4cus.github.io/windows-patch-dashboard/";
+const REPOSITORY_URL = "https://github.com/f4cus/windows-patch-dashboard";
+const LINKEDIN_URL = "https://www.linkedin.com/in/fvillagra/";
+
 const LEGEND_ITEMS = [
   { status: "none", label: "Sin problemas conocidos", symbol: "—" },
   { status: "open", label: "Abierto", symbol: "!" },
@@ -29,13 +33,47 @@ const LEGEND_ITEMS = [
   { status: "unknown", label: "Desconocido", symbol: "?" },
 ] as const;
 
+function MoonIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="theme-toggle__icon"
+      data-icon="moon"
+      viewBox="0 0 24 24"
+    >
+      <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="theme-toggle__icon"
+      data-icon="sun"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="12" cy="12" r="3.5" />
+      <path d="M12 2v2.25M12 19.75V22M4.93 4.93l1.59 1.59M17.48 17.48l1.59 1.59M2 12h2.25M19.75 12H22M4.93 19.07l1.59-1.59M17.48 6.52l1.59-1.59" />
+    </svg>
+  );
+}
+
 export default function App({
   reports = localReports,
   exporter = exportReportAsPng,
   renderedAt,
 }: AppProps) {
+  const availableReports = useMemo(
+    () =>
+      [...reports].sort((left, right) =>
+        right.reportMonth.localeCompare(left.reportMonth),
+      ),
+    [reports],
+  );
   const [selectedMonth, setSelectedMonth] = useState(
-    () => reports[0]?.reportMonth ?? "",
+    () => availableReports[0]?.reportMonth ?? "",
   );
   const [osSelections, setOsSelections] = useState<
     Readonly<Record<string, readonly string[]>>
@@ -47,8 +85,11 @@ export default function App({
   const { theme, toggleTheme } = useTheme();
 
   const report = useMemo(
-    () => reports.find((candidate) => candidate.reportMonth === selectedMonth),
-    [reports, selectedMonth],
+    () =>
+      availableReports.find(
+        (candidate) => candidate.reportMonth === selectedMonth,
+      ),
+    [availableReports, selectedMonth],
   );
 
   const availableOperatingSystems = useMemo(
@@ -59,8 +100,19 @@ export default function App({
     [report],
   );
 
-  const selectedOperatingSystems =
-    osSelections[selectedMonth] ?? availableOperatingSystems;
+  const selectedOperatingSystems = useMemo(() => {
+    const storedSelection = osSelections[selectedMonth];
+    if (storedSelection === undefined) {
+      return availableOperatingSystems;
+    }
+
+    const validSelection = availableOperatingSystems.filter((operatingSystem) =>
+      storedSelection.includes(operatingSystem),
+    );
+    return storedSelection.length > 0 && validSelection.length === 0
+      ? availableOperatingSystems
+      : validSelection;
+  }, [availableOperatingSystems, osSelections, selectedMonth]);
   const selectedOperatingSystemSet = useMemo(
     () => new Set(selectedOperatingSystems),
     [selectedOperatingSystems],
@@ -177,7 +229,6 @@ export default function App({
       <header className="app-nav" aria-label="Cabecera de la aplicación">
         <div className="wordmark">
           <span>Windows Patch Dashboard</span>
-          <small>Lectura editorial de Patch Tuesday</small>
         </div>
         <div className="app-actions">
           <button
@@ -187,15 +238,17 @@ export default function App({
             aria-checked={theme === "dark"}
             aria-label={
               theme === "dark"
-                ? "Cambiar a tema claro"
-                : "Cambiar a tema oscuro"
+                ? "Cambiar a modo claro"
+                : "Cambiar a modo oscuro"
+            }
+            title={
+              theme === "dark"
+                ? "Cambiar a modo claro"
+                : "Cambiar a modo oscuro"
             }
             onClick={toggleTheme}
           >
-            <span className="theme-toggle__track" aria-hidden="true">
-              <span className="theme-toggle__thumb" />
-            </span>
-            <span>{theme === "dark" ? "Oscuro" : "Claro"}</span>
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
             className="button button--primary"
@@ -216,7 +269,7 @@ export default function App({
               value={selectedMonth}
               onChange={(event) => setSelectedMonth(event.target.value)}
             >
-              {reports.map((candidate) => (
+              {availableReports.map((candidate) => (
                 <option
                   key={candidate.reportMonth}
                   value={candidate.reportMonth}
@@ -318,6 +371,18 @@ export default function App({
           />
         </div>
       </main>
+      <footer className="app-footer">
+        <a href={PROJECT_URL}>Windows Patch Dashboard</a>
+        <span>Facu Villagra</span>
+        <span aria-hidden="true">·</span>
+        <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
+          LinkedIn
+        </a>
+        <span aria-hidden="true">·</span>
+        <a href={REPOSITORY_URL} target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+      </footer>
     </div>
   );
 }

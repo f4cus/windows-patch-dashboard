@@ -57,6 +57,27 @@ function reportWith(
   return { ...augustReport, ...overrides, updates };
 }
 
+const julyReport = reportWith(
+  {
+    reportMonth: "2026-07",
+    patchTuesdayDate: "2026-07-14",
+    generatedAt: "2026-07-15T09:00:00Z",
+    status: "verified",
+  },
+  [
+    updateWith({
+      kb: "KB5000001",
+      sources: [
+        {
+          type: "msrc",
+          url: "https://msrc.microsoft.com/update-guide",
+          retrievedAt: "2026-07-15T08:00:00Z",
+        },
+      ],
+    }),
+  ],
+);
+
 beforeEach(() => {
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;
@@ -70,6 +91,17 @@ afterEach(() => {
 });
 
 describe("V1 report experience", () => {
+  it("removes the secondary editorial tagline", () => {
+    renderApp();
+
+    expect(
+      within(screen.getByLabelText("Cabecera de la aplicación")).getByText(
+        "Windows Patch Dashboard",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText(/lectura editorial/i)).toBeNull();
+  });
+
   it("renders all nine August records under exactly five canonical columns", () => {
     const { container } = renderApp();
 
@@ -96,19 +128,28 @@ describe("V1 report experience", () => {
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(
       screen
-        .getByRole("switch", { name: "Cambiar a tema claro" })
+        .getByRole("switch", { name: "Cambiar a modo claro" })
         .getAttribute("aria-checked"),
     ).toBe("true");
+    expect(
+      screen
+        .getByRole("switch", { name: "Cambiar a modo claro" })
+        .querySelector('[data-icon="sun"]'),
+    ).toBeTruthy();
   });
 
-  it("toggles and persists an explicit theme preference", () => {
+  it("uses an accessible icon-only toggle and persists the theme", () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
     renderApp();
 
     const toggle = screen.getByRole("switch", {
-      name: "Cambiar a tema claro",
+      name: "Cambiar a modo claro",
     });
     expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(toggle.textContent).toBe("");
+    expect(toggle.querySelector('[data-icon="sun"]')).toBeTruthy();
+    expect(screen.queryByText("Claro")).toBeNull();
+    expect(screen.queryByText("Oscuro")).toBeNull();
 
     fireEvent.click(toggle);
 
@@ -116,9 +157,14 @@ describe("V1 report experience", () => {
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe("light");
     expect(
       screen
-        .getByRole("switch", { name: "Cambiar a tema oscuro" })
+        .getByRole("switch", { name: "Cambiar a modo oscuro" })
         .getAttribute("aria-checked"),
     ).toBe("false");
+    expect(
+      screen
+        .getByRole("switch", { name: "Cambiar a modo oscuro" })
+        .querySelector('[data-icon="moon"]'),
+    ).toBeTruthy();
   });
 
   it("selects individual operating systems in canonical report order", () => {
@@ -280,30 +326,19 @@ describe("V1 report experience", () => {
   });
 
   it("switches between locally available report months", () => {
-    const julyReport = reportWith(
-      {
-        reportMonth: "2026-07",
-        patchTuesdayDate: "2026-07-14",
-        generatedAt: "2026-07-15T09:00:00Z",
-        status: "verified",
-      },
-      [
-        updateWith({
-          kb: "KB5000001",
-          sources: [
-            {
-              type: "msrc",
-              url: "https://msrc.microsoft.com/update-guide",
-              retrievedAt: "2026-07-15T08:00:00Z",
-            },
-          ],
-        }),
-      ],
-    );
-
     const { container } = renderApp({
-      reports: [augustReport, julyReport],
+      reports: [julyReport, augustReport],
     });
+    const monthSelector =
+      screen.getByLabelText<HTMLSelectElement>("Mes del informe");
+
+    expect(monthSelector.value).toBe("2026-08");
+    expect(
+      screen
+        .getAllByRole<HTMLOptionElement>("option")
+        .map((option) => option.textContent),
+    ).toEqual(["agosto de 2026", "julio de 2026"]);
+
     fireEvent.change(screen.getByLabelText("Mes del informe"), {
       target: { value: "2026-07" },
     });
@@ -312,6 +347,78 @@ describe("V1 report experience", () => {
     expect(screen.getByText("KB5000001")).toBeTruthy();
     expect(
       screen.getByLabelText("Sistemas operativos: 1 de 1 seleccionados"),
+    ).toBeTruthy();
+  });
+
+  it("keeps OS selection valid when the report month changes", () => {
+    const { container } = renderApp({ reports: [augustReport, julyReport] });
+
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar" }));
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: "Windows Server 2025" }),
+    );
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-07" },
+    });
+
+    expect(screen.getAllByRole<HTMLInputElement>("checkbox")).toHaveLength(1);
+    expect(screen.getByRole<HTMLInputElement>("checkbox").checked).toBe(true);
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(1);
+    expect(screen.getByText("KB5000001")).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-08" },
+    });
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(1);
+    expect(screen.getByText("KB5120233")).toBeTruthy();
+  });
+
+  it("carries the selected month into Report Mode", () => {
+    const { container } = renderApp({ reports: [augustReport, julyReport] });
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-07" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+
+    expect(screen.getByText("Informe mensual · julio de 2026")).toBeTruthy();
+    expect(screen.getByText("14 de julio de 2026")).toBeTruthy();
+    expect(screen.getByText("KB5000001")).toBeTruthy();
+    expect(container.querySelectorAll("thead th")).toHaveLength(5);
+    expect(
+      within(container.querySelector(".report-metadata")!).getByText("1"),
+    ).toBeTruthy();
+  });
+
+  it("shows project and professional links in Interactive Mode", () => {
+    renderApp();
+
+    expect(
+      screen
+        .getByRole("link", { name: "Windows Patch Dashboard" })
+        .getAttribute("href"),
+    ).toBe("https://f4cus.github.io/windows-patch-dashboard/");
+    expect(screen.getByText("Facu Villagra")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "LinkedIn" }).getAttribute("href"),
+    ).toBe("https://www.linkedin.com/in/fvillagra/");
+    expect(
+      screen.getByRole("link", { name: "GitHub" }).getAttribute("href"),
+    ).toBe("https://github.com/f4cus/windows-patch-dashboard");
+  });
+
+  it("includes restrained product and author attribution in Report Mode", () => {
+    renderApp();
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+
+    expect(
+      screen.getByText(
+        "Windows Patch Dashboard · f4cus.github.io/windows-patch-dashboard",
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Desarrollado por Facu Villagra · linkedin.com/in/fvillagra",
+      ),
     ).toBeTruthy();
   });
 
@@ -335,6 +442,34 @@ describe("V1 report experience", () => {
     expect(exporter).toHaveBeenCalledWith(
       exportedReport,
       "microsoft-patch-tuesday-2026-08",
+    );
+    expect(exportedReport.textContent).toContain(
+      "Desarrollado por Facu Villagra · linkedin.com/in/fvillagra",
+    );
+    expect(exportedReport.textContent).toContain(
+      "Windows Patch Dashboard · f4cus.github.io/windows-patch-dashboard",
+    );
+  });
+
+  it("exports the selected report month", async () => {
+    const exporter = vi.fn().mockResolvedValue(undefined);
+    const { container } = renderApp({
+      exporter,
+      reports: [augustReport, julyReport],
+    });
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-07" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Exportar PNG" }));
+
+    await waitFor(() => expect(exporter).toHaveBeenCalledTimes(1));
+    const exportedReport = exporter.mock.calls[0][0] as HTMLElement;
+    expect(exportedReport).toBe(container.querySelector("#report"));
+    expect(exportedReport.textContent).toContain("julio de 2026");
+    expect(exportedReport.textContent).toContain("KB5000001");
+    expect(exporter).toHaveBeenCalledWith(
+      exportedReport,
+      "microsoft-patch-tuesday-2026-07",
     );
   });
 });
