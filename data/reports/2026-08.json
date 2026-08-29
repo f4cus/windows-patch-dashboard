@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-08",
   "patchTuesdayDate": "2026-08-11",
-  "generatedAt": "2026-08-24T20:48:02.378791Z",
+  "generatedAt": "2026-08-29T02:49:12.152626Z",
   "status": "partial",
   "updates": [
     {
@@ -24,12 +24,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/08/kb5120386-windows-server-2012-mr",
-          "retrievedAt": "2026-08-24T20:48:01.635293Z"
+          "retrievedAt": "2026-08-29T02:49:11.226976Z"
         }
       ]
     },
@@ -52,12 +52,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/08/kb5120385-windows-8-1-mr",
-          "retrievedAt": "2026-08-24T20:48:01.490825Z"
+          "retrievedAt": "2026-08-29T02:49:11.044581Z"
         }
       ]
     },
@@ -80,12 +80,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120418-windows-10-1607-security-update",
-          "retrievedAt": "2026-08-24T20:48:01.769500Z"
+          "retrievedAt": "2026-08-29T02:49:11.389975Z"
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120238-windows-10-1809-security-update",
-          "retrievedAt": "2026-08-24T20:48:01.076446Z"
+          "retrievedAt": "2026-08-29T02:49:10.320340Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120242-windows-server-2022-security-update",
-          "retrievedAt": "2026-08-24T20:48:01.341887Z"
+          "retrievedAt": "2026-08-29T02:49:10.695419Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120233-windows-server-2025-security-update",
-          "retrievedAt": "2026-08-24T20:48:00.866271Z"
+          "retrievedAt": "2026-08-29T02:49:10.059252Z"
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5120240-windows-11-23h2-security-update",
-          "retrievedAt": "2026-08-24T20:48:01.256087Z"
+          "retrievedAt": "2026-08-29T02:49:10.518587Z"
         }
       ]
     },
@@ -211,21 +211,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-08-11",
-      "changesSummary": "Esta actualización incluye mejoras con respecto a las siguientes actualizaciones publicadas previamente: 28 de julio de 2026: versión preliminar de KB5101684 (compilaciones del SO 26200.8973 y 26100.8973) 18 de julio de 2026: KB5121767 (compilaciones del SO 26200.8894 y 26100.8894) fuera de banda 14 de julio de 2026: KB5101650 (compilaciones del SO 26200.8875 y 26100.8875) En el siguiente resumen se describen las principales mejoras de calidad que aborda esta actualización. El texto en negrita entre paréntesis indica el elemento o el área del cambio. [Actualizaciones de seguridad] Esta actualización proporciona mejoras de seguridad. Para obtener más información acerca de las vulnerabilidades de seguridad resueltas por esta actualización, consulte la Guía de actualización de seguridad [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Uso compartido] Esta actualización elimina la experiencia de bandeja desplegable (anteriormente denominada bandeja de arrastre) en los dispositivos en los que estaba disponible. También quita la configuración asociada en Configuración > Multitarea del sistema > . Seguimos evaluando la experiencia y explorando futuras mejoras.",
+      "changesSummary": "Esta actualización incluye mejoras con respecto a las siguientes actualizaciones publicadas previamente: 28 de julio de 2026: versión preliminar de KB5101684 (compilaciones del SO 26200.8973 y 26100.8973) 18 de julio de 2026: KB5121767 (compilaciones del SO 26200.8894 y 26100.8894) fuera de banda 14 de julio de 2026: KB5101650 (compilaciones del SO 26200.8875 y 26100.8875) En el siguiente resumen se describen las principales mejoras de calidad que aborda esta actualización. El texto en negrita entre paréntesis indica el elemento o el área del cambio. [Actualizaciones de seguridad] Esta actualización proporciona mejoras de seguridad. Para obtener más información acerca de las vulnerabilidades de seguridad resueltas por esta actualización, consulte la Guía de actualización de seguridad . [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Uso compartido] Esta actualización elimina la experiencia de bandeja desplegable (anteriormente denominada bandeja de arrastre) en los dispositivos en los que estaba disponible. También quita la configuración asociada en Configuración > Multitarea del sistema > . Seguimos evaluando la experiencia y explorando futuras mejoras.",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
-      "knownIssuesSummary": "Informes de ciertos juegos que dejan de responder Síntomas Microsoft ha recibido informes de problemas relacionados con la imposibilidad de ejecutar determinados juegos según lo esperado después de instalar esta actualización. La investigación en curso indica que este problema está asociado con determinados periféricos o componentes de dispositivo internos que admiten funciones de iluminación RGB. Estos dispositivos pueden instalar controladores o componentes de software con nombres de archivo similares a inpoutx64 . En los sistemas en los que se encuentran estos controladores, iniciar determinados juegos puede desencadenar este problema. Los juegos identificados en los informes de este problema incluyen ARC Raiders, MARVEL Tōkon: Fighting Souls y THE FINALS. Los síntomas notificados incluyen: La aplicación del juego deja de responder La aplicación del juego se cierra sin previo aviso Se muestra el error \"EXCEPTION_ACCESS_VIOLATION\" El dispositivo se reinicia sin previo aviso Si experimentas este problema o uno similar, usa el Centro de opiniones para enviar un informe. Para abrir el Centro de opiniones, presiona la tecla + F del logotipo de Windows . Para obtener información adicional, consulte Enviar comentarios a Microsoft con la aplicación Centro de opiniones . Sus informes son útiles para nuestra investigación. Solución alternativa Este problema se puede evitar deshabilitando temporalmente el controlador inpoutx64 mediante el Registro de Windows. Importante Este artículo contiene información sobre cómo modificar el Registro. Asegúrese de hacer una copia de seguridad del Registro antes de modificarlo. Asegúrese de que sabe cómo restaurar el registro en caso de que se produzca un problema. Para obtener más información sobre cómo realizar una copia de seguridad, restaurar y modificar el Registro, consulte Cómo hacer una copia de seguridad y restaurar el registro en Windows . Siga estos pasos para deshabilitar el controlador a través del Registro de Windows: Abra el Registro de Windows. Esto se puede hacer abriendo el menú Inicio y escribiendo regedit . Seleccione el Editor del Registro en los resultados. Vaya a la claveHKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\inpoutx64 . Esto se puede hacer usando las carpetas en el lado izquierdo de la ventana o escribiendo la ruta en la línea de dirección en la parte superior de la ventana. Nota Asegúrese de haber realizado una copia de seguridad del Registro, según la importante nota anterior. Si necesita deshacer el cambio, puede ser necesario en los pasos siguientes. En el lado derecho de la ventana, busque el valor del registro denominado Inicio . Haga doble clic en esta tecla e introduzca el número 4 en el campo titulado Datos de valor . Cierre la ventana y reinicie el equipo. Tenga en cuenta que es posible que deshabilitar esta clave del Registro pueda dar lugar a un comportamiento no deseado, como problemas con las características RGB en periféricos o componentes, o problemas con el software usado para controlar las características RGB. Si experimenta estos problemas y desea restaurar esa funcionalidad, puede volver a habilitar el controlador restaurando la clave del Registro a su valor anterior. Puede restaurar el Registro siguiendo los pasos que se indican en Cómo realizar copias de seguridad y restaurar el Registro en Windows . Microsoft está investigando la interacción entre estos componentes relacionados con RGB y los juegos afectados. Se proporcionarán detalles adicionales a medida que estén disponibles.",
+      "knownIssuesSummary": "Informes de ciertos juegos que dejan de responder Síntomas Microsoft ha recibido informes de problemas relacionados con la imposibilidad de ejecutar determinados juegos según lo esperado después de instalar esta actualización. La investigación en curso indica que este problema está asociado con determinados periféricos o componentes de dispositivo internos que admiten funciones de iluminación RGB. Estos dispositivos pueden instalar controladores o componentes de software con nombres de archivo similares a inpoutx64 . En los sistemas en los que se encuentran estos controladores, iniciar determinados juegos puede desencadenar este problema. Los juegos identificados en los informes de este problema incluyen ARC Raiders, MARVEL Tōkon: Fighting Souls y THE FINALS. Los síntomas notificados incluyen: La aplicación del juego deja de responder La aplicación del juego se cierra sin previo aviso Se muestra el error \"EXCEPTION_ACCESS_VIOLATION\" El dispositivo se reinicia sin previo aviso Si experimentas este problema o uno similar, usa el Centro de opiniones para enviar un informe. Para abrir el Centro de opiniones, presiona la tecla + F del logotipo de Windows . Para obtener información adicional, consulte Enviar comentarios a Microsoft con la aplicación Centro de opiniones . Sus informes son útiles para nuestra investigación. Resolución Este problema se resuelve mediante un bloqueo que impide que el controlador inpoutx64 se cargue en los dispositivos afectados. Cuando se aplica el bloqueo, se muestra un mensaje que indica que el controlador se ha deshabilitado, después de lo cual el juego se iniciará normalmente. Esta resolución está disponible automáticamente para dispositivos empresariales y de consumidor que no estén administrados por departamentos de TI. Para dispositivos administrados por la empresa, la mitigación no se propagará automáticamente. Los administradores de TI pueden seguir los pasos de la sección de solución alternativa del sitio de estado de la versión de Windows .",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121003-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-08-24T20:48:02.071405Z"
+          "retrievedAt": "2026-08-29T02:49:11.656143Z"
         }
       ]
     },
@@ -248,12 +248,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-24T20:48:00.325971Z"
+          "retrievedAt": "2026-08-29T02:49:09.255330Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121000-windows-11-26h1-security-update",
-          "retrievedAt": "2026-08-24T20:48:01.951609Z"
+          "retrievedAt": "2026-08-29T02:49:11.565041Z"
         }
       ]
     }
