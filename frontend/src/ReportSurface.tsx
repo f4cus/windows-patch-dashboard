@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import type {
   KnownIssuesStatus,
   MonthlyReport,
+  ReportStatus,
   ReportSource,
   UpdateRecord,
   UpdateType,
@@ -9,7 +10,6 @@ import type {
 import {
   formatDate,
   formatDateTime,
-  formatRenderedDate,
   formatReportMonth,
   REPORT_COLUMN_LABELS,
   SOURCE_LABELS,
@@ -19,12 +19,25 @@ import type { ColorTheme } from "./useTheme";
 const STATUS_PRESENTATION: Readonly<
   Record<KnownIssuesStatus, { readonly label: string; readonly symbol: string }>
 > = {
-  none: { label: "Sin problemas conocidos", symbol: "—" },
+  none: {
+    label: "Microsoft no reporta problemas conocidos.",
+    symbol: "—",
+  },
   open: { label: "Abierto", symbol: "!" },
   resolved: { label: "Resuelto", symbol: "✓" },
   "not-published": { label: "No publicado", symbol: "—" },
-  unknown: { label: "Desconocido", symbol: "?" },
+  unknown: { label: "No verificado", symbol: "?" },
 };
+
+const REPORT_STATUS_LABELS: Readonly<Record<ReportStatus, string>> = {
+  generated: "Informe generado",
+  verified: "Informe verificado",
+  partial: "Informe parcial",
+  "manual-golden-fixture": "Informe de prueba",
+};
+
+const PARTIAL_REPORT_EXPLANATION =
+  "Parte de la información no pudo verificarse completamente en las fuentes oficiales.";
 
 const UPDATE_TYPE_LABELS: Readonly<Record<UpdateType, string>> = {
   security: "Seguridad",
@@ -82,6 +95,30 @@ function SourceDetails({
   );
 }
 
+function getMicrosoftSupportUrl(
+  sources: readonly ReportSource[],
+): string | null {
+  for (const source of sources) {
+    if (source.type !== "microsoft-support") {
+      continue;
+    }
+
+    try {
+      const url = new URL(source.url);
+      if (
+        url.protocol === "https:" &&
+        url.hostname === "support.microsoft.com"
+      ) {
+        return url.href;
+      }
+    } catch {
+      // Ignore malformed source URLs and preserve the KB text fallback.
+    }
+  }
+
+  return null;
+}
+
 function ReportRow({
   update,
   interactive,
@@ -89,15 +126,29 @@ function ReportRow({
   readonly update: UpdateRecord;
   readonly interactive: boolean;
 }) {
+  const supportUrl = interactive
+    ? getMicrosoftSupportUrl(update.sources)
+    : null;
+  const kbClassName =
+    update.kb === "NO PUBLICADO" ? "kb-unpublished" : "kb-number";
+
   return (
     <tr>
       <td className="kb-cell">
-        <strong
-          className={
-            update.kb === "NO PUBLICADO" ? "kb-unpublished" : "kb-number"
-          }
-        >
-          {update.kb}
+        <strong className={kbClassName}>
+          {supportUrl === null || update.kb === "NO PUBLICADO" ? (
+            update.kb
+          ) : (
+            <a
+              className="kb-link"
+              href={supportUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Abrir ${update.kb} en Microsoft Support`}
+            >
+              {update.kb}
+            </a>
+          )}
         </strong>
         <span className="record-meta">
           {UPDATE_TYPE_LABELS[update.updateType]} ·{" "}
@@ -124,7 +175,9 @@ function ReportRow({
             </span>
           )}
         </div>
-        <p>{update.knownIssuesSummary}</p>
+        {update.knownIssuesStatus === "none" ? null : (
+          <p>{update.knownIssuesSummary}</p>
+        )}
       </td>
     </tr>
   );
@@ -135,13 +188,12 @@ interface ReportSurfaceProps {
   readonly updates: readonly UpdateRecord[];
   readonly scopeLabel: string;
   readonly interactive: boolean;
-  readonly renderedAt: Date;
   readonly theme: ColorTheme;
 }
 
 export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
   function ReportSurface(
-    { report, updates, scopeLabel, interactive, renderedAt, theme },
+    { report, updates, scopeLabel, interactive, theme },
     reportRef,
   ) {
     return (
@@ -155,7 +207,19 @@ export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
         <header className="report-header">
           <div className="report-title-block">
             <h1 id="report-title">Microsoft Patch Tuesday</h1>
-            <p>Informe mensual · {formatReportMonth(report.reportMonth)}</p>
+            <p className="report-subtitle">
+              <span>
+                Informe mensual · {formatReportMonth(report.reportMonth)}
+              </span>
+              <span className="report-status" data-status={report.status}>
+                {REPORT_STATUS_LABELS[report.status]}
+              </span>
+              {report.status === "partial" ? (
+                <span className="report-status-explanation">
+                  {PARTIAL_REPORT_EXPLANATION}
+                </span>
+              ) : null}
+            </p>
           </div>
           <dl className="report-metadata">
             <div>
@@ -163,8 +227,8 @@ export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
               <dd>{formatDate(report.patchTuesdayDate)}</dd>
             </div>
             <div>
-              <dt>Generado</dt>
-              <dd>{formatRenderedDate(renderedAt)}</dd>
+              <dt>Datos actualizados</dt>
+              <dd>{formatDateTime(report.generatedAt)}</dd>
             </div>
             <div>
               <dt>Alcance</dt>

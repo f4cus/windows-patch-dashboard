@@ -18,7 +18,6 @@ export type ReportExporter = (
 interface AppProps {
   readonly reports?: readonly MonthlyReport[];
   readonly exporter?: ReportExporter;
-  readonly renderedAt?: Date;
 }
 
 const PROJECT_URL = "https://f4cus.github.io/windows-patch-dashboard/";
@@ -26,11 +25,15 @@ const REPOSITORY_URL = "https://github.com/f4cus/windows-patch-dashboard";
 const LINKEDIN_URL = "https://www.linkedin.com/in/fvillagra/";
 
 const LEGEND_ITEMS = [
-  { status: "none", label: "Sin problemas conocidos", symbol: "—" },
+  {
+    status: "none",
+    label: "Microsoft no reporta problemas conocidos.",
+    symbol: "—",
+  },
   { status: "open", label: "Abierto", symbol: "!" },
   { status: "resolved", label: "Resuelto", symbol: "✓" },
   { status: "not-published", label: "No publicado", symbol: "—" },
-  { status: "unknown", label: "Desconocido", symbol: "?" },
+  { status: "unknown", label: "No verificado", symbol: "?" },
 ] as const;
 
 function MoonIcon() {
@@ -63,7 +66,6 @@ function SunIcon() {
 export default function App({
   reports = localReports,
   exporter = exportReportAsPng,
-  renderedAt,
 }: AppProps) {
   const availableReports = useMemo(
     () =>
@@ -80,7 +82,6 @@ export default function App({
   >({});
   const [mode, setMode] = useState<ViewMode>("interactive");
   const [exportState, setExportState] = useState<ExportState>("idle");
-  const [reportRenderedAt] = useState(() => renderedAt ?? new Date());
   const reportRef = useRef<HTMLElement>(null);
   const { theme, toggleTheme } = useTheme();
 
@@ -209,6 +210,16 @@ export default function App({
         <p className="sr-only" role="status">
           Modo informe activo. Presione Escape para volver al modo interactivo.
         </p>
+        <div className="report-mode-actions">
+          <button
+            className="button button--secondary"
+            type="button"
+            aria-label="Volver a vista interactiva"
+            onClick={() => setMode("interactive")}
+          >
+            ← Volver
+          </button>
+        </div>
         <div className="report-viewport">
           <ReportSurface
             ref={reportRef}
@@ -216,7 +227,6 @@ export default function App({
             updates={updates}
             scopeLabel={scopeLabel}
             interactive={false}
-            renderedAt={reportRenderedAt}
             theme={theme}
           />
         </div>
@@ -366,7 +376,6 @@ export default function App({
             updates={updates}
             scopeLabel={scopeLabel}
             interactive={true}
-            renderedAt={reportRenderedAt}
             theme={theme}
           />
         </div>

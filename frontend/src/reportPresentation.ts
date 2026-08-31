@@ -27,12 +27,6 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat("es-AR", {
   year: "numeric",
 });
 
-const RENDERED_DATE_FORMATTER = new Intl.DateTimeFormat("es-AR", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
-
 function parseIsoDate(value: string): Date {
   return new Date(`${value}T00:00:00Z`);
 }
@@ -51,8 +45,4 @@ export function formatDateTime(value: string | null): string {
   return value === null
     ? "No disponible"
     : DATE_FORMATTER.format(new Date(value));
-}
-
-export function formatRenderedDate(value: Date): string {
-  return RENDERED_DATE_FORMATTER.format(value);
 }

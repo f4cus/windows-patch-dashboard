@@ -103,7 +103,8 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - OOB discovery is intentionally conservative and requires explicit official structured evidence.
 - Only one unique report month is currently committed, so the month selector has no historical choice until more report JSON files are added.
 - The report contract is validated both in Python and again by the TypeScript loader. This is useful defense in depth but creates contract-sync maintenance work.
-- `frontend` has Vitest tests, but the current `ci.yml` frontend job does not run `npm test`; agents must run it locally until CI is aligned.
+- The report JSON does not preserve structured reasons for a `partial` status; adding them is deferred to Phase 3.
+- CVRF vulnerability entries discover and deduplicate KB/product relationships, but the monthly contract does not retain CVE identifiers or severity. A future phase must decide whether to rename the column to "Cambios destacados" or extend the contract with verifiable CVE data.
 - Historical docs contain some Phase-specific statements that no longer match the current UI/source behavior; use the root harness files and current code/workflows as the operational context.
 
 ## Sources of Truth

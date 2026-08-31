@@ -2,8 +2,8 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-08",
   "patchTuesdayDate": "2026-08-11",
-  "generatedAt": "2026-08-29T02:49:12.152626Z",
-  "status": "partial",
+  "generatedAt": "2026-08-31T13:12:29.644048Z",
+  "status": "generated",
   "updates": [
     {
       "kb": "KB5120386",
@@ -18,18 +18,18 @@
       "changesSummary": "Obtenga más información sobre esta actualización acumulativa de seguridad, incluidas las mejoras, los problemas conocidos y cómo obtener la actualización. Esta actualización de seguridad incluye correcciones y mejoras de calidad que forman parte de la siguiente actualización: 14 de julio de 2026: KB5099445 (paquete acumulativo mensual) [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. Para obtener información sobre los distintos tipos de actualizaciones de Windows, como las críticas, de seguridad, de controladores, los Service Pack, etc., consulta Descripción de la terminología estándar que se usa para describir las actualizaciones de software de Microsoft . Para ver otras notas y mensajes, consulte la página principal del historial de actualizaciones de Windows Server 2012 .",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
       "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/08/kb5120386-windows-server-2012-mr",
-          "retrievedAt": "2026-08-29T02:49:11.226976Z"
+          "retrievedAt": "2026-08-31T13:12:25.133816Z"
         }
       ]
     },
@@ -46,18 +46,18 @@
       "changesSummary": "Obtenga más información sobre esta actualización acumulativa de seguridad, incluidas las mejoras, los problemas conocidos y cómo obtener la actualización. Windows Server 2012 R2 Esta actualización de seguridad incluye correcciones y mejoras de calidad que forman parte de la siguiente actualización: 14 de julio de 2026: KB5099444 (paquete acumulativo mensual) [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. Para obtener información sobre los distintos tipos de actualizaciones de Windows, como las críticas, de seguridad, de controladores, los Service Pack, etc., consulta Descripción de la terminología estándar que se usa para describir las actualizaciones de software de Microsoft . Para ver otras notas y mensajes, consulte la página principal del historial de actualizaciones de Windows 8.1 y Windows Server 2012 R2 .",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
       "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/08/kb5120385-windows-8-1-mr",
-          "retrievedAt": "2026-08-29T02:49:11.044581Z"
+          "retrievedAt": "2026-08-31T13:12:24.347279Z"
         }
       ]
     },
@@ -74,18 +74,18 @@
       "changesSummary": "En este artículo se enumeran los problemas de seguridad y las mejoras de calidad incluidos en esta actualización acumulativa de seguridad. Windows 10, versión 1607 14 de julio de 2026: KB5099535 (compilación del SO 14393.9339) [Copia de seguridad] Historial de archivos Las copias de seguridad automáticas en recursos compartidos de red mediante el Bloque de mensajes del servidor (SMB) podrían producir un error incorrecto \"credenciales no válidas\". Cuando se produce este problema, las copias de seguridad programadas no copian ningún archivo. Esta actualización resuelve el problema. [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro. La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses.",
       "resolvedIssuesSummary": "[Copia de seguridad] Historial de archivos Las copias de seguridad automáticas en recursos compartidos de red mediante el Bloque de mensajes del servidor (SMB) podrían producir un error incorrecto \"credenciales no válidas\". Cuando se produce este problema, las copias de seguridad programadas no copian ningún archivo. Esta actualización resuelve el problema.",
       "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120418-windows-10-1607-security-update",
-          "retrievedAt": "2026-08-29T02:49:11.389975Z"
+          "retrievedAt": "2026-08-31T13:12:26.254304Z"
         }
       ]
     },
@@ -102,18 +102,18 @@
       "changesSummary": "En este artículo se enumeran los problemas de seguridad y las mejoras de calidad incluidos en esta actualización acumulativa de seguridad. Windows 10, versión 1809 14 de julio de 2026: KB5099538 (compilación del SO 17763.9020) [Copia de seguridad] Historial de archivos Las copias de seguridad automáticas en recursos compartidos de red mediante el Bloque de mensajes del servidor (SMB) podrían producir un error incorrecto \"credenciales no válidas\". Cuando se produce este problema, las copias de seguridad programadas no copian ningún archivo. Esta actualización resuelve el problema. [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro. La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses.",
       "resolvedIssuesSummary": "[Copia de seguridad] Historial de archivos Las copias de seguridad automáticas en recursos compartidos de red mediante el Bloque de mensajes del servidor (SMB) podrían producir un error incorrecto \"credenciales no válidas\". Cuando se produce este problema, las copias de seguridad programadas no copian ningún archivo. Esta actualización resuelve el problema.",
       "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120238-windows-10-1809-security-update",
-          "retrievedAt": "2026-08-29T02:49:10.320340Z"
+          "retrievedAt": "2026-08-31T13:12:21.986314Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120242-windows-server-2022-security-update",
-          "retrievedAt": "2026-08-29T02:49:10.695419Z"
+          "retrievedAt": "2026-08-31T13:12:23.592924Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120233-windows-server-2025-security-update",
-          "retrievedAt": "2026-08-29T02:49:10.059252Z"
+          "retrievedAt": "2026-08-31T13:12:20.854597Z"
         }
       ]
     },
@@ -186,18 +186,18 @@
       "changesSummary": "Esta actualización soluciona problemas de seguridad del sistema operativo Windows. Use EKB KB5027397 para actualizar a Windows 11, versión 23H2. Esta actualización de seguridad contiene correcciones y mejoras de calidad de KB5099414 (publicada el 14 de julio de 2026). En el siguiente resumen se describen los principales problemas abordados por esta actualización. Además, se incluyen nuevas características disponibles. El texto en negrita entre paréntesis indica el elemento o el área del cambio. [Conectividad] Esta actualización actualiza el perfil de COSA para SolNet-Mobile admita la configuración de operador móvil más reciente. [Administración de dispositivos] Esta actualización mejora la confiabilidad de los dispositivos administrados a través de la administración de dispositivos móviles (MDM), ya que ayuda a que los dispositivos sigan funcionando con normalidad cuando expira un certificado MDM. [Historial de archivos] Esta actualización mejora la confiabilidad de las copias de seguridad del historial de archivos en recursos compartidos de red SMB, lo que ayuda a las copias de seguridad programadas a acceder a ubicaciones de red y copiar archivos según lo esperado. [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Panel de emojis] El panel de emojis (tecla Windows + punto (.)) ahora es compatible con GIPHY luego de la obsolescencia de la API Tenor de Google.",
       "resolvedIssuesSummary": "Esta actualización soluciona problemas de seguridad del sistema operativo Windows. [Administración de dispositivos] Esta actualización mejora la confiabilidad de los dispositivos administrados a través de la administración de dispositivos móviles (MDM), ya que ayuda a que los dispositivos sigan funcionando con normalidad cuando expira un certificado MDM. [Historial de archivos] Esta actualización mejora la confiabilidad de las copias de seguridad del historial de archivos en recursos compartidos de red SMB, lo que ayuda a las copias de seguridad programadas a acceder a ubicaciones de red y copiar archivos según lo esperado.",
       "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5120240-windows-11-23h2-security-update",
-          "retrievedAt": "2026-08-29T02:49:10.518587Z"
+          "retrievedAt": "2026-08-31T13:12:22.804499Z"
         }
       ]
     },
@@ -220,12 +220,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121003-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-08-29T02:49:11.656143Z"
+          "retrievedAt": "2026-08-31T13:12:28.184518Z"
         }
       ]
     },
@@ -242,18 +242,18 @@
       "changesSummary": "Esta actualización incluye nuevas características y mejoras de calidad que formaban parte de la siguiente actualización: 14 de julio de 2026: KB5101649 (compilación del SO 28000.2525) 28 de julio de 2026: versión preliminar de KB5101681 (compilación del SO 28000.2608) Esta actualización aborda vulnerabilidades de seguridad documentadas en la siguiente guía: Novedades de seguridad de agosto de 2026 En el siguiente resumen se describen las principales mejoras de calidad que aborda esta actualización. El texto en negrita entre paréntesis indica el elemento o el área del cambio. [Dispositivo] Esta actualización mejora los informes de mantenimiento del TPM al garantizar que el estado del certificado EK se notifique con precisión. [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Uso compartido] Esta actualización elimina la experiencia de bandeja desplegable (anteriormente denominada bandeja de arrastre) en los dispositivos en los que estaba disponible. También quita la configuración asociada en Configuración > Multitarea del sistema > . Seguimos evaluando la experiencia y explorando futuras mejoras.",
       "resolvedIssuesSummary": "[Dispositivo] Esta actualización mejora los informes de mantenimiento del TPM al garantizar que el estado del certificado EK se notifique con precisión.",
       "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "unknown",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-08-29T02:49:09.255330Z"
+          "retrievedAt": "2026-08-31T13:12:19.143539Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121000-windows-11-26h1-security-update",
-          "retrievedAt": "2026-08-29T02:49:11.565041Z"
+          "retrievedAt": "2026-08-31T13:12:27.366497Z"
         }
       ]
     }

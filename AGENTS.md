@@ -99,7 +99,7 @@ npm test
 npm run build
 ```
 
-Run `npm test` even though the current `ci.yml` frontend job does not invoke it.
+Keep this local validation sequence aligned with the frontend CI job.
 
 ### Data
 

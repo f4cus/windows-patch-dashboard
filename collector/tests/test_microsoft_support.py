@@ -116,6 +116,18 @@ def test_no_known_issues_does_not_override_a_separate_open_issue() -> None:
     assert article.known_issues_status == "open"
 
 
+def test_current_spanish_no_known_issues_does_not_override_an_open_issue() -> None:
+    article = _parse(
+        _article_with_known_items(
+            [
+                "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
+                "Después de instalar esta actualización, WSUS no muestra los detalles del error.",
+            ]
+        )
+    )
+    assert article.known_issues_status == "open"
+
+
 def test_contradictory_none_and_resolved_evidence_is_unknown() -> None:
     article = _parse(
         _article_with_known_items(
@@ -162,6 +174,24 @@ def test_spanish_headings_release_date_and_explicit_no_known_issues() -> None:
     assert article.locale == "es-ES"
     assert "Esta actualización corrige" in article.changes_summary
     assert "Esta actualización corrige" in article.resolved_issues_summary
+    assert article.known_issues_status == "none"
+
+
+@pytest.mark.parametrize(
+    "known_issue",
+    [
+        "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
+        "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
+    ],
+)
+def test_current_spanish_no_known_issue_phrases_map_to_none(known_issue: str) -> None:
+    article = _parse(
+        f"""<h1>11 de agosto de 2026: KB5120242</h1>
+        <h2>Mejoras</h2><p>Esta actualización mejora la confiabilidad.</p>
+        <h2>Problemas conocidos en esta actualización</h2>
+        <p>{known_issue}</p>""".encode(),
+        source_url=SPANISH_URL,
+    )
     assert article.known_issues_status == "none"
 
 

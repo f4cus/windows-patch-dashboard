@@ -81,6 +81,8 @@ _NONE_PATTERNS = (
     "microsoft no tiene conocimiento de ningún problema",
     "actualmente, microsoft no tiene conocimiento de ningún problema",
     "en este momento, microsoft no tiene conocimiento de ningún problema",
+    "microsoft no está al tanto de ningún problema con respecto a esta actualización.",
+    "por el momento no hemos identificado ningún problema con respecto a esta actualización.",
 )
 _RESOLVED_PATTERNS = (
     "resolved in",

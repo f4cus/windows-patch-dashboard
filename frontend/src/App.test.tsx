@@ -16,7 +16,6 @@ import type { MonthlyReport, UpdateRecord } from "./data/model";
 import { THEME_STORAGE_KEY } from "./useTheme";
 
 const augustReport = loadMonthlyReport(augustFixture);
-const renderedAt = new Date("2026-08-13T12:00:00Z");
 
 function installMatchMedia(prefersDark = false) {
   Object.defineProperty(window, "matchMedia", {
@@ -35,12 +34,8 @@ function installMatchMedia(prefersDark = false) {
   });
 }
 
-function renderApp(
-  properties: Omit<React.ComponentProps<typeof App>, "renderedAt"> = {},
-) {
-  return render(
-    <App reports={[augustReport]} renderedAt={renderedAt} {...properties} />,
-  );
+function renderApp(properties: React.ComponentProps<typeof App> = {}) {
+  return render(<App reports={[augustReport]} {...properties} />);
 }
 
 function updateWith(
@@ -247,17 +242,64 @@ describe("V1 report experience", () => {
     expect(screen.queryByRole("switch")).toBeNull();
   });
 
-  it("renders only the public report metadata and current render date", () => {
-    const { container } = renderApp();
+  it("renders only public report metadata using the stable JSON timestamp", () => {
+    const report = reportWith({
+      generatedAt: "2026-08-29T02:49:12.152626Z",
+    });
+    const { container } = renderApp({ reports: [report] });
     const metadata = container.querySelector<HTMLElement>(".report-metadata")!;
 
     expect(metadata.querySelectorAll(":scope > div")).toHaveLength(4);
     expect(
       [...metadata.querySelectorAll("dt")].map((item) => item.textContent),
-    ).toEqual(["Patch Tuesday", "Generado", "Alcance", "Registros"]);
-    expect(within(metadata).getByText("13 de agosto de 2026")).toBeTruthy();
+    ).toEqual(["Patch Tuesday", "Datos actualizados", "Alcance", "Registros"]);
+    expect(within(metadata).getByText("29 de agosto de 2026")).toBeTruthy();
     expect(container.textContent).not.toMatch(/fixture|proveniencia/i);
     expect(container.textContent).not.toContain("Sin fecha");
+  });
+
+  it("renders a null generatedAt fixture as unavailable", () => {
+    const { container } = renderApp();
+    const metadata = within(
+      container.querySelector<HTMLElement>(".report-metadata")!,
+    );
+
+    expect(metadata.getByText("Datos actualizados")).toBeTruthy();
+    expect(metadata.getByText("No disponible")).toBeTruthy();
+  });
+
+  it.each([
+    ["generated", "Informe generado"],
+    ["verified", "Informe verificado"],
+    ["partial", "Informe parcial"],
+    ["manual-golden-fixture", "Informe de prueba"],
+  ] as const)("maps report status %s to %s", (status, expectedLabel) => {
+    const { container } = renderApp({
+      reports: [reportWith({ status })],
+    });
+
+    expect(
+      within(
+        container.querySelector<HTMLElement>(".report-subtitle")!,
+      ).getByText(expectedLabel),
+    ).toBeTruthy();
+  });
+
+  it("explains a partial report safely beside the subtitle", () => {
+    const { container } = renderApp({
+      reports: [reportWith({ status: "partial" })],
+    });
+    const subtitle = container.querySelector<HTMLElement>(".report-subtitle")!;
+
+    expect(within(subtitle).getByText("Informe parcial")).toBeTruthy();
+    expect(
+      within(subtitle).getByText(
+        "Parte de la información no pudo verificarse completamente en las fuentes oficiales.",
+      ),
+    ).toBeTruthy();
+    expect(
+      container.querySelector(".report-metadata")?.textContent,
+    ).not.toContain("Informe parcial");
   });
 
   it("renders NO PUBLICADO explicitly", () => {
@@ -290,8 +332,57 @@ describe("V1 report experience", () => {
     expect(screen.getByText("OOB · reemplazada por KB5999999")).toBeTruthy();
   });
 
-  it("shows official source links in Interactive Mode", () => {
+  it("derives the canonical none copy and omits redundant source wording", () => {
+    const sourceWording =
+      "Microsoft no está al tanto de ningún problema con respecto a esta actualización.";
+    const noneUpdate = updateWith({
+      knownIssuesStatus: "none",
+      knownIssuesSummary: sourceWording,
+    });
+    const { container } = renderApp({
+      reports: [reportWith({}, [noneUpdate])],
+    });
+    const row = container.querySelector<HTMLElement>("tbody tr")!;
+
+    expect(
+      within(row).getByText("Microsoft no reporta problemas conocidos.", {
+        selector: ".status-label",
+      }),
+    ).toBeTruthy();
+    expect(within(row).queryByText(sourceWording)).toBeNull();
+    expect(row.querySelector(".known-issues-cell p")).toBeNull();
+    expect(
+      within(container.querySelector<HTMLElement>(".status-legend")!).getByText(
+        "Microsoft no reporta problemas conocidos.",
+      ),
+    ).toBeTruthy();
+  });
+
+  it("presents unknown evidence as not verified in the row and legend", () => {
+    const unknownUpdate = updateWith({
+      knownIssuesStatus: "unknown",
+      knownIssuesSummary: "La evidencia disponible es ambigua.",
+    });
+    const { container } = renderApp({
+      reports: [reportWith({}, [unknownUpdate])],
+    });
+
+    expect(
+      within(container.querySelector<HTMLElement>("tbody")!).getByText(
+        "No verificado",
+      ),
+    ).toBeTruthy();
+    expect(
+      within(container.querySelector<HTMLElement>(".status-legend")!).getByText(
+        "No verificado",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText("Desconocido")).toBeNull();
+  });
+
+  it("links the KB directly to Microsoft Support in Interactive Mode", () => {
     const sourcedUpdate = updateWith({
+      kb: "KB5120386",
       sources: [
         {
           type: "microsoft-support",
@@ -302,12 +393,49 @@ describe("V1 report experience", () => {
     });
 
     renderApp({ reports: [reportWith({}, [sourcedUpdate])] });
-    fireEvent.click(screen.getByText("Fuentes (1)"));
 
-    const link = screen.getByRole("link", { name: "Abrir Microsoft Support" });
-    expect(link.getAttribute("href")).toBe(
+    const kbLink = screen.getByRole("link", {
+      name: "Abrir KB5120386 en Microsoft Support",
+    });
+    expect(kbLink.textContent).toBe("KB5120386");
+    expect(kbLink.getAttribute("href")).toBe(
       "https://support.microsoft.com/help/5120386",
     );
+    expect(kbLink.getAttribute("target")).toBe("_blank");
+    expect(kbLink.getAttribute("rel")).toBe("noreferrer");
+
+    fireEvent.click(screen.getByText("Fuentes (1)"));
+
+    const sourceLink = screen.getByRole("link", {
+      name: "Abrir Microsoft Support",
+    });
+    expect(sourceLink.getAttribute("href")).toBe(
+      "https://support.microsoft.com/help/5120386",
+    );
+  });
+
+  it("keeps the KB as text when no valid Microsoft Support source exists", () => {
+    const unsupportedSource = updateWith({
+      kb: "KB5120386",
+      sources: [
+        {
+          type: "microsoft-support",
+          url: "https://example.com/help/5120386",
+          retrievedAt: "2026-08-12T10:00:00Z",
+        },
+      ],
+    });
+
+    renderApp({ reports: [reportWith({}, [unsupportedSource])] });
+
+    expect(
+      screen.queryByRole("link", {
+        name: "Abrir KB5120386 en Microsoft Support",
+      }),
+    ).toBeNull();
+    expect(
+      screen.getByText("KB5120386", { selector: ".kb-number" }),
+    ).toBeTruthy();
   });
 
   it("hides Interactive Mode controls and sources in Report Mode", () => {
@@ -323,6 +451,58 @@ describe("V1 report experience", () => {
     expect(container.querySelector("#report")?.getAttribute("data-theme")).toBe(
       "dark",
     );
+  });
+
+  it("provides a visible report-mode exit outside the exported surface", () => {
+    const { container } = renderApp();
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+
+    const exitButton = screen.getByRole("button", {
+      name: "Volver a vista interactiva",
+    });
+    const reportSurface = container.querySelector<HTMLElement>("#report")!;
+    expect(exitButton.textContent).toBe("← Volver");
+    expect(reportSurface.contains(exitButton)).toBe(false);
+
+    fireEvent.click(exitButton);
+
+    expect(screen.getByLabelText("Mes del informe")).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "Volver a vista interactiva" }),
+    ).toBeNull();
+  });
+
+  it("keeps Escape as a report-mode exit shortcut", () => {
+    renderApp();
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+
+    fireEvent.keyDown(window, { key: "Escape" });
+
+    expect(screen.getByLabelText("Mes del informe")).toBeTruthy();
+  });
+
+  it("does not link the KB inside Report Mode", () => {
+    const sourcedUpdate = updateWith({
+      kb: "KB5120386",
+      sources: [
+        {
+          type: "microsoft-support",
+          url: "https://support.microsoft.com/help/5120386",
+          retrievedAt: "2026-08-12T10:00:00Z",
+        },
+      ],
+    });
+    renderApp({ reports: [reportWith({}, [sourcedUpdate])] });
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+
+    expect(
+      screen.queryByRole("link", {
+        name: "Abrir KB5120386 en Microsoft Support",
+      }),
+    ).toBeNull();
+    expect(
+      screen.getByText("KB5120386", { selector: ".kb-number" }),
+    ).toBeTruthy();
   });
 
   it("switches between locally available report months", () => {
