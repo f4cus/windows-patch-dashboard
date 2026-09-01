@@ -108,11 +108,18 @@ describe("V1 report experience", () => {
       ),
     ).toEqual([
       "KB",
-      "OS",
-      "Vulnerabilidades / Cambios Clave",
-      "Issues Resueltos",
-      "Problemas Conocidos",
+      "Sistema operativo",
+      "Cambios destacados",
+      "Correcciones",
+      "Problemas conocidos",
     ]);
+  });
+
+  it("hides the month selector when only one report is available", () => {
+    renderApp();
+
+    expect(screen.queryByLabelText("Mes del informe")).toBeNull();
+    expect(screen.getByText("Informe mensual · agosto de 2026")).toBeTruthy();
   });
 
   it("follows the system color preference initially", () => {
@@ -321,15 +328,88 @@ describe("V1 report experience", () => {
   it("keeps known-issue status and OOB supersedence independent", () => {
     const openAndSuperseded = updateWith({
       knownIssuesStatus: "open",
+      knownIssuesSummary:
+        "Windows Server Update Services no muestra detalles del error después de instalar esta actualización.",
       supersededBy: "KB5999999",
     });
 
-    renderApp({ reports: [reportWith({}, [openAndSuperseded])] });
+    const { container } = renderApp({
+      reports: [reportWith({}, [openAndSuperseded])],
+    });
 
     expect(
       screen.getByText("Abierto", { selector: ".status-label" }),
     ).toBeTruthy();
     expect(screen.getByText("OOB · reemplazada por KB5999999")).toBeTruthy();
+    expect(
+      container.querySelector(".known-issues-cell .record-copy--preview")
+        ?.textContent,
+    ).toContain("Windows Server Update Services");
+  });
+
+  it("uses one accessible action to reveal the complete row and sources", () => {
+    const sourcedUpdate = updateWith({
+      kb: "KB5120386",
+      changesSummary:
+        "Cambio documentado con suficiente contenido para comprobar que la vista inicial es un prefijo literal y que el detalle completo permanece controlado por la acción accesible. ".repeat(
+          2,
+        ),
+      sources: [
+        {
+          type: "microsoft-support",
+          url: "https://support.microsoft.com/help/5120386",
+          retrievedAt: "2026-08-12T10:00:00Z",
+        },
+      ],
+    });
+    const { container } = renderApp({
+      reports: [reportWith({}, [sourcedUpdate])],
+    });
+    const row = container.querySelector<HTMLElement>("tbody tr")!;
+    const expandButton = within(row).getByRole("button", {
+      name: "Ver detalle completo de KB5120386",
+    });
+    const controlledIds = expandButton
+      .getAttribute("aria-controls")!
+      .split(" ");
+
+    expect(row.querySelectorAll(".record-disclosure")).toHaveLength(1);
+    expect(expandButton.getAttribute("aria-expanded")).toBe("false");
+    expect(controlledIds.length).toBeGreaterThanOrEqual(3);
+    controlledIds.forEach((id) =>
+      expect(container.ownerDocument.getElementById(id)).toBeTruthy(),
+    );
+    expect(
+      row.querySelector(".record-copy--preview")?.getAttribute("aria-hidden"),
+    ).toBe("false");
+    expect(
+      row.querySelector(".record-copy--full")?.getAttribute("aria-hidden"),
+    ).toBe("true");
+    expect(
+      row.querySelector(".record-sources")?.getAttribute("aria-hidden"),
+    ).toBe("true");
+
+    fireEvent.click(expandButton);
+
+    expect(
+      within(row)
+        .getByRole("button", {
+          name: "Ocultar detalle de KB5120386",
+        })
+        .getAttribute("aria-expanded"),
+    ).toBe("true");
+    expect(
+      row.querySelector(".record-copy--preview")?.getAttribute("aria-hidden"),
+    ).toBe("true");
+    expect(
+      row.querySelector(".record-copy--full")?.getAttribute("aria-hidden"),
+    ).toBe("false");
+    expect(
+      row.querySelector(".record-sources")?.getAttribute("aria-hidden"),
+    ).toBe("false");
+    expect(
+      screen.getByRole("link", { name: "Abrir Microsoft Support" }),
+    ).toBeTruthy();
   });
 
   it("derives the canonical none copy and omits redundant source wording", () => {
@@ -404,7 +484,11 @@ describe("V1 report experience", () => {
     expect(kbLink.getAttribute("target")).toBe("_blank");
     expect(kbLink.getAttribute("rel")).toBe("noreferrer");
 
-    fireEvent.click(screen.getByText("Fuentes (1)"));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Ver detalle completo de KB5120386",
+      }),
+    );
 
     const sourceLink = screen.getByRole("link", {
       name: "Abrir Microsoft Support",
@@ -446,7 +530,14 @@ describe("V1 report experience", () => {
     expect(screen.queryByLabelText("Mes del informe")).toBeNull();
     expect(screen.queryByRole("button", { name: "Exportar PNG" })).toBeNull();
     expect(container.querySelector(".app-nav")).toBeNull();
-    expect(container.querySelector(".source-details")).toBeNull();
+    expect(container.querySelector(".record-sources")).toBeNull();
+    expect(container.querySelector(".record-disclosure")).toBeNull();
+    expect(container.querySelector(".record-copy--preview")).toBeNull();
+    expect(
+      [...container.querySelectorAll(".record-copy--full")].every(
+        (copy) => copy.getAttribute("aria-hidden") !== "true",
+      ),
+    ).toBe(true);
     expect(container.querySelectorAll("thead th")).toHaveLength(5);
     expect(container.querySelector("#report")?.getAttribute("data-theme")).toBe(
       "dark",
@@ -466,7 +557,9 @@ describe("V1 report experience", () => {
 
     fireEvent.click(exitButton);
 
-    expect(screen.getByLabelText("Mes del informe")).toBeTruthy();
+    expect(
+      screen.getByLabelText("Sistemas operativos: 9 de 9 seleccionados"),
+    ).toBeTruthy();
     expect(
       screen.queryByRole("button", { name: "Volver a vista interactiva" }),
     ).toBeNull();
@@ -478,7 +571,9 @@ describe("V1 report experience", () => {
 
     fireEvent.keyDown(window, { key: "Escape" });
 
-    expect(screen.getByLabelText("Mes del informe")).toBeTruthy();
+    expect(
+      screen.getByLabelText("Sistemas operativos: 9 de 9 seleccionados"),
+    ).toBeTruthy();
   });
 
   it("does not link the KB inside Report Mode", () => {

@@ -2,10 +2,10 @@ import type { ReportSource } from "./data/model";
 
 export const REPORT_COLUMN_LABELS = [
   "KB",
-  "OS",
-  "Vulnerabilidades / Cambios Clave",
-  "Issues Resueltos",
-  "Problemas Conocidos",
+  "Sistema operativo",
+  "Cambios destacados",
+  "Correcciones",
+  "Problemas conocidos",
 ] as const;
 
 export const SOURCE_LABELS: Readonly<Record<ReportSource["type"], string>> = {

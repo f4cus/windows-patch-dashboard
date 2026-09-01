@@ -36,10 +36,12 @@ the fixed Phase 2 scope.
 Interactive Mode follows this order:
 
 1. Minimal product header and Report Mode action.
-2. Locally derived month selector, optional OS-family filter, and PNG export.
-3. Known-issue status legend, with OOB supersedence explained separately.
+2. A month selector only when multiple reports are available, plus the
+   OS-family filter and PNG export.
+3. A compact on-demand known-issue status reference.
 4. The canonical report surface.
-5. Inline provenance/source disclosures per update.
+5. One progressive-disclosure action per update for complete prose and
+   official sources.
 6. Compact static-runtime footer.
 
 Report Mode renders only the canonical report surface. Escape returns to
@@ -53,20 +55,22 @@ generated date, report status, selected scope, and record count. The table has
 exactly these five columns, in this order:
 
 1. KB
-2. OS
-3. Vulnerabilidades / Cambios Clave
-4. Issues Resueltos
-5. Problemas Conocidos
+2. Sistema operativo
+3. Cambios destacados
+4. Correcciones
+5. Problemas conocidos
 
 `NO PUBLICADO` remains explicit. Known-issue status is a text-and-symbol label,
 never color alone. `supersededBy` is rendered as an independent OOB label so an
 update can simultaneously show an open, resolved, none, or unknown known-issue
 state. Fixture prose is rendered verbatim.
 
-The table uses a fixed canonical minimum width. Narrow viewports scroll the
-report horizontally inside its own region; the surrounding document does not
-overflow. This is intentional because collapsing long operational prose into
-cards would destroy the report artifact and the five-column contract.
+Interactive Mode keeps the semantic table and presents a clearly indicated
+prefix of each long field until the record's single detail action is expanded.
+On narrow viewports, the same table rows are reorganized vertically without
+duplicating report data or introducing decorative cards. Report Mode retains
+the fixed canonical minimum width and internal horizontal scrolling so the
+five-column artifact remains deterministic.
 
 ## Export behavior
 

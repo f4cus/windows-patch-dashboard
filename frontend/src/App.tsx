@@ -261,7 +261,7 @@ export default function App({
             {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
-            className="button button--primary"
+            className="button button--secondary"
             type="button"
             onClick={() => setMode("report")}
           >
@@ -272,23 +272,25 @@ export default function App({
 
       <main className="app-main">
         <section className="operator-bar" aria-label="Controles del informe">
-          <div className="control-group">
-            <label htmlFor="report-month">Mes del informe</label>
-            <select
-              id="report-month"
-              value={selectedMonth}
-              onChange={(event) => setSelectedMonth(event.target.value)}
-            >
-              {availableReports.map((candidate) => (
-                <option
-                  key={candidate.reportMonth}
-                  value={candidate.reportMonth}
-                >
-                  {formatReportMonth(candidate.reportMonth)}
-                </option>
-              ))}
-            </select>
-          </div>
+          {availableReports.length > 1 ? (
+            <div className="control-group">
+              <label htmlFor="report-month">Mes del informe</label>
+              <select
+                id="report-month"
+                value={selectedMonth}
+                onChange={(event) => setSelectedMonth(event.target.value)}
+              >
+                {availableReports.map((candidate) => (
+                  <option
+                    key={candidate.reportMonth}
+                    value={candidate.reportMonth}
+                  >
+                    {formatReportMonth(candidate.reportMonth)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
 
           <details className="os-filter">
             <summary
@@ -352,13 +354,13 @@ export default function App({
                 ? "No se pudo generar el PNG. Intente nuevamente."
                 : updates.length === 0
                   ? "Seleccione al menos un sistema operativo."
-                  : "Alta resolución · superficie completa"}
+                  : null}
             </span>
           </div>
         </section>
 
-        <section className="status-legend" aria-labelledby="legend-title">
-          <h2 id="legend-title">Estados de problemas conocidos</h2>
+        <details className="status-legend">
+          <summary>Referencia de estados</summary>
           <ul>
             {LEGEND_ITEMS.map((item) => (
               <li key={item.status} data-status={item.status}>
@@ -367,7 +369,7 @@ export default function App({
               </li>
             ))}
           </ul>
-        </section>
+        </details>
 
         <div className="report-viewport">
           <ReportSurface

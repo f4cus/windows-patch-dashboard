@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useId, useState } from "react";
 import type {
   KnownIssuesStatus,
   MonthlyReport,
@@ -52,6 +52,24 @@ const SOURCE_LINK_LABELS: Readonly<Record<ReportSource["type"], string>> = {
   "release-health": "Release Health ↗",
 };
 
+const PREVIEW_CHARACTER_LIMIT = 180;
+
+function createTextPreview(text: string): string {
+  const value = text.trim();
+  const characters = Array.from(value);
+  if (characters.length <= PREVIEW_CHARACTER_LIMIT) {
+    return value;
+  }
+
+  const candidate = characters.slice(0, PREVIEW_CHARACTER_LIMIT).join("");
+  const wordBoundary = candidate.lastIndexOf(" ");
+  const end =
+    wordBoundary > PREVIEW_CHARACTER_LIMIT / 2
+      ? wordBoundary
+      : candidate.length;
+  return `${candidate.slice(0, end).trimEnd()}…`;
+}
+
 function StatusLabel({ status }: { readonly status: KnownIssuesStatus }) {
   const presentation = STATUS_PRESENTATION[status];
 
@@ -65,14 +83,22 @@ function StatusLabel({ status }: { readonly status: KnownIssuesStatus }) {
   );
 }
 
-function SourceDetails({
+function SourceList({
+  id,
+  expanded,
   sources,
 }: {
+  readonly id: string;
+  readonly expanded: boolean;
   readonly sources: readonly ReportSource[];
 }) {
   return (
-    <details className="source-details report-interactive">
-      <summary>{`Fuentes (${sources.length})`}</summary>
+    <div
+      className="record-sources report-interactive"
+      id={id}
+      aria-hidden={!expanded}
+    >
+      <h3>{`Fuentes oficiales (${sources.length})`}</h3>
       <ul>
         {sources.map((source) => (
           <li key={`${source.type}-${source.url}`}>
@@ -91,7 +117,38 @@ function SourceDetails({
           </li>
         ))}
       </ul>
-    </details>
+    </div>
+  );
+}
+
+function RecordCopy({
+  detailId,
+  expanded,
+  interactive,
+  text,
+}: {
+  readonly detailId: string;
+  readonly expanded: boolean;
+  readonly interactive: boolean;
+  readonly text: string;
+}) {
+  if (!interactive) {
+    return <p className="record-copy record-copy--full">{text}</p>;
+  }
+
+  return (
+    <>
+      <p className="record-copy record-copy--preview" aria-hidden={expanded}>
+        {createTextPreview(text)}
+      </p>
+      <p
+        className="record-copy record-copy--full"
+        id={detailId}
+        aria-hidden={!expanded}
+      >
+        {text}
+      </p>
+    </>
   );
 }
 
@@ -126,15 +183,28 @@ function ReportRow({
   readonly update: UpdateRecord;
   readonly interactive: boolean;
 }) {
+  const [expanded, setExpanded] = useState(false);
+  const detailId = useId();
+  const changesId = `${detailId}-changes`;
+  const resolvedId = `${detailId}-resolved`;
+  const knownIssuesId = `${detailId}-known-issues`;
+  const sourcesId = `${detailId}-sources`;
   const supportUrl = interactive
     ? getMicrosoftSupportUrl(update.sources)
     : null;
   const kbClassName =
     update.kb === "NO PUBLICADO" ? "kb-unpublished" : "kb-number";
+  const controlledIds = [changesId, resolvedId];
+  if (update.knownIssuesStatus !== "none") {
+    controlledIds.push(knownIssuesId);
+  }
+  if (update.sources.length > 0) {
+    controlledIds.push(sourcesId);
+  }
 
   return (
-    <tr>
-      <td className="kb-cell">
+    <tr data-expanded={interactive ? expanded : undefined}>
+      <td className="kb-cell" data-label={REPORT_COLUMN_LABELS[0]}>
         <strong className={kbClassName}>
           {supportUrl === null || update.kb === "NO PUBLICADO" ? (
             update.kb
@@ -154,19 +224,49 @@ function ReportRow({
           {UPDATE_TYPE_LABELS[update.updateType]} ·{" "}
           {formatDate(update.releaseDate)}
         </span>
+        {interactive ? (
+          <button
+            className="record-disclosure report-interactive"
+            type="button"
+            aria-controls={controlledIds.join(" ")}
+            aria-expanded={expanded}
+            aria-label={`${expanded ? "Ocultar detalle" : "Ver detalle completo"} de ${update.kb}`}
+            onClick={() => setExpanded((current) => !current)}
+          >
+            {expanded ? "Ocultar detalle" : "Ver detalle completo"}
+          </button>
+        ) : null}
         {interactive && update.sources.length > 0 ? (
-          <SourceDetails sources={update.sources} />
+          <SourceList
+            id={sourcesId}
+            expanded={expanded}
+            sources={update.sources}
+          />
         ) : null}
       </td>
-      <td className="os-cell">
+      <td className="os-cell" data-label={REPORT_COLUMN_LABELS[1]}>
         <strong>{update.os.displayName}</strong>
         {update.os.channel === null ? null : (
           <span className="channel-label">Canal {update.os.channel}</span>
         )}
       </td>
-      <td>{update.changesSummary}</td>
-      <td>{update.resolvedIssuesSummary}</td>
-      <td className="known-issues-cell">
+      <td data-label={REPORT_COLUMN_LABELS[2]}>
+        <RecordCopy
+          detailId={changesId}
+          expanded={expanded}
+          interactive={interactive}
+          text={update.changesSummary}
+        />
+      </td>
+      <td data-label={REPORT_COLUMN_LABELS[3]}>
+        <RecordCopy
+          detailId={resolvedId}
+          expanded={expanded}
+          interactive={interactive}
+          text={update.resolvedIssuesSummary}
+        />
+      </td>
+      <td className="known-issues-cell" data-label={REPORT_COLUMN_LABELS[4]}>
         <div className="known-issues-signals">
           <StatusLabel status={update.knownIssuesStatus} />
           {update.supersededBy === null ? null : (
@@ -176,7 +276,12 @@ function ReportRow({
           )}
         </div>
         {update.knownIssuesStatus === "none" ? null : (
-          <p>{update.knownIssuesSummary}</p>
+          <RecordCopy
+            detailId={knownIssuesId}
+            expanded={expanded}
+            interactive={interactive}
+            text={update.knownIssuesSummary}
+          />
         )}
       </td>
     </tr>
@@ -203,6 +308,7 @@ export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
         ref={reportRef}
         aria-labelledby="report-title"
         data-theme={theme}
+        data-layout={interactive ? "interactive" : "report"}
       >
         <header className="report-header">
           <div className="report-title-block">
