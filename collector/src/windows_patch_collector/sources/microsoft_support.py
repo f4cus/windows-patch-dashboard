@@ -116,22 +116,36 @@ _OPEN_PATTERNS = (
     "no pueden",
     "solución alternativa",
 )
-_FIX_PATTERNS = (
-    "this update addresses",
-    "this update resolves",
-    "this update fixes",
-    "this update improves",
-    "fixed an issue",
-    "resolves an issue",
-    "restores ",
-    "corrects ",
-    "esta actualización soluciona",
-    "esta actualización resuelve",
-    "esta actualización corrige",
-    "esta actualización mejora",
-    "corrige un problema",
-    "resuelve un problema",
-    "restaura ",
+_STRUCTURED_ITEM_PATTERN = re.compile(
+    r"^\[(?P<label>[^\]\r\n]{1,80})\]\s+(?P<body>.+)$",
+    re.DOTALL,
+)
+_EXPLICIT_FIX_PATTERNS = (
+    re.compile(
+        r"\bthis update (?:addresses|fixes|resolves) "
+        r"(?:an?|the|this) (?:issue|problem)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\besta actualización (?:corrige|resuelve|soluciona) "
+        r"(?:un|el|este) problema\b",
+        re.IGNORECASE,
+    ),
+)
+_GENERIC_SECURITY_UPDATE_PATTERNS = (
+    re.compile(
+        r"^this update provides security improvements\s*\."
+        r"(?:\s*for more information (?:about|on) the security vulnerabilities "
+        r"resolved by this update,\s*see the security update guide\s*\.?)?$",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"^esta actualización proporciona mejoras de seguridad\s*\."
+        r"(?:\s*para obtener más información (?:acerca de|sobre) las vulnerabilidades "
+        r"de seguridad resueltas por esta actualización,\s*consulte la guía de "
+        r"actualización de seguridad\s*\.?)?$",
+        re.IGNORECASE,
+    ),
 )
 _CONTENT_HEADINGS = frozenset(
     {
@@ -242,6 +256,36 @@ def _meaningful_text(nodes: list[Tag]) -> list[str]:
     return candidates
 
 
+def _structured_item_parts(value: str) -> tuple[str, str] | None:
+    match = _STRUCTURED_ITEM_PATTERN.fullmatch(value)
+    if match is None:
+        return None
+    return match.group("label"), match.group("body")
+
+
+def _structured_text(nodes: list[Tag]) -> list[str]:
+    candidates: list[str] = []
+    normalized_candidates: set[str] = set()
+    for node in nodes:
+        if node.name in {"li", "tr"}:
+            selected = [node]
+        else:
+            selected = [
+                item
+                for item in node.select("li, tr")
+                if item.name != "tr" or bool(item.select("td"))
+            ]
+        for item in selected:
+            if _is_hidden(item):
+                continue
+            text = " ".join(item.get_text(" ", strip=True).split())
+            normalized = text.casefold()
+            if _structured_item_parts(text) is not None and normalized not in normalized_candidates:
+                candidates.append(text)
+                normalized_candidates.add(normalized)
+    return candidates
+
+
 def _find_sections(soup: BeautifulSoup, names: frozenset[str]) -> list[list[str]]:
     sections: list[list[str]] = []
     for raw_heading in soup.find_all(re.compile(r"^h[1-6]$")):
@@ -254,6 +298,31 @@ def _find_sections(soup: BeautifulSoup, names: frozenset[str]) -> list[list[str]
             if text:
                 sections.append(text)
     return sections
+
+
+def _find_structured_content(soup: BeautifulSoup) -> list[str]:
+    candidates: list[str] = []
+    normalized_candidates: set[str] = set()
+    for raw_heading in soup.find_all(re.compile(r"^h[1-6]$")):
+        heading = cast(Tag, raw_heading)
+        if _is_hidden(heading):
+            continue
+        title = " ".join(heading.get_text(" ", strip=True).split()).casefold()
+        if title not in _CONTENT_HEADINGS:
+            continue
+        section_nodes: list[Tag] = []
+        for node in _section_nodes(heading):
+            if node.name and re.fullmatch(r"h[1-6]", node.name):
+                nested_title = " ".join(node.get_text(" ", strip=True).split()).casefold()
+                if nested_title in _KNOWN_HEADINGS:
+                    break
+            section_nodes.append(node)
+        for item in _structured_text(section_nodes):
+            normalized = item.casefold()
+            if normalized not in normalized_candidates:
+                candidates.append(item)
+                normalized_candidates.add(normalized)
+    return candidates
 
 
 def _parse_article_date(title: str) -> date:
@@ -276,12 +345,23 @@ def _parse_article_date(title: str) -> date:
 
 
 def _is_explicit_fix(value: str) -> bool:
-    normalized = value.casefold()
-    if "security issues" in normalized or "security vulnerabilities" in normalized:
+    parts = _structured_item_parts(value)
+    if parts is None:
         return False
-    if normalized.startswith(("the following is", "the following summary", "this article lists")):
+    _, body = parts
+    if body.casefold().startswith(("corregido:", "fixed:")):
+        return True
+    return any(pattern.search(body) is not None for pattern in _EXPLICIT_FIX_PATTERNS)
+
+
+def _is_generic_security_update(value: str) -> bool:
+    parts = _structured_item_parts(value)
+    if parts is None:
         return False
-    return any(pattern in normalized for pattern in _FIX_PATTERNS)
+    label, body = parts
+    if label.casefold() not in {"actualizaciones de seguridad", "security updates"}:
+        return False
+    return any(pattern.fullmatch(body) is not None for pattern in _GENERIC_SECURITY_UPDATE_PATTERNS)
 
 
 def _classify_known_issue_item(value: str) -> KnownIssuesStatus:
@@ -347,10 +427,14 @@ def parse_support_article(
     release_date = _parse_article_date(title)
     article_locale = _article_locale(soup)
 
-    content_sections = _find_sections(soup, _CONTENT_HEADINGS)
-    content_items = list(dict.fromkeys(item for section in content_sections for item in section))
-    changes_summary = " ".join(content_items) if content_items else _UNAVAILABLE_CHANGES
-    fixes = [item for item in content_items if _is_explicit_fix(item)]
+    content_items = [
+        item for item in _find_structured_content(soup) if not _is_generic_security_update(item)
+    ]
+    changes: list[str] = []
+    fixes: list[str] = []
+    for item in content_items:
+        (fixes if _is_explicit_fix(item) else changes).append(item)
+    changes_summary = " ".join(changes) if changes else _UNAVAILABLE_CHANGES
     resolved_summary = " ".join(fixes) if fixes else _UNAVAILABLE_RESOLVED
 
     known_sections = _find_sections(soup, _KNOWN_HEADINGS)

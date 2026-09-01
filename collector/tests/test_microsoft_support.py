@@ -52,11 +52,162 @@ def _article_with_known_items(items: list[str]) -> bytes:
     <h2>How to get this update</h2>""".encode()
 
 
-def test_extracts_improvements_fixes_and_explicit_no_known_issues() -> None:
+def test_routes_explicit_fix_exclusively_and_maps_no_known_issues() -> None:
     article = _parse(_article("Microsoft is not currently aware of any issues with this update."))
-    assert "scheduled backups" in article.changes_summary
+    assert article.changes_summary.startswith("No disponible")
+    assert "scheduled backups" not in article.changes_summary
     assert "scheduled backups" in article.resolved_issues_summary
     assert article.known_issues_status == "none"
+
+
+def test_spanish_structured_content_excludes_editorial_copy_and_generic_security() -> None:
+    article = _parse(
+        """<h1>11 de agosto de 2026: KB5120242</h1>
+        <h2>Mejoras</h2>
+        <p>Esta actualización de seguridad contiene correcciones y mejoras de calidad.</p>
+        <ul><li>14 de julio de 2026: KB5099540</li></ul>
+        <p>En el siguiente resumen se describen los principales problemas abordados.</p>
+        <ul>
+          <li>[Explorador de archivos] Esta actualización mejora las vistas previas DFS.</li>
+          <li>[Sistema] Corregido: Esta actualización restaura la configuración esperada.</li>
+          <li>[Actualizaciones de seguridad] Esta actualización proporciona mejoras de seguridad.
+          Para obtener más información acerca de las vulnerabilidades de seguridad resueltas por
+          esta actualización, consulte la Guía de actualización de seguridad.</li>
+        </ul>
+        <p>Si ya instaló actualizaciones anteriores, solo se descargarán las nuevas.</p>
+        <p>Para obtener más información, consulte la documentación de Microsoft.</p>
+        <h2>Problemas conocidos en esta actualización</h2>
+        <p>Microsoft no está al tanto de ningún problema con respecto a esta actualización.</p>
+        """.encode(),
+        source_url=SPANISH_URL,
+    )
+
+    assert article.changes_summary == (
+        "[Explorador de archivos] Esta actualización mejora las vistas previas DFS."
+    )
+    assert article.resolved_issues_summary == (
+        "[Sistema] Corregido: Esta actualización restaura la configuración esperada."
+    )
+    assert "KB5099540" not in article.changes_summary
+    assert "Actualizaciones de seguridad" not in article.changes_summary
+    assert "Si ya instaló" not in article.changes_summary
+
+
+def test_english_structured_content_excludes_editorial_copy_and_generic_security() -> None:
+    article = _parse(
+        b"""<h1>August 11, 2026 - KB5120242</h1>
+        <h2>Improvements</h2>
+        <p>This security update contains fixes and quality improvements.</p>
+        <ul><li>July 14, 2026 - KB5099540</li></ul>
+        <p>The following summary outlines the key issues addressed by this update.</p>
+        <ul>
+          <li>[File Explorer] This update improves previews on DFS mapped drives.</li>
+          <li>[System] Fixed: This update restores the expected configuration.</li>
+          <li>[Security updates] This update provides security improvements. For more information
+          about the security vulnerabilities resolved by this update, see the Security Update
+          Guide.</li>
+        </ul>
+        <p>If you've already installed previous updates, only the new updates will download.</p>
+        <p>For more information, see Microsoft documentation.</p>
+        <h2>Known issues in this update</h2>
+        <p>Microsoft is not currently aware of any issues with this update.</p>"""
+    )
+
+    assert article.changes_summary == (
+        "[File Explorer] This update improves previews on DFS mapped drives."
+    )
+    assert article.resolved_issues_summary == (
+        "[System] Fixed: This update restores the expected configuration."
+    )
+    assert "KB5099540" not in article.changes_summary
+    assert "Security updates" not in article.changes_summary
+    assert "already installed" not in article.changes_summary
+
+
+@pytest.mark.parametrize(
+    ("heading", "item", "source_url"),
+    [
+        (
+            "Mejoras",
+            "[Copia de seguridad] Las copias programadas podrían fallar. "
+            "Esta actualización resuelve el problema.",
+            SPANISH_URL,
+        ),
+        (
+            "Improvements",
+            "[Backup] Scheduled backups might fail. This update resolves the issue.",
+            URL,
+        ),
+    ],
+)
+def test_explicit_resolution_sentence_is_exclusively_a_fix(
+    heading: str,
+    item: str,
+    source_url: str,
+) -> None:
+    article = _parse(
+        f"""<h1>August 11, 2026 - KB5120242</h1>
+        <h2>{heading}</h2><ul><li>{item}</li></ul>""".encode(),
+        source_url=source_url,
+    )
+
+    assert article.changes_summary.startswith("No disponible")
+    assert article.resolved_issues_summary == item
+
+
+@pytest.mark.parametrize(
+    ("heading", "item", "source_url"),
+    [
+        (
+            "Mejoras",
+            "[Seguridad] Esta actualización mejora la protección y restaura una opción.",
+            SPANISH_URL,
+        ),
+        (
+            "Improvements",
+            "[Security] This update improves protection and restores an option.",
+            URL,
+        ),
+        (
+            "Mejoras",
+            "[Actualizaciones de seguridad] Esta actualización proporciona mejoras de seguridad. "
+            "También agrega una validación concreta para las firmas.",
+            SPANISH_URL,
+        ),
+        (
+            "Improvements",
+            "[Security updates] This update provides security improvements. "
+            "It also adds concrete signature validation.",
+            URL,
+        ),
+    ],
+)
+def test_security_improves_and_restores_words_do_not_imply_a_fix(
+    heading: str,
+    item: str,
+    source_url: str,
+) -> None:
+    article = _parse(
+        f"""<h1>August 11, 2026 - KB5120242</h1>
+        <h2>{heading}</h2><ul><li>{item}</li></ul>""".encode(),
+        source_url=source_url,
+    )
+
+    assert article.changes_summary == item
+    assert article.resolved_issues_summary.startswith("No disponible")
+
+
+def test_unstructured_improvements_keep_unavailable_fallbacks() -> None:
+    article = _parse(
+        b"""<h1>August 11, 2026 - KB5120242</h1>
+        <h2>Improvements</h2>
+        <p>This update includes quality improvements from an earlier update.</p>
+        <ul><li>July 14, 2026 - KB5099540</li></ul>
+        <p>For more information, see Microsoft documentation.</p>"""
+    )
+
+    assert article.changes_summary.startswith("No disponible")
+    assert article.resolved_issues_summary.startswith("No disponible")
 
 
 def test_maps_open_known_issue() -> None:
@@ -164,7 +315,7 @@ def test_spanish_headings_release_date_and_explicit_no_known_issues() -> None:
     article = _parse(
         """<h1>11 de agosto de 2026: KB5120242 (compilación del SO 20348.5499)</h1>
         <h2>Mejoras y correcciones</h2>
-        <ul><li>Esta actualización corrige un problema de fiabilidad.</li></ul>
+        <ul><li>[Sistema] Corregido: Esta actualización corrige un problema de fiabilidad.</li></ul>
         <h2>Problemas conocidos en esta actualización</h2>
         <p>Microsoft no tiene conocimiento de ningún problema con esta actualización.</p>
         <h2>Cómo obtener esta actualización</h2>""".encode(),
@@ -172,7 +323,7 @@ def test_spanish_headings_release_date_and_explicit_no_known_issues() -> None:
     )
     assert article.release_date.isoformat() == "2026-08-11"
     assert article.locale == "es-ES"
-    assert "Esta actualización corrige" in article.changes_summary
+    assert article.changes_summary.startswith("No disponible")
     assert "Esta actualización corrige" in article.resolved_issues_summary
     assert article.known_issues_status == "none"
 
@@ -218,7 +369,8 @@ def test_spanish_heading_with_english_date_is_still_spanish_content() -> None:
 def test_spanish_summary_and_open_known_issue() -> None:
     article = _parse(
         """<h1>11 de agosto de 2026: KB5120242</h1>
-        <h2>Resumen</h2><p>Esta actualización mejora la confiabilidad del sistema.</p>
+        <h2>Resumen</h2>
+        <ul><li>[Sistema] Esta actualización mejora la confiabilidad del sistema.</li></ul>
         <h2>Problemas conocidos en esta actualización</h2>
         <details><summary>Detalles de errores de WSUS</summary>
         <p>Después de instalar esta actualización, WSUS no muestra los detalles del error.</p>
