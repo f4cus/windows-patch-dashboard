@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-08",
   "patchTuesdayDate": "2026-08-11",
-  "generatedAt": "2026-09-04T22:21:11.337891Z",
+  "generatedAt": "2026-09-05T22:03:35.701804Z",
   "status": "generated",
   "updates": [
     {
@@ -24,12 +24,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/08/kb5120386-windows-server-2012-mr",
-          "retrievedAt": "2026-09-04T22:21:10.243837Z"
+          "retrievedAt": "2026-09-05T22:03:34.561113Z"
         }
       ]
     },
@@ -52,12 +52,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/08/kb5120385-windows-8-1-mr",
-          "retrievedAt": "2026-09-04T22:21:09.955828Z"
+          "retrievedAt": "2026-09-05T22:03:34.308889Z"
         }
       ]
     },
@@ -73,19 +73,19 @@
       "releaseDate": "2026-08-11",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro. La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses.",
       "resolvedIssuesSummary": "[Copia de seguridad] Historial de archivos Las copias de seguridad automáticas en recursos compartidos de red mediante el Bloque de mensajes del servidor (SMB) podrían producir un error incorrecto \"credenciales no válidas\". Cuando se produce este problema, las copias de seguridad programadas no copian ningún archivo. Esta actualización resuelve el problema.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "CompatTelRunner.exe podría cerrarse inesperadamente Síntomas Después de instalar esta actualización, algunos dispositivos Windows Server 2016 pueden generar eventos de error de aplicación periódicos (id. de evento 1000, con código de excepción 0xc0000409) asociados con CompatTelRunner.exe. Se han observado informes en dispositivos físicos y máquinas virtuales, incluidos entornos de Azure y VMware. CompatTelRunner.exe realiza el inventario de compatibilidad y las tareas de diagnóstico relacionadas. Aunque los errores periódicos de CompatTelRunner.exe pueden generar entradas de registro de eventos de aplicación, no afectan a la funcionalidad del dispositivo. Las advertencias del registro de eventos asociadas se pueden descartar de forma segura y temporal hasta que se publique una resolución en una próxima actualización. Solución alternativa Se proporcionarán detalles adicionales a medida que estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120418-windows-10-1607-security-update",
-          "retrievedAt": "2026-09-04T22:21:10.454834Z"
+          "retrievedAt": "2026-09-05T22:03:34.782057Z"
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/08/kb5120238-windows-10-1809-security-update",
-          "retrievedAt": "2026-09-04T22:21:09.200075Z"
+          "retrievedAt": "2026-09-05T22:03:33.238801Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120242-windows-server-2022-security-update",
-          "retrievedAt": "2026-09-04T22:21:09.722956Z"
+          "retrievedAt": "2026-09-05T22:03:33.772391Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/08/kb5120233-windows-server-2025-security-update",
-          "retrievedAt": "2026-09-04T22:21:08.894246Z"
+          "retrievedAt": "2026-09-05T22:03:32.928925Z"
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5120240-windows-11-23h2-security-update",
-          "retrievedAt": "2026-09-04T22:21:09.514334Z"
+          "retrievedAt": "2026-09-05T22:03:33.515672Z"
         }
       ]
     },
@@ -220,12 +220,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121003-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-09-04T22:21:10.886691Z"
+          "retrievedAt": "2026-09-05T22:03:35.281494Z"
         }
       ]
     },
@@ -248,12 +248,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug",
-          "retrievedAt": "2026-09-04T22:21:08.085487Z"
+          "retrievedAt": "2026-09-05T22:03:32.282851Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/08/kb5121000-windows-11-26h1-security-update",
-          "retrievedAt": "2026-09-04T22:21:10.682412Z"
+          "retrievedAt": "2026-09-05T22:03:34.997854Z"
         }
       ]
     }
