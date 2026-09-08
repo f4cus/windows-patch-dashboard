@@ -73,7 +73,7 @@ The month format is strict `YYYY-MM`. The collector validates and atomically wri
 
 ## Automation
 
-`.github/workflows/pages.yml` deploys a validated frontend artifact on every push to `main` without performing live collection. It also runs daily at 20:17 UTC and supports manual dispatch with an optional `YYYY-MM` input. Scheduled or month-less manual runs select the most recent Patch Tuesday that has already occurred, so dates before the current month's Patch Tuesday continue to refresh the preceding report.
+`.github/workflows/pages.yml` deploys a validated frontend artifact on every push to `main` without performing live collection. It also runs daily at 18:00 UTC, equivalent to 15:00 in Argentina (ART, UTC-3), and supports manual dispatch with an optional `YYYY-MM` input. Scheduled or month-less manual runs select the most recent Patch Tuesday that has already occurred, so dates before the current month's Patch Tuesday continue to refresh the preceding report.
 
 Refresh runs collect and validate first, then compare reports while ignoring only `generatedAt` and source `retrievedAt`. Timestamp-only refreshes restore the committed file and create no commit. Meaningful changes stage only the expected monthly report, commit with `github-actions[bot]` using `GITHUB_TOKEN`, and build/deploy that exact commit in the same workflow run. The Pages artifact contains only `frontend/dist`; no `gh-pages` branch is used.
 
