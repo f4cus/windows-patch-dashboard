@@ -2,8 +2,8 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-09",
   "patchTuesdayDate": "2026-09-08",
-  "generatedAt": "2026-09-08T17:16:54.903471Z",
-  "status": "partial",
+  "generatedAt": "2026-09-08T19:09:28.356106Z",
+  "status": "generated",
   "updates": [
     {
       "kb": "KB5123065",
@@ -15,16 +15,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "We are currently not aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/server-2012/2026/09/kb5123065-windows-server-2012-mr",
+          "retrievedAt": "2026-09-08T19:09:26.946169Z"
         }
       ]
     },
@@ -38,16 +43,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "We are currently not aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-8-1/2026/09/kb5123066-windows-8-1-mr",
+          "retrievedAt": "2026-09-08T19:09:27.297148Z"
         }
       ]
     },
@@ -61,16 +71,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [Windows Code Integrity policies] Improves application compatibility during Windows certificate-authority rotation by recognizing Microsoft Windows Production PCA 2026 RSA2048-SHA256 as equivalent to PCA 2011.",
+      "resolvedIssuesSummary": "[Remote Desktop] This update addresses an issue that affects Remote Desktop audio redirection. Audio from the remote session might not play on the local computer in certain configurations. [Microsoft Compatibility Telemetry service (known issue)] Fixed: After installing Windows update KB5120418 released on August 11, 2026, some Windows Server 2016 devices might generate recurring Application Error events (Event ID 1000, with exception code 0xc0000409) associated with CompatTelRunner.exe.",
+      "knownIssuesSummary": "Microsoft is not currently aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/09/kb5123099-windows-10-1607-security-update",
+          "retrievedAt": "2026-09-08T19:09:27.694722Z"
         }
       ]
     },
@@ -84,16 +99,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [Windows Code Integrity policies] Improves application compatibility during Windows certificate-authority rotation by recognizing Microsoft Windows Production PCA 2026 RSA2048-SHA256 as equivalent to PCA 2011.",
+      "resolvedIssuesSummary": "[Remote Desktop] This update addresses an issue that affects Remote Desktop audio redirection. Audio from the remote session might not play on the local computer in certain configurations.",
+      "knownIssuesSummary": "We are currently not aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/09/kb5122876-windows-10-1809-security-update",
+          "retrievedAt": "2026-09-08T19:09:25.997005Z"
         }
       ]
     },
@@ -107,16 +127,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Certificates] This update improves application compatibility during Windows certificate-authority updates, helping applications continue to work as expected as Microsoft transitions to newer signing certificates. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [Networking] This update improves network failover on Windows Server systems by helping connections respond more quickly when a network adapter is disconnected. This helps network storage and file access continue to work as expected. [Remote desktop] This update improves Remote Desktop audio redirection, helping audio from remote sessions play correctly on the local device.",
+      "resolvedIssuesSummary": "[Hyper-V] This update addresses an issue that might cause a limited number of Windows Server 2022 virtual machines to intermittently encounter a stop error 0x139 resulting in an unexpected restart.",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) does not display error details After installing KB5070884 or later updates, Windows Server Update Services (WSUS) does not display synchronization error details within its error reporting. This functionality is temporarily removed to address the Remote Code Execution Vulnerability, CVE-2025-59287 .",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/09/kb5122882-windows-server-2022-security-update",
+          "retrievedAt": "2026-09-08T19:09:26.634910Z"
         }
       ]
     },
@@ -130,16 +155,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Certificates] This update improves application compatibility during Windows certificate-authority updates, helping applications continue to work as expected as Microsoft transitions to newer signing certificates [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [Networking] This update improves network failover on Windows Server systems by helping connections respond more quickly when a network adapter is disconnected. This helps network storage and file access continue to work as expected. [Remote Desktop] This update improves Remote Desktop audio redirection, helping audio from remote sessions play correctly on the local device. [Sysmon] This update improves Sysmon's Process Tampering detection by preventing false Event ID 25 alerts for normal Windows Session Manager (smss.exe) activity. This update improves Sysmon reliability during file monitoring, helping prevent unexpected system crashes when archive directories are unavailable. This update improves Sysmon tampering detection by making executable file validation more reliable and consistent. This update improves Sysmon file archiving reliability, helping monitored file operations complete as expected even when archive directories cannot be accessed.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) does not display error details After installing KB5070881 or later updates, Windows Server Update Services (WSUS) does not display synchronization error details within its error reporting. This functionality is temporarily removed to address the Remote Code Execution Vulnerability, CVE-2025-59287 .",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/09/kb5122871-windows-server-2025-security-update",
+          "retrievedAt": "2026-09-08T19:09:25.524433Z"
         }
       ]
     },
@@ -153,16 +183,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [Cellular] Updating COSA profiles for Telavox and Swisscom. [OMA DM] This update improves the logging features of the Omadmclient component. More debug information is now saved when connecting to a server.",
+      "resolvedIssuesSummary": "[Remote Desktop] This update addresses an issue that affects Remote Desktop audio redirection. Audio from the remote session might not play on the local computer in certain configurations.",
+      "knownIssuesSummary": "Microsoft is not currently aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/09/kb5122880-windows-11-22h2-23h2-security-update",
+          "retrievedAt": "2026-09-08T19:09:26.364034Z"
         }
       ]
     },
@@ -176,16 +211,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Security updates] This update provides security improvements. For more information about the security vulnerabilities resolved by this update, see the Security Update Guide ) [Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [OMA-DM Client Logging] This update improves diagnostic logging for the OMA-DM client, providing additional information to help troubleshoot device management server connection issues.",
+      "resolvedIssuesSummary": "[Mouse] Fixed: This update addresses an issue that prevented customized mouse cursor settings, including pointer style and color, from displaying correctly. Selected cursor options and colors now work as expected. [Personalization] Fixed: This update addresses an issue where desktop background and other personalization settings might not load correctly, causing the desktop background to appear black. [Teams and Outlook on Arm64 PCs] Fixed: This update addresses an issue that could cause Microsoft Teams and Microsoft Outlook to unexpectedly close on Arm64-based PCs. [Remote Desktop Audio Redirection] This update addresses an issue affecting Remote Desktop audio redirection that could prevent audio from a remote session from playing on the local device in certain configurations.",
+      "knownIssuesSummary": "Microsoft is not currently aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/09/kb5124008-windows-11-24h2-25h2-security-update",
+          "retrievedAt": "2026-09-08T19:09:28.009890Z"
         }
       ]
     },
@@ -199,16 +239,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-09-08",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [Date and Time] This update adjusts Morocco Standard Time to reflect Morocco's transition to permanent UTC+00:00 effective September 20, 2026. This change ensures that the correct local time is displayed after the transition. [OMA-DM Client Logging] This update improves diagnostic logging for the OMA-DM client by adding certificate chain information for server connections, helping administrators troubleshoot device management connectivity issues.",
+      "resolvedIssuesSummary": "[Teams and Outlook on Arm64 PCs] Fixed: This update addresses an issue that could cause Microsoft Teams and Microsoft Outlook to unexpectedly close on Arm64-based PCs. [Remote Desktop Audio Redirection] This update addresses an issue affecting Remote Desktop audio redirection that could prevent audio from a remote session from playing on the local device in certain configurations.",
+      "knownIssuesSummary": "Microsoft is not currently aware of any issues with this update.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+          "retrievedAt": "2026-09-08T19:09:24.142611Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/09/kb5124012-windows-11-26h1-security-update",
+          "retrievedAt": "2026-09-08T19:09:28.313277Z"
         }
       ]
     }
