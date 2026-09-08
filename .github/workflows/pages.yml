@@ -11,7 +11,7 @@ on:
         required: false
         type: string
   schedule:
-    - cron: "17 20 * * *"
+    - cron: "0 18 * * *"
 
 permissions: {}
 

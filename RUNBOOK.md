@@ -171,7 +171,7 @@ Deployment is defined in `.github/workflows/pages.yml`.
 
 - Push to `main`: validate repository data, build frontend, deploy Pages. **No live Microsoft collection** on this path.
 - `workflow_dispatch`: refresh + deploy; optional strict `YYYY-MM` input.
-- Schedule: daily at `20:17 UTC` (`17 20 * * *`).
+- Schedule: daily at `15:00 ART` (Argentina, UTC-3), equivalent to `18:00 UTC` (`0 18 * * *`).
 
 ### Scheduled/manual refresh flow
 

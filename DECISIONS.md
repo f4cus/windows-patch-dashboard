@@ -130,7 +130,7 @@ Live collection naturally changes retrieval timestamps even when Microsoft facts
 Keeping timestamp-only commits would create noise in Git history without changing the dashboard's meaning.
 
 ### Consequences
-- Scheduled refreshes can run daily without committing daily.
+- Scheduled refreshes run daily at 15:00 ART (Argentina, UTC-3), equivalent to 18:00 UTC (`0 18 * * *`), without necessarily committing daily.
 - Meaningful changes use `github-actions[bot]` and the built-in `GITHUB_TOKEN`.
 - A refresh failure prevents that run from deploying newly collected data.
 
