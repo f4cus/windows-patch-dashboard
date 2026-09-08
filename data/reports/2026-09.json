@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportMonth": "2026-09",
+  "patchTuesdayDate": "2026-09-08",
+  "generatedAt": "2026-09-08T17:16:54.903471Z",
+  "status": "partial",
+  "updates": [
+    {
+      "kb": "KB5123065",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 (ESU)"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5123066",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012 R2",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 R2 (ESU)"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5123099",
+      "os": {
+        "family": "Windows Server",
+        "version": "2016",
+        "channel": null,
+        "displayName": "Windows Server 2016"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5122876",
+      "os": {
+        "family": "Windows Server",
+        "version": "2019",
+        "channel": null,
+        "displayName": "Windows Server 2019"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5122882",
+      "os": {
+        "family": "Windows Server",
+        "version": "2022",
+        "channel": null,
+        "displayName": "Windows Server 2022"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5122871",
+      "os": {
+        "family": "Windows Server",
+        "version": "2025",
+        "channel": null,
+        "displayName": "Windows Server 2025"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5122880",
+      "os": {
+        "family": "Windows 11",
+        "version": "23H2",
+        "channel": null,
+        "displayName": "Windows 11 23H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5124008",
+      "os": {
+        "family": "Windows 11",
+        "version": "24H2/25H2",
+        "channel": null,
+        "displayName": "Windows 11 24H2/25H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5124012",
+      "os": {
+        "family": "Windows 11",
+        "version": "26H1",
+        "channel": null,
+        "displayName": "Windows 11 26H1"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-09-08",
+      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
+      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
+      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
+      "knownIssuesStatus": "unknown",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
+          "retrievedAt": "2026-09-08T17:16:52.733991Z"
+        }
+      ]
+    }
+  ]
+}
