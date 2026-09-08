@@ -28,6 +28,9 @@ export async function exportReportAsPng(
     const dataUrl = await renderer(reportElement, {
       backgroundColor: getComputedStyle(reportElement).backgroundColor,
       cacheBust: true,
+      // Keep attribution visible in the UI, but omit its subtree from the PNG.
+      filter: (node) =>
+        !(node instanceof Element && node.classList.contains("report-footer")),
       height,
       pixelRatio: 2,
       width,
