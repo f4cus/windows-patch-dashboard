@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-09",
   "patchTuesdayDate": "2026-09-08",
-  "generatedAt": "2026-09-09T20:19:14.684340Z",
+  "generatedAt": "2026-09-12T20:06:01.598955Z",
   "status": "generated",
   "updates": [
     {
@@ -17,19 +17,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses.",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
-      "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/09/kb5123065-windows-server-2012-mr",
-          "retrievedAt": "2026-09-09T20:19:14.223213Z"
+          "retrievedAt": "2026-09-12T20:06:00.818947Z"
         }
       ]
     },
@@ -45,19 +45,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses.",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
-      "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/09/kb5123066-windows-8-1-mr",
-          "retrievedAt": "2026-09-09T20:19:14.333036Z"
+          "retrievedAt": "2026-09-12T20:06:01.039067Z"
         }
       ]
     },
@@ -73,19 +73,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Directivas de integridad de código de Windows] Mejora la compatibilidad de las aplicaciones durante la rotación de las entidades de certificación de Windows al reconocer Microsoft Windows Production PCA 2026 RSA2048-SHA256 como equivalente a PCA 2011.",
       "resolvedIssuesSummary": "[Escritorio remoto] Esta actualización soluciona un problema que afecta al redireccionamiento de audio de Escritorio remoto. Es posible que el audio de la sesión remota no se reproduzca en el equipo local en determinadas configuraciones. [Servicio de telemetría de compatibilidad de Microsoft (problema conocido)] Corregido: después de instalar la actualización de Windows KB5120418 publicada el 11 de agosto de 2026, algunos dispositivos Windows Server 2016 pueden generar eventos de error de aplicación periódicos (id. de evento 1000, con código de excepción 0xc0000409) asociados a CompatTelRunner.exe.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5123099-windows-10-1607-security-update",
-          "retrievedAt": "2026-09-09T20:19:14.447916Z"
+          "retrievedAt": "2026-09-12T20:06:01.269885Z"
         }
       ]
     },
@@ -101,19 +101,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Directivas de integridad de código de Windows] Mejora la compatibilidad de las aplicaciones durante la rotación de las entidades de certificación de Windows al reconocer Microsoft Windows Production PCA 2026 RSA2048-SHA256 como equivalente a PCA 2011.",
       "resolvedIssuesSummary": "[Escritorio remoto] Esta actualización soluciona un problema que afecta al redireccionamiento de audio de Escritorio remoto. Es posible que el audio de la sesión remota no se reproduzca en el equipo local en determinadas configuraciones.",
-      "knownIssuesSummary": "Por el momento no hemos identificado ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5122876-windows-10-1809-security-update",
-          "retrievedAt": "2026-09-09T20:19:13.895809Z"
+          "retrievedAt": "2026-09-12T20:06:00.288245Z"
         }
       ]
     },
@@ -129,19 +129,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Certificados] Esta actualización mejora la compatibilidad de las aplicaciones durante las actualizaciones de la entidad de certificación de Windows, lo que ayuda a que las aplicaciones sigan funcionando como se esperaba a medida que Microsoft realiza la transición a certificados de firma más recientes. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Redes] Esta actualización mejora la conmutación por error de red en sistemas Windows Server, ya que ayuda a las conexiones a responder más rápidamente cuando se desconecta un adaptador de red. Esto ayuda a que el almacenamiento en red y el acceso a archivos sigan funcionando según lo previsto. [Escritorio remoto] Esta actualización mejora el redireccionamiento de audio de Escritorio remoto, lo que ayuda a que el audio de las sesiones remotas se reproduzca correctamente en el dispositivo local.",
       "resolvedIssuesSummary": "[Hyper-V] Esta actualización soluciona un problema que podía provocar que un número limitado de máquinas virtuales de Windows Server 2022 sufrieran de forma intermitente un error de detención 0x139 se produjera un reinicio inesperado.",
-      "knownIssuesSummary": "Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070884 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070884 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 . Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5122882-windows-server-2022-security-update",
-          "retrievedAt": "2026-09-09T20:19:14.128428Z"
+          "retrievedAt": "2026-09-12T20:06:00.590095Z"
         }
       ]
     },
@@ -157,19 +157,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Certificados] Esta actualización mejora la compatibilidad de las aplicaciones durante las actualizaciones de la entidad de certificación de Windows, lo que ayuda a que las aplicaciones sigan funcionando como se esperaba a medida que Microsoft realiza la transición a certificados de firma más recientes [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Redes] Esta actualización mejora la conmutación por error de red en sistemas Windows Server, ya que ayuda a las conexiones a responder más rápidamente cuando se desconecta un adaptador de red. Esto ayuda a que el almacenamiento en red y el acceso a archivos sigan funcionando según lo previsto. [Escritorio remoto] Esta actualización mejora el redireccionamiento de audio de Escritorio remoto, lo que ayuda a que el audio de las sesiones remotas se reproduzca correctamente en el dispositivo local. [Sysmon] Esta actualización mejora la detección de la alteración de procesos de Sysmon al evitar alertas falsas de identificador de evento 25 para la actividad normal del Administrador de sesiones (smss.exe) de Windows. Esta actualización mejora la confiabilidad de Sysmon durante la supervisión de archivos, lo que ayuda a evitar bloqueos inesperados del sistema cuando los directorios de archivo no están disponibles. Esta actualización mejora la detección de alteraciones de Sysmon al hacer que la validación de archivos ejecutables sea más confiable y coherente. Esta actualización mejora la confiabilidad del archivado de archivos Sysmon, lo que ayuda a que las operaciones de archivos supervisadas se completen según lo previsto, incluso cuando no se puede acceder a los directorios de archivado.",
       "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
-      "knownIssuesSummary": "Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070881 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070881 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 . Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5122871-windows-server-2025-security-update",
-          "retrievedAt": "2026-09-09T20:19:13.764496Z"
+          "retrievedAt": "2026-09-12T20:06:00.110692Z"
         }
       ]
     },
@@ -185,19 +185,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Celular] Actualización de perfiles COSA para Telavox y Swisscom. [OMA-DM] Esta actualización mejora las características de registro del componente Omadmclient. Ahora se guarda más información de depuración al conectarse a un servidor.",
       "resolvedIssuesSummary": "[Escritorio remoto] Esta actualización soluciona un problema que afecta al redireccionamiento de audio de Escritorio remoto. Es posible que el audio de la sesión remota no se reproduzca en el equipo local en determinadas configuraciones.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los recursos compartidos de carpetas de host no estén disponibles en máquinas virtuales de Linux basadas en Hyper-V **Síntomas** Después de instalar la actualización de seguridad (KB5122880) de septiembre de 2026, las aplicaciones que usan máquinas virtuales [administradas por HCS](https://learn.microsoft.com/virtualization/api/hcs/overview) pueden experimentar problemas al compartir la carpeta host con Linux máquinas virtuales que usan Plan9. Las máquinas virtuales afectadas se inician con normalidad, pero las carpetas compartidas desde el host de Windows con Plan9 no aparecen o no se puede acceder a ellas en el entorno de invitado. Las aplicaciones o entornos de espacio aislado que dependen de estas carpetas compartidas podrían mostrar un error que indique que no se montaron recursos compartidos de unidad Plan9. Claude Cowork y el Subsistema de Windows para Linux (WSL) son dos de las aplicaciones afectadas por este problema. Las máquinas virtuales Standard Hyper-V que no usan la característica Plan9 no se ven afectadas por este problema. **Pasos siguientes** Microsoft está buscando una resolución y actualizará esta documentación cuando haya más información disponible. Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5122880-windows-11-22h2-23h2-security-update",
-          "retrievedAt": "2026-09-09T20:19:14.016078Z"
+          "retrievedAt": "2026-09-12T20:06:00.416929Z"
         }
       ]
     },
@@ -213,19 +213,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Actualizaciones de seguridad] Esta actualización proporciona mejoras de seguridad. Para obtener más información acerca de las vulnerabilidades de seguridad resueltas por esta actualización, consulte la Guía de actualización de seguridad ) [Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Registro del cliente de OMA-DM] Esta actualización mejora el registro de diagnóstico para el cliente OMA-DM y proporciona información adicional para ayudar a solucionar problemas de conexión del servidor de administración de dispositivos.",
       "resolvedIssuesSummary": "[Ratón] Corregido: Esta actualización soluciona un problema que impedía que la configuración personalizada del cursor del ratón, incluidos el estilo y el color del puntero, se mostrara correctamente. Las opciones de cursor seleccionadas y los colores ahora funcionan según lo esperado. [Personalización] Corregido: Esta actualización soluciona un problema por el que el fondo del escritorio y otras configuraciones de personalización podían no cargarse correctamente, lo que hacía que el fondo del escritorio apareciera negro. [Teams y Outlook en equipos Arm64] Corregido: Esta actualización soluciona un problema que podía provocar que Microsoft Teams y Microsoft Outlook se cerraran de forma inesperada en equipos basados en ARM64. [Redirección de audio de Escritorio remoto] Esta actualización soluciona un problema que afectaba a la redirección de audio del Escritorio remoto y que podía impedir que el audio de una sesión remota se reprodujera en el dispositivo local en determinadas configuraciones.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los recursos compartidos de carpetas de host no estén disponibles en máquinas virtuales de Linux basadas en Hyper-V Después de instalar la actualización de seguridad (KB5124008) de septiembre de 2026, las aplicaciones que usan máquinas virtuales administradas por HCS pueden experimentar problemas al compartir la carpeta host con máquinas virtuales Linux mediante Plan9. Las máquinas virtuales afectadas se inician con normalidad, pero las carpetas compartidas desde el host de Windows con Plan9 no aparecen o no se puede acceder a ellas en el entorno de invitado. Las aplicaciones o entornos de espacio aislado que dependen de estas carpetas compartidas podrían mostrar un error que indique que no se montaron recursos compartidos de unidad Plan9. Claude Cowork y el Subsistema de Windows para Linux (WSL) son dos de las aplicaciones afectadas por este problema. Las máquinas virtuales Standard Hyper-V que no usan la característica Plan9 no se ven afectadas por este problema. Microsoft está buscando una resolución y actualizará esta documentación cuando haya más información disponible. Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5124008-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-09-09T20:19:14.566784Z"
+          "retrievedAt": "2026-09-12T20:06:01.385724Z"
         }
       ]
     },
@@ -241,19 +241,19 @@
       "releaseDate": "2026-09-08",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Fecha y hora] Esta actualización ajusta la hora de Marruecos Standard para reflejar la transición de Marruecos a permanente UTC+00:00 a partir del 20 de septiembre de 2026. Este cambio garantiza que se muestra la hora local correcta después de la transición. [Registro del cliente de OMA-DM] Esta actualización mejora el registro de diagnóstico para el cliente OMA-DM al agregar información de cadena de certificados para las conexiones del servidor, lo que ayuda a los administradores a solucionar problemas de conectividad con la administración de dispositivos.",
       "resolvedIssuesSummary": "[Teams y Outlook en equipos Arm64] Corregido: Esta actualización soluciona un problema que podía provocar que Microsoft Teams y Microsoft Outlook se cerraran de forma inesperada en equipos basados en ARM64. [Redirección de audio de Escritorio remoto] Esta actualización soluciona un problema que afectaba a la redirección de audio del Escritorio remoto y que podía impedir que el audio de una sesión remota se reprodujera en el dispositivo local en determinadas configuraciones.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que los recursos compartidos de carpetas de host no estén disponibles en máquinas virtuales de Linux basadas en Hyper-V Síntomas Después de instalar la actualización de seguridad (KB5124012) de septiembre de 2026, las aplicaciones que usan máquinas virtuales administradas por HCS pueden experimentar problemas al compartir la carpeta host con máquinas virtuales Linux mediante Plan9. Las máquinas virtuales afectadas se inician con normalidad, pero las carpetas compartidas desde el host de Windows con Plan9 no aparecen o no se puede acceder a ellas en el entorno de invitado. Las aplicaciones o entornos de espacio aislado que dependen de estas carpetas compartidas podrían mostrar un error que indique que no se montaron recursos compartidos de unidad Plan9. Claude Cowork y el Subsistema de Windows para Linux (WSL) son dos de las aplicaciones afectadas por este problema. Las máquinas virtuales Standard Hyper-V que no usan la característica Plan9 no se ven afectadas por este problema. Pasos siguientes Microsoft está buscando una resolución y actualizará esta documentación cuando haya más información disponible. Es posible que los Servicios de escritorio remoto dejen de responder después de la actualización de seguridad de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026, algunas organizaciones pueden experimentar problemas con los Servicios de Escritorio remoto (RDS). En algunos entornos, RDS podría volverse inestable, lo que provoca errores en las conexiones RDP después de varios minutos, problemas de inicio de sesión o servidores que se bloquean en \"Esperando la configuración de Escritorio remoto\". Las herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS y el Explorador de archivos, también podrían dejar de responder. Además, la página de Windows Update podría dejar de responder y mostrar continuamente un indicador de carga. Soporte técnico de Microsoft : los administradores de TI que necesiten una solución inmediata deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda. Resolución Microsoft está trabajando para solucionar este problema en una futura actualización de Windows y proporcionará detalles adicionales cuando estén disponibles.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-09T20:19:13.094927Z"
+          "retrievedAt": "2026-09-12T20:05:59.042515Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5124012-windows-11-26h1-security-update",
-          "retrievedAt": "2026-09-09T20:19:14.663967Z"
+          "retrievedAt": "2026-09-12T20:06:01.553215Z"
         }
       ]
     }
