@@ -131,6 +131,7 @@ GitHub Pages builds set `PAGES_BASE_PATH`; `frontend/vite.config.js` normalizes 
 Production collection currently uses:
 
 - monthly MSRC CVRF: `https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/<YYYY-Mon>`;
+- Windows message center: `https://learn.microsoft.com/en-us/windows/release-health/windows-message-center` for dated OOB announcements;
 - Microsoft Support KB articles, preferring `es-ES` and falling back to `en-US`;
 - the CSAF parser exists and is tested, but the production monthly collector does not use a bulk CSAF collection path.
 
@@ -244,15 +245,17 @@ Use `.venv\Scripts\python` for collector commands.
 
 - Read the exact conflict from collector/workflow logs.
 - Check whether each candidate has a successfully parsed official Microsoft Support article.
+- Check whether Support explicitly labels a candidate Out-of-band in its article title.
+- If an expected OOB is missing from CVRF, check the dated Windows message center announcement and its official KB link.
 - Do not choose by KB number/date proximity.
 
 **Likely Cause**
 
-CVRF can expose more than one normal monthly candidate for a normalized OS. The current tie-breaker selects only when exactly one candidate is Support-verified.
+CVRF can expose more than one candidate for a normalized OS. A generic `Security Update` subtype may include an OOB; normalization uses an explicit Support article title to classify it before resolving monthly candidates. Other OOB KBs may be absent from CVRF and are discovered from dated, OS-labelled message center announcements. Multiple actual monthly candidates still require the existing tie-breaker.
 
 **Resolution**
 
-If exactly one candidate is verified, current normalization should select it and warn about unverified candidates. If zero or multiple candidates verify, the collector intentionally fails. Investigate official Microsoft evidence; do not hardcode a KB exclusion without a durable official classification rule.
+For a confirmed monthly plus OOB pair, retain both records and their own release dates. A supersedence link requires independent official evidence. If multiple actual monthly candidates remain, exactly one Support-verified candidate is selected and unverified candidates are warned about; zero or multiple verified candidates cause a deliberate conflict. Investigate official Microsoft evidence before changing classification rules.
 
 ### Symptom: Generated report status is `partial`
 

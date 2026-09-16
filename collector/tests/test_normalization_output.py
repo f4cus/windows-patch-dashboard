@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from windows_patch_collector.collector import collect_month
 from windows_patch_collector.errors import CollectionConflictError
+from windows_patch_collector.http_client import MicrosoftHttpClient
 from windows_patch_collector.models import (
     OsIdentity,
     StructuredResult,
@@ -32,6 +34,7 @@ def _update(
     subtype: str = "Security Update",
     supersedes: str | None = None,
     identity: OsIdentity = WINDOWS_SERVER_2022,
+    release_date_explicit: bool = True,
 ) -> StructuredUpdate:
     return StructuredUpdate(  # type: ignore[arg-type]
         kb,
@@ -42,10 +45,11 @@ def _update(
         STAMP,
         subtype,
         supersedes=supersedes,
+        release_date_explicit=release_date_explicit,
     )
 
 
-def _article(kb: str, release: date) -> SupportArticle:
+def _article(kb: str, release: date, *, is_out_of_band: bool = False) -> SupportArticle:
     return SupportArticle(
         kb,
         release,
@@ -55,6 +59,7 @@ def _article(kb: str, release: date) -> SupportArticle:
         "This update addresses a verified reliability issue.",
         "Microsoft is not currently aware of any issues with this update.",
         "none",
+        is_out_of_band=is_out_of_band,
     )
 
 
@@ -189,6 +194,116 @@ def test_oob_candidate_does_not_cause_monthly_duplicate_conflict(
     assert base["supersededBy"] == oob.kb
     assert target["updateType"] == "oob"
     assert target["supersededBy"] is None
+
+
+@pytest.mark.parametrize("supersedes", [None, "KB5120242"])
+def test_support_confirmed_oob_is_additive_with_independent_supersedence(
+    schema: dict[str, object], supersedes: str | None
+) -> None:
+    monthly = _update()
+    oob = _update(
+        "KB5120999",
+        release_date_explicit=False,
+        supersedes=supersedes,
+    )
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((monthly, oob), MSRC_URL, STAMP),
+        support_articles={
+            monthly.kb: _article(monthly.kb, monthly.release_date),
+            oob.kb: _article(oob.kb, date(2026, 8, 15), is_out_of_band=True),
+        },
+        support_failures={},
+        generated_at=STAMP,
+    )
+    validate_document(result.document, schema)
+    rows = {row["kb"]: row for row in result.document["updates"] if row["kb"] != "NO PUBLICADO"}
+    assert result.document["reportMonth"] == "2026-08"
+    assert result.document["patchTuesdayDate"] == "2026-08-11"
+    assert rows[monthly.kb]["updateType"] == "security"
+    assert rows[monthly.kb]["releaseDate"] == "2026-08-11"
+    assert rows[monthly.kb]["supersededBy"] == (oob.kb if supersedes else None)
+    assert rows[oob.kb]["updateType"] == "oob"
+    assert rows[oob.kb]["releaseDate"] == "2026-08-15"
+    assert rows[oob.kb]["supersededBy"] is None
+    assert [source["type"] for source in rows[oob.kb]["sources"]] == [
+        "msrc",
+        "microsoft-support",
+    ]
+
+
+def test_later_support_date_without_explicit_oob_does_not_reclassify() -> None:
+    monthly = _update()
+    candidate = _update("KB5120999", release_date_explicit=False)
+    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((monthly, candidate), MSRC_URL, STAMP),
+            support_articles={
+                monthly.kb: _article(monthly.kb, monthly.release_date),
+                candidate.kb: _article(candidate.kb, date(2026, 8, 15)),
+            },
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+
+def test_collector_merges_announced_oob_absent_from_cvrf(schema: dict[str, object]) -> None:
+    monthly = _update()
+    announced = _update("KB5120999", release=date(2026, 8, 15), update_type="oob")
+    announced = StructuredUpdate(
+        announced.kb,
+        announced.os,
+        announced.release_date,
+        announced.update_type,
+        "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
+        STAMP,
+        "Out-of-band announcement",
+        source_type="release-health",
+    )
+    articles = {
+        monthly.kb: _article(monthly.kb, monthly.release_date),
+        announced.kb: _article(announced.kb, announced.release_date, is_out_of_band=True),
+    }
+    with MicrosoftHttpClient() as client:
+        result = collect_month(
+            "2026-08",
+            client=client,
+            structured_fetcher=lambda _client, _month: StructuredResult(
+                (monthly,), MSRC_URL, STAMP
+            ),
+            message_center_fetcher=lambda _client, _month: StructuredResult(
+                (announced,), announced.source_url, STAMP
+            ),
+            support_fetcher=lambda _client, kb: articles[kb],
+            now=lambda: STAMP,
+        )
+    validate_document(result.normalized.document, schema)
+    row = next(row for row in result.normalized.document["updates"] if row["kb"] == announced.kb)
+    assert row["updateType"] == "oob"
+    assert row["supersededBy"] is None
+    assert [source["type"] for source in row["sources"]] == [
+        "release-health",
+        "microsoft-support",
+    ]
+
+
+def test_collector_rejects_oob_announcement_without_support_confirmation() -> None:
+    announced = _update("KB5120999", release=date(2026, 8, 15), update_type="oob")
+    with (
+        MicrosoftHttpClient() as client,
+        pytest.raises(CollectionConflictError, match="does not confirm announced OOB"),
+    ):
+        collect_month(
+            "2026-08",
+            client=client,
+            structured_fetcher=lambda _client, _month: StructuredResult((), MSRC_URL, STAMP),
+            message_center_fetcher=lambda _client, _month: StructuredResult(
+                (announced,), MSRC_URL, STAMP
+            ),
+            support_fetcher=lambda _client, kb: _article(kb, date(2026, 8, 15)),
+            now=lambda: STAMP,
+        )
 
 
 def test_atomic_writer_preserves_existing_file_on_invalid_document(

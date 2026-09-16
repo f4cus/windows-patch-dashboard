@@ -5,19 +5,20 @@ This file records the small set of **active** decisions that would be risky to l
 ## D001 - Official Microsoft sources only
 
 ### Decision
-Production report data is populated only from official Microsoft sources. MSRC CVRF is the V1 monthly discovery source. Official Microsoft Support KB articles provide article-specific changes, fixes, and known issues. The CSAF adapter remains tested and complementary, not the primary monthly discovery path.
+Production report data is populated only from official Microsoft sources. MSRC CVRF is the V1 monthly discovery source. The official Windows message center supplies dated OOB announcements that may be absent from CVRF. Official Microsoft Support KB articles verify each KB's release date, OOB label, changes, fixes, and known issues. The CSAF adapter remains tested and complementary, not the primary monthly discovery path.
 
 ### Context
 The product needs one reliable monthly KB/product view plus article-level operational content.
 
 ### Rationale
-The repository's live source evaluation found that CVRF exposes one monthly document with the KB/product remediation relationships needed by the supported scope. CSAF is distributed per CVE and has no month-level KB/product manifest in the implemented path. Microsoft Support supplies the KB article content that CVRF does not.
+The repository's live source evaluation found that CVRF exposes one monthly document with the KB/product remediation relationships needed by the supported scope. CVRF omits some officially announced OOB updates, so the message center complements its discovery. CSAF is distributed per CVE and has no month-level KB/product manifest in the implemented path. Microsoft Support supplies the KB article content that CVRF does not.
 
 ### Alternatives
 A bulk monthly CSAF crawl was evaluated for V1 and not selected because it would require downloading and reconciling many per-CVE advisories.
 
 ### Consequences
 - A CVRF collection failure is fatal for that run.
+- A message center collection failure is fatal because OOB completeness cannot be checked safely.
 - Individual Support failures may produce an honest `partial` report.
 - Third-party sources must not populate production report facts.
 
@@ -84,18 +85,19 @@ Active.
 ## D005 - OOB history is additive and conservative
 
 ### Decision
-Represent a verified out-of-band update as its own record with `updateType: oob`. The original monthly record may point to it through `supersededBy`. OOB status is independent from `knownIssuesStatus`.
+Represent an officially identified out-of-band update as its own record with `updateType: oob`; never remove the monthly record. The original monthly record may point to it through `supersededBy` only when separate official evidence establishes that relationship. OOB status and supersedence are independent from `knownIssuesStatus` and from each other.
 
 ### Context
 An OOB release should not erase the monthly update or its known-issue history.
 
 ### Rationale
-The data contract and validators explicitly preserve both records and require same-OS, later-date, non-cyclic supersedence.
+The data contract and validators preserve both records. When a supersedence link exists, validation requires a same-OS, later-date, non-cyclic relationship.
 
 ### Consequences
-- OOB discovery requires explicit structured evidence for the OOB label, date, and superseded KB.
-- Later dates alone do not imply OOB.
-- Generalized/brittle OOB inference is outside the current implementation.
+- OOB classification requires an explicit, deterministic Microsoft source label. CVRF may identify an OOB directly; Microsoft Support may identify it in the article title when CVRF uses the generic `Security Update` subtype. The message center can discover additional OOB KBs through dated, OS-labelled official announcement links; Support then verifies each article.
+- An OOB may have `supersededBy: null` on the monthly record. Set the link only from an explicit official supersedence relationship.
+- Later dates alone imply neither OOB nor supersedence.
+- Conflicting official dates still fail collection; unsupported inference remains outside the implementation.
 
 ### Status
 Active.

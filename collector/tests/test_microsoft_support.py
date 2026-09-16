@@ -58,6 +58,33 @@ def test_routes_explicit_fix_exclusively_and_maps_no_known_issues() -> None:
     assert "scheduled backups" not in article.changes_summary
     assert "scheduled backups" in article.resolved_issues_summary
     assert article.known_issues_status == "none"
+    assert article.is_out_of_band is False
+
+
+@pytest.mark.parametrize(
+    ("title", "source_url"),
+    [
+        ("August 15, 2026—KB5120242 (OS Build 20348.4295) Out-of-band", URL),
+        (
+            "15 de agosto de 2026: KB5120242 (compilación del SO 20348.4295) fuera de banda",
+            SPANISH_URL,
+        ),
+    ],
+)
+def test_explicit_support_title_identifies_oob(title: str, source_url: str) -> None:
+    content = _article("Microsoft is not currently aware of any issues with this update.")
+    content = content.replace(
+        b"August 11, 2026\xe2\x80\x94KB5120242 (OS Build 20348.4294)",
+        title.encode(),
+    )
+    article = _parse(content, source_url=source_url)
+    assert article.is_out_of_band is True
+    assert article.release_date.isoformat() == "2026-08-15"
+
+
+def test_oob_mentioned_outside_title_does_not_classify_article() -> None:
+    article = _parse(_article("An out-of-band update may resolve this issue later."))
+    assert article.is_out_of_band is False
 
 
 def test_spanish_structured_content_excludes_editorial_copy_and_generic_security() -> None:

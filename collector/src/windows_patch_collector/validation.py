@@ -183,7 +183,6 @@ def _semantic_issues(document: Mapping[str, Any]) -> list[ValidationIssue]:
         )
 
     updates_by_key: dict[UpdateKey, list[int]] = {}
-    referenced_oob_keys: set[UpdateKey] = set()
     updates_by_kb: dict[str, list[int]] = {}
     identities: list[OsIdentity | None] = []
     for index, update in enumerate(updates):
@@ -195,9 +194,6 @@ def _semantic_issues(document: Mapping[str, Any]) -> list[ValidationIssue]:
         if identity is not None and isinstance(kb, str):
             updates_by_key.setdefault((identity, kb), []).append(index)
             updates_by_kb.setdefault(kb, []).append(index)
-        superseded_by = update.get("supersededBy")
-        if identity is not None and isinstance(superseded_by, str):
-            referenced_oob_keys.add((identity, superseded_by))
 
     for indices in updates_by_key.values():
         for duplicate_index in indices[1:]:
@@ -269,19 +265,6 @@ def _semantic_issues(document: Mapping[str, Any]) -> list[ValidationIssue]:
                             "the superseding out-of-band update must have a later release date",
                         )
                     )
-
-        if (
-            update.get("updateType") == "oob"
-            and identity is not None
-            and isinstance(kb, str)
-            and (identity, kb) not in referenced_oob_keys
-        ):
-            issues.append(
-                ValidationIssue(
-                    f"$.updates[{index}].kb",
-                    "an out-of-band update must be linked from the record it supersedes",
-                )
-            )
 
     issues.extend(_supersedence_cycle_issues(edges))
     return issues

@@ -44,6 +44,8 @@ class StructuredUpdate:
     source_subtype: str
     support_url: str | None = None
     supersedes: str | None = None
+    release_date_explicit: bool = True
+    source_type: Literal["msrc", "release-health"] = "msrc"
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,3 +71,4 @@ class SupportArticle:
     known_issues_summary: str
     known_issues_status: KnownIssuesStatus
     locale: SupportLocale = "en-US"
+    is_out_of_band: bool = False

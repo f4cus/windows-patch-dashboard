@@ -68,15 +68,14 @@ def test_superseded_by_must_resolve_to_oob_record_in_same_report(
         validate_document(make_report([monthly]), schema)
 
 
-def test_standalone_oob_record_is_rejected(
+def test_oob_without_supersedence_reference_is_valid(
     schema: dict[str, Any],
     make_update: UpdateFactory,
     make_report: ReportFactory,
 ) -> None:
     oob = make_update(kb="KB5000002", update_type="oob")
 
-    with pytest.raises(ReportValidationError, match="linked from the record it supersedes"):
-        validate_document(make_report([oob]), schema)
+    validate_document(make_report([oob]), schema)
 
 
 def test_supersedence_cannot_point_to_a_regular_update(

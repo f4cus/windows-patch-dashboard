@@ -30,6 +30,7 @@ _SPANISH_DATE_PATTERN = re.compile(
     r"noviembre|diciembre)\s+de\s+(?P<year>[0-9]{4})",
     re.IGNORECASE,
 )
+_OOB_TITLE_PATTERN = re.compile(r"\b(?:out-of-band|fuera de banda)\b", re.IGNORECASE)
 _ENGLISH_MONTHS = {
     name.casefold(): number
     for number, name in enumerate(
@@ -456,6 +457,7 @@ def parse_support_article(
         known_summary,
         known_status,
         article_locale,
+        _OOB_TITLE_PATTERN.search(title) is not None,
     )
 
 

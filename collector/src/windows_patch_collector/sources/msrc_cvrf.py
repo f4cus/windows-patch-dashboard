@@ -110,7 +110,7 @@ def parse_cvrf(
         if product_id and identity is not None:
             products[product_id] = identity
 
-    candidates: dict[tuple[str, OsIdentity, date, UpdateType], tuple[str, str | None]] = {}
+    candidates: dict[tuple[str, OsIdentity, date, UpdateType], tuple[str, str | None, bool]] = {}
     warnings: list[str] = []
     for remediation in root.iter():
         if _local_name(remediation) != "Remediation":
@@ -157,7 +157,7 @@ def parse_cvrf(
         for identity in identities:
             key = (kb, identity, release_date, parsed_update_type)
             existing = candidates.get(key)
-            value = (subtype, supersedes)
+            value = (subtype, supersedes, date_text is not None)
             if existing is not None and existing != value:
                 raise SourceParseError(f"Conflicting CVRF remediation metadata for {kb}")
             candidates[key] = value
@@ -167,7 +167,7 @@ def parse_cvrf(
         key: value for key, value in candidates.items() if key[1].family == "Windows Server"
     }
     windows_candidates: dict[
-        tuple[str, date, UpdateType], list[tuple[OsIdentity, tuple[str, str | None]]]
+        tuple[str, date, UpdateType], list[tuple[OsIdentity, tuple[str, str | None, bool]]]
     ] = defaultdict(list)
     for (kb, identity, release_date, update_type), value in candidates.items():
         if identity.family == "Windows 11":
@@ -177,6 +177,7 @@ def parse_cvrf(
     for (kb, identity, release_date, update_type), (
         subtype,
         supersedes,
+        release_date_explicit,
     ) in server_candidates.items():
         updates.append(
             StructuredUpdate(
@@ -188,13 +189,14 @@ def parse_cvrf(
                 retrieved_at,
                 subtype,
                 supersedes=supersedes,
+                release_date_explicit=release_date_explicit,
             )
         )
     for (kb, release_date, update_type), values in windows_candidates.items():
         metadata = {value for _, value in values}
         if len(metadata) != 1:
             raise SourceParseError(f"Conflicting Windows 11 CVRF metadata for {kb}")
-        subtype, supersedes = metadata.pop()
+        subtype, supersedes, release_date_explicit = metadata.pop()
         updates.append(
             StructuredUpdate(
                 kb,
@@ -205,6 +207,7 @@ def parse_cvrf(
                 retrieved_at,
                 subtype,
                 supersedes=supersedes,
+                release_date_explicit=release_date_explicit,
             )
         )
     return StructuredResult(tuple(updates), source_url, retrieved_at, tuple(sorted(set(warnings))))

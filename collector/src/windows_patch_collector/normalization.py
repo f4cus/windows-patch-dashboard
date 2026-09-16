@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -82,6 +82,15 @@ def _select_updates(
                 f"{update.kb}: ignored because Microsoft Support identifies it as hotpatch"
             )
             continue
+        article = support_articles.get(update.kb)
+        if article is not None and article.is_out_of_band and update.update_type == "security":
+            if update.release_date_explicit and article.release_date != update.release_date:
+                raise CollectionConflictError(
+                    f"Official date conflict for {update.kb}: "
+                    f"MSRC={update.release_date.isoformat()}, "
+                    f"Support={article.release_date.isoformat()}"
+                )
+            update = replace(update, update_type="oob", release_date=article.release_date)
         if update.update_type == "security" and update.release_date != expected_release:
             continue
         key = (update.os, update.kb)
@@ -171,7 +180,7 @@ def normalize_report(
                 f"Official date conflict for {update.kb}: MSRC={update.release_date.isoformat()}, "
                 f"Support={article.release_date.isoformat()}"
             )
-        sources = [_source("msrc", update.source_url, update.retrieved_at)]
+        sources = [_source(update.source_type, update.source_url, update.retrieved_at)]
         if article is None:
             changes = _UNAVAILABLE_CHANGES
             resolved = _UNAVAILABLE_RESOLVED

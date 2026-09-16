@@ -21,6 +21,7 @@ It does **not** provide device inventory, patch compliance, authentication/accou
 ```mermaid
 flowchart LR
     CVRF[MSRC CVRF\nmonthly discovery] --> COL[Python collector]
+    HEALTH[Windows message center\nOOB announcements] --> COL
     SUP[Microsoft Support KBs\narticle content] --> COL
     CSAF[MSRC CSAF adapter\ntested/complementary] -. not primary V1 discovery .-> COL
     COL --> NORM[Normalize + validate]
@@ -38,10 +39,10 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 ## Data Flow
 
 1. A strict `YYYY-MM` report month is selected. Automation chooses the latest month whose second Tuesday has already occurred when no month is supplied.
-2. The collector retrieves the monthly MSRC CVRF document and maps supported Microsoft product names to normalized OS identities.
+2. The collector retrieves the monthly MSRC CVRF document for monthly KBs and the official Windows message center for dated OOB announcement links. It maps supported product/OS labels to normalized identities and excludes hotpatch-only packages through their official Support path.
 3. Each discovered KB is verified against official Microsoft Support. `es-ES` content is preferred; `en-US` is the fallback when Spanish content cannot be retrieved and parsed reliably.
 4. Microsoft Support provides deterministic article content for changes, fixes, and known issues. Hotpatch exclusions require an official Support redirect under Microsoft's `/hotpatch/` path.
-5. Normalization applies product rules, canonical ordering, provenance, known-issue semantics, `NO PUBLICADO` behavior for missing 2012/2012 R2 ESU monthly rollups, conservative OOB handling, and fail-safe conflict checks.
+5. Normalization applies product rules, canonical ordering, provenance, known-issue semantics, `NO PUBLICADO` behavior for missing 2012/2012 R2 ESU monthly rollups, and fail-safe conflict checks. Explicit OOB labels from CVRF, message center announcements, or the verified Microsoft Support article title add a separate record; supersedence is linked only when CVRF states it.
 6. The report is schema/semantics validated and atomically written to `data/reports/YYYY-MM.json`. An existing report is preserved if collection or validation fails.
 7. Scheduled/manual automation compares the generated report with the committed report while ignoring only `generatedAt` and source `retrievedAt`. Only substantive changes are committed.
 8. Vite imports `data/fixtures/*.json` and `data/reports/*.json` at build time. A production report overrides a same-month fixture.
@@ -89,9 +90,9 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 ## Current State
 
 - `main` is the default branch.
-- `data/reports/2026-08.json` is the currently committed production report.
+- `data/reports/2026-08.json` and `data/reports/2026-09.json` are production reports; September is the newest.
 - `data/fixtures/2026-08.json` is the manual golden fixture; the production report takes precedence for the same month.
-- The committed August production report currently has status `partial`, meaning collection succeeded but at least one item remained incomplete/ambiguous according to collector rules.
+- The September production report has status `partial`: all nine monthly and nine officially announced standard OOB KBs are present, while at least one article-level fact remains incomplete under collector rules.
 - `.github/workflows/pages.yml` is active for pushes to `main`, daily schedule, and manual dispatch. Recent inspected scheduled runs completed successfully.
 - The public project URL encoded in the frontend is `https://f4cus.github.io/windows-patch-dashboard/`.
 
@@ -100,8 +101,8 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - V1 monthly discovery depends on CVRF; there is no automatic bulk-CSAF fallback.
 - CSAF parsing exists and is tested, but it is complementary and is not used by the production monthly collection path.
 - Microsoft Support extraction depends on recognizable article structure. Unverifiable known-issue evidence remains `unknown` rather than being guessed.
-- OOB discovery is intentionally conservative and requires explicit official structured evidence.
-- Only one unique report month is currently committed, so the month selector has no historical choice until more report JSON files are added.
+- OOB discovery is intentionally conservative and requires an explicit official label from CVRF, the Windows message center, or the verified Microsoft Support article title. Missing supersedence evidence leaves the link null. The message center is a recent-announcements source, so older OOB records remain discoverable only while their announcements are retained there or CVRF lists them.
+- The month selector currently offers the committed August and September reports.
 - The report contract is validated both in Python and again by the TypeScript loader. This is useful defense in depth but creates contract-sync maintenance work.
 - The report JSON does not preserve structured reasons for a `partial` status; adding them is deferred to Phase 3.
 - CVRF vulnerability entries discover and deduplicate KB/product relationships, but the monthly contract does not retain CVE identifiers or severity. A future phase must decide whether to rename the column to "Cambios destacados" or extend the contract with verifiable CVE data.
