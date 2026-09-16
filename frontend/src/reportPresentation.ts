@@ -35,9 +35,6 @@ export const REPORT_STATUS_LABELS: Readonly<Record<ReportStatus, string>> = {
   "manual-golden-fixture": "Informe de prueba",
 };
 
-export const PARTIAL_REPORT_EXPLANATION =
-  "Parte de la información no pudo verificarse completamente en las fuentes oficiales.";
-
 export const UPDATE_TYPE_LABELS: Readonly<Record<UpdateType, string>> = {
   security: "Seguridad",
   oob: "OOB",

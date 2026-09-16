@@ -16,6 +16,7 @@ import { loadMonthlyReport } from "./data/loadMonthlyReport";
 import type { MonthlyReport, UpdateRecord } from "./data/model";
 import {
   formatCompactDate,
+  formatDate,
   formatDateTime,
   KNOWN_ISSUES_LABELS,
 } from "./reportPresentation";
@@ -300,21 +301,48 @@ describe("V1 report experience", () => {
     ).toBeTruthy();
   });
 
-  it("explains a partial report safely beside the subtitle", () => {
+  it("keeps the partial status without the generic explanation", () => {
     const { container } = renderApp({
       reports: [reportWith({ status: "partial" })],
     });
     const subtitle = container.querySelector<HTMLElement>(".report-subtitle")!;
 
     expect(within(subtitle).getByText("Informe parcial")).toBeTruthy();
-    expect(
-      within(subtitle).getByText(
-        "Parte de la información no pudo verificarse completamente en las fuentes oficiales.",
-      ),
-    ).toBeTruthy();
+    expect(container.querySelector(".report-status-explanation")).toBeNull();
+    expect(container.textContent).not.toContain(
+      "Parte de la información no pudo verificarse completamente en las fuentes oficiales.",
+    );
     expect(
       container.querySelector(".report-metadata")?.textContent,
     ).not.toContain("Informe parcial");
+  });
+
+  it("shows a type badge and each release date beside distinct September KBs", () => {
+    const { container } = renderApp({ reports: [septemberReport] });
+    const rows = [
+      ...container.querySelectorAll<HTMLTableRowElement>("tbody tr"),
+    ];
+    const firstTwo = septemberReport.updates.slice(0, 2);
+
+    expect(rows).toHaveLength(septemberReport.updates.length);
+    expect(firstTwo.map((update) => update.updateType)).toEqual([
+      "security",
+      "oob",
+    ]);
+    firstTwo.forEach((update, index) => {
+      const row = rows[index];
+      const heading = row.querySelector<HTMLElement>(".kb-heading")!;
+      const badge = heading.querySelector<HTMLElement>(".update-type-badge")!;
+      const date = row.querySelector<HTMLElement>(".record-date")!;
+
+      expect(heading.querySelector("strong")?.textContent).toBe(update.kb);
+      expect(badge.dataset.type).toBe(update.updateType);
+      expect(badge.textContent).toBe(
+        update.updateType === "security" ? "Seguridad" : "OOB",
+      );
+      expect(date.textContent).toBe(formatDate(update.releaseDate));
+      expect(row.querySelectorAll(".record-disclosure")).toHaveLength(1);
+    });
   });
 
   it("renders NO PUBLICADO explicitly", () => {
@@ -547,6 +575,12 @@ describe("V1 report experience", () => {
       ),
     ).toBe(true);
     expect(container.querySelectorAll("thead th")).toHaveLength(5);
+    expect(container.querySelectorAll(".update-type-badge")).toHaveLength(
+      augustReport.updates.length,
+    );
+    expect(container.querySelectorAll(".record-date")).toHaveLength(
+      augustReport.updates.length,
+    );
     expect(container.querySelector("#report")?.getAttribute("data-theme")).toBe(
       "dark",
     );
@@ -722,6 +756,15 @@ describe("V1 report experience", () => {
     expect(exportedReport.dataset.theme).toBe("dark");
     expect(exportedReport.querySelectorAll("tbody tr")).toHaveLength(1);
     expect(exportedReport.textContent).toContain("KB5120242");
+    expect(
+      exportedReport.querySelector(".update-type-badge")?.textContent,
+    ).toBe("Seguridad");
+    expect(exportedReport.querySelector(".record-date")?.textContent).toBe(
+      formatDate(
+        augustReport.updates.find((update) => update.kb === "KB5120242")!
+          .releaseDate,
+      ),
+    );
     expect(exporter).toHaveBeenCalledWith(
       exportedReport,
       "microsoft-patch-tuesday-2026-08",

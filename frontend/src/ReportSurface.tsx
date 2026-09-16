@@ -10,7 +10,6 @@ import {
   formatDateTime,
   formatReportMonth,
   KNOWN_ISSUES_LABELS,
-  PARTIAL_REPORT_EXPLANATION,
   REPORT_COLUMN_LABELS,
   REPORT_STATUS_LABELS,
   SOURCE_LABELS,
@@ -190,25 +189,27 @@ function ReportRow({
   return (
     <tr data-expanded={interactive ? expanded : undefined}>
       <td className="kb-cell" data-label={REPORT_COLUMN_LABELS[0]}>
-        <strong className={kbClassName}>
-          {supportUrl === null || update.kb === "NO PUBLICADO" ? (
-            update.kb
-          ) : (
-            <a
-              className="kb-link"
-              href={supportUrl}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Abrir ${update.kb} en Microsoft Support`}
-            >
-              {update.kb}
-            </a>
-          )}
-        </strong>
-        <span className="record-meta">
-          {UPDATE_TYPE_LABELS[update.updateType]} ·{" "}
-          {formatDate(update.releaseDate)}
-        </span>
+        <div className="kb-heading">
+          <strong className={kbClassName}>
+            {supportUrl === null || update.kb === "NO PUBLICADO" ? (
+              update.kb
+            ) : (
+              <a
+                className="kb-link"
+                href={supportUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Abrir ${update.kb} en Microsoft Support`}
+              >
+                {update.kb}
+              </a>
+            )}
+          </strong>
+          <span className="update-type-badge" data-type={update.updateType}>
+            {UPDATE_TYPE_LABELS[update.updateType]}
+          </span>
+        </div>
+        <span className="record-date">{formatDate(update.releaseDate)}</span>
         {interactive ? (
           <button
             className="record-disclosure report-interactive"
@@ -305,11 +306,6 @@ export const ReportSurface = forwardRef<HTMLElement, ReportSurfaceProps>(
               <span className="report-status" data-status={report.status}>
                 {REPORT_STATUS_LABELS[report.status]}
               </span>
-              {report.status === "partial" ? (
-                <span className="report-status-explanation">
-                  {PARTIAL_REPORT_EXPLANATION}
-                </span>
-              ) : null}
             </p>
           </div>
           <dl className="report-metadata">
