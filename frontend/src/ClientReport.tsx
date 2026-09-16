@@ -4,7 +4,6 @@ import {
   formatDateTime,
   formatReportMonth,
   KNOWN_ISSUES_LABELS,
-  PARTIAL_REPORT_EXPLANATION,
   REPORT_STATUS_LABELS,
   SOURCE_LABELS,
   UPDATE_TYPE_LABELS,
@@ -86,6 +85,10 @@ export function ClientReport({
   updates,
   scopeLabel,
 }: ClientReportProps) {
+  const unknownKnownIssues = updates.filter(
+    (update) => update.knownIssuesStatus === "unknown",
+  );
+
   return (
     <article className="client-report" aria-labelledby="client-report-title">
       <header className="client-report__header">
@@ -111,9 +114,6 @@ export function ClientReport({
             <dd>{REPORT_STATUS_LABELS[report.status]}</dd>
           </div>
         </dl>
-        {report.status === "partial" ? (
-          <p className="client-report__notice">{PARTIAL_REPORT_EXPLANATION}</p>
-        ) : null}
       </header>
 
       {updates.length === 0 ? (
@@ -135,6 +135,44 @@ export function ClientReport({
           ),
         )
       )}
+
+      {report.status === "partial" ? (
+        <section
+          className="client-report__verification"
+          aria-labelledby="client-verification-title"
+        >
+          <h2 id="client-verification-title">Notas de verificación</h2>
+          {unknownKnownIssues.length > 0 ? (
+            <>
+              <p>
+                El informe está marcado como parcial. En los siguientes
+                registros incluidos, la clasificación del estado de problemas
+                conocidos figura como «No verificado». La información disponible
+                se conserva sin inferir un estado:
+              </p>
+              <ul>
+                {unknownKnownIssues.map((update, index) => (
+                  <li key={`${update.os.displayName}-${update.kb}-${index}`}>
+                    {update.kb} — {update.os.displayName}
+                  </li>
+                ))}
+              </ul>
+              <p>
+                Esta limitación se refiere a la clasificación de problemas
+                conocidos; los KB, sistemas operativos, fechas de publicación,
+                tipos de actualización y fuentes oficiales se presentan según
+                los registros del reporte.
+              </p>
+            </>
+          ) : (
+            <p>
+              El informe está marcado como parcial. Los registros incluidos no
+              muestran problemas conocidos con estado «No verificado»; los datos
+              del reporte no detallan otra causa para esta selección.
+            </p>
+          )}
+        </section>
+      ) : null}
     </article>
   );
 }

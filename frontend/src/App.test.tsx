@@ -754,6 +754,103 @@ describe("V1 report experience", () => {
 });
 
 describe("Client Report", () => {
+  it("explains only the included unknown known-issue records in a final note", () => {
+    const monthly = updateWith({
+      kb: "KB9000001",
+      updateType: "security",
+      knownIssuesStatus: "resolved",
+    });
+    const firstUnknown = updateWith({
+      kb: "KB9000002",
+      updateType: "oob",
+      knownIssuesStatus: "unknown",
+    });
+    const secondUnknown = updateWith({
+      kb: "KB9000003",
+      os: augustReport.updates.find(
+        (update) => update.os.displayName !== monthly.os.displayName,
+      )!.os,
+      updateType: "oob",
+      knownIssuesStatus: "unknown",
+    });
+    const partialReport = reportWith({ status: "partial" }, [
+      monthly,
+      firstUnknown,
+      secondUnknown,
+    ]);
+    const unknownRecords = partialReport.updates.filter(
+      (update) => update.knownIssuesStatus === "unknown",
+    );
+    const classifiedRecord = partialReport.updates.find(
+      (update) => update.knownIssuesStatus !== "unknown",
+    )!;
+    const { container } = renderApp({ reports: [partialReport] });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const clientReport =
+      container.querySelector<HTMLElement>(".client-report")!;
+    const header = clientReport.querySelector<HTMLElement>(
+      ".client-report__header",
+    )!;
+    const note = clientReport.querySelector<HTMLElement>(
+      ".client-report__verification",
+    )!;
+
+    expect(within(header).getByText("Informe parcial")).toBeTruthy();
+    expect(clientReport.textContent).not.toContain(
+      "Parte de la información no pudo verificarse completamente en las fuentes oficiales.",
+    );
+    expect(
+      within(note).getByRole("heading", { name: "Notas de verificación" }),
+    ).toBeTruthy();
+    expect(
+      [...note.querySelectorAll("li")].map((item) => item.textContent),
+    ).toEqual(
+      unknownRecords.map((update) => `${update.kb} — ${update.os.displayName}`),
+    );
+    expect(note.textContent).not.toContain(classifiedRecord.kb);
+    expect(clientReport.lastElementChild).toBe(note);
+    expect(clientReport.querySelectorAll(".client-update")).toHaveLength(
+      partialReport.updates.length,
+    );
+    expect(
+      clientReport.querySelectorAll('[data-type="security"]'),
+    ).toHaveLength(
+      partialReport.updates.filter((update) => update.updateType === "security")
+        .length,
+    );
+    expect(clientReport.querySelectorAll('[data-type="oob"]')).toHaveLength(
+      partialReport.updates.filter((update) => update.updateType === "oob")
+        .length,
+    );
+  });
+
+  it("uses a neutral fallback when partial has no included unknown records", () => {
+    const classified = updateWith({ knownIssuesStatus: "resolved" });
+    const { container } = renderApp({
+      reports: [reportWith({ status: "partial" }, [classified])],
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const note = container.querySelector<HTMLElement>(
+      ".client-report__verification",
+    )!;
+    expect(note.textContent).toContain(
+      "Los registros incluidos no muestran problemas conocidos con estado «No verificado»",
+    );
+    expect(note.querySelectorAll("li")).toHaveLength(0);
+  });
+
+  it("does not show verification notes for a generated report", () => {
+    const unknown = updateWith({ knownIssuesStatus: "unknown" });
+    const { container } = renderApp({
+      reports: [reportWith({ status: "generated" }, [unknown])],
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    expect(container.querySelector(".client-report__verification")).toBeNull();
+  });
+
   it("uses the selected month and shows monthly and OOB records separately", () => {
     const { container } = renderApp({
       reports: [augustReport, septemberReport],

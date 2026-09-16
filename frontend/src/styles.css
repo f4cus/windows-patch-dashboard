@@ -981,9 +981,34 @@ a {
   font-weight: 600;
 }
 
-.client-report .client-report__notice,
 .client-report .client-report__empty {
   margin-block-start: 1rem;
+}
+
+.client-report__verification {
+  margin-block-start: 2rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid #aeb9c8;
+}
+
+.client-report__verification h2 {
+  color: #344863;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.client-report__verification p,
+.client-report__verification ul {
+  margin: 0.5rem 0 0;
+}
+
+.client-report__verification ul {
+  padding-inline-start: 1.2rem;
+}
+
+.client-report__verification li {
+  margin-block-start: 0.2rem;
 }
 
 .client-os {
@@ -1363,8 +1388,13 @@ a {
   }
 
   .client-update__header,
-  .client-update__sources li {
+  .client-update__sources li,
+  .client-report__verification li {
     break-inside: avoid;
+  }
+
+  .client-report__verification h2 {
+    break-after: avoid;
   }
 
   .client-update__detail p {
