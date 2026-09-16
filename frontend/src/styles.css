@@ -910,6 +910,163 @@ a {
   border-color: var(--color-rule-2);
 }
 
+.client-report-shell {
+  min-height: 100dvh;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.client-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  width: min(100%, 210mm);
+  margin: 0 auto var(--space-md);
+}
+
+.client-report {
+  width: min(100%, 210mm);
+  margin-inline: auto;
+  padding: clamp(var(--space-md), 3vw, 18mm);
+  border: var(--rule-thin) solid #d5d9df;
+  background: #fff;
+  color: #1b2533;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.client-report__header {
+  padding-block-end: 1.25rem;
+  border-block-end: 2px solid #263b5d;
+}
+
+.client-report h1,
+.client-report h2,
+.client-report h3,
+.client-report h4,
+.client-report p {
+  margin: 0;
+}
+
+.client-report h1 {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1.15;
+}
+
+.client-report .client-report__month {
+  margin-block-start: 0.3rem;
+  font-size: 1.2rem;
+}
+
+.client-report__metadata {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 1.25rem 0 0;
+}
+
+.client-report__metadata dt,
+.client-report__detail h4 {
+  color: #344863;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.client-report__metadata dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+}
+
+.client-report .client-report__notice,
+.client-report .client-report__empty {
+  margin-block-start: 1rem;
+}
+
+.client-os {
+  margin-block-start: 1.65rem;
+}
+
+.client-os h2 {
+  padding-block-end: 0.4rem;
+  border-block-end: 1px solid #aeb9c8;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.client-update {
+  margin-block-start: 1.15rem;
+  padding-block-start: 0.85rem;
+  border-block-start: 1px solid #d5d9df;
+}
+
+.client-update__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.8rem;
+  margin-block-end: 0.85rem;
+}
+
+.client-update__header h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.client-update__type {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid #aeb9c8;
+  border-radius: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.client-update__type[data-type="oob"] {
+  border-color: #4b607b;
+  color: #263b5d;
+}
+
+.client-update__date {
+  color: #344863;
+  font-size: 0.85rem;
+}
+
+.client-update__detail {
+  margin-block-start: 0.75rem;
+}
+
+.client-update__detail h4 {
+  margin-block-end: 0.2rem;
+}
+
+.client-update__status {
+  font-weight: 700;
+}
+
+.client-update__status + p {
+  margin-block-start: 0.2rem;
+}
+
+.client-update__sources ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+.client-update__sources a {
+  color: #173d70;
+  text-decoration: underline;
+}
+
 .load-error {
   width: min(100% - (var(--space-md) * 2), 42rem);
   margin: var(--space-2xl) auto;
@@ -1100,6 +1257,10 @@ a {
 }
 
 @media (max-width: 32rem) {
+  .client-report__metadata {
+    grid-template-columns: 1fr;
+  }
+
   .app-nav {
     gap: var(--space-sm);
   }
@@ -1151,6 +1312,11 @@ a {
   }
 }
 
+@page client-report-page {
+  size: A4 portrait;
+  margin: 18mm 17mm 19mm;
+}
+
 @media print {
   .interactive-shell > .app-nav,
   .interactive-shell > .app-footer,
@@ -1165,5 +1331,51 @@ a {
     padding: 0;
     background-color: var(--color-paper);
     color: var(--color-ink-2);
+  }
+
+  .client-report-shell {
+    min-height: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  .client-report-actions {
+    display: none;
+  }
+
+  .client-report {
+    page: client-report-page;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: #111;
+    font-size: 10.5pt;
+    line-height: 1.4;
+  }
+
+  .client-report__header,
+  .client-os h2,
+  .client-update__header,
+  .client-update__detail h4 {
+    break-after: avoid;
+  }
+
+  .client-update__header,
+  .client-update__sources li {
+    break-inside: avoid;
+  }
+
+  .client-update__detail p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .client-report__header,
+  .client-os,
+  .client-update,
+  .client-update__detail {
+    break-inside: auto;
   }
 }

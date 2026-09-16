@@ -10,12 +10,15 @@ import {
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import augustFixture from "../../data/fixtures/2026-08.json";
+import septemberData from "../../data/reports/2026-09.json";
 import App from "./App";
 import { loadMonthlyReport } from "./data/loadMonthlyReport";
 import type { MonthlyReport, UpdateRecord } from "./data/model";
+import { formatDateTime, KNOWN_ISSUES_LABELS } from "./reportPresentation";
 import { THEME_STORAGE_KEY } from "./useTheme";
 
 const augustReport = loadMonthlyReport(augustFixture);
+const septemberReport = loadMonthlyReport(septemberData);
 
 function installMatchMedia(prefersDark = false) {
   Object.defineProperty(window, "matchMedia", {
@@ -74,6 +77,7 @@ const julyReport = reportWith(
 );
 
 beforeEach(() => {
+  document.title = "Windows Patch Dashboard";
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;
   document.documentElement.style.colorScheme = "";
@@ -746,5 +750,141 @@ describe("V1 report experience", () => {
       exportedReport,
       "microsoft-patch-tuesday-2026-07",
     );
+  });
+});
+
+describe("Client Report", () => {
+  it("uses the selected month and shows monthly and OOB records separately", () => {
+    const { container } = renderApp({
+      reports: [augustReport, septemberReport],
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const document = container.querySelector<HTMLElement>(".client-report")!;
+    const server2022 = [...document.querySelectorAll(".client-os")].find(
+      (section) =>
+        section.querySelector("h2")?.textContent === "Windows Server 2022",
+    )!;
+    const records = server2022.querySelectorAll(".client-update");
+
+    expect(document.querySelector("h1")?.textContent).toBe(
+      "Microsoft Patch Tuesday",
+    );
+    expect(document.textContent).toContain("septiembre de 2026");
+    expect(document.textContent).toContain("8 de septiembre de 2026");
+    expect(document.textContent).toContain(
+      formatDateTime(septemberReport.generatedAt),
+    );
+    expect(records).toHaveLength(2);
+    expect(records[0].querySelector("h3")?.textContent).toBe("KB5122882");
+    expect(records[1].querySelector("h3")?.textContent).toBe("KB5129237");
+    expect(records[0].querySelector("[data-type]")?.textContent).toBe(
+      "Seguridad",
+    );
+    expect(records[1].querySelector("[data-type]")?.textContent).toBe("OOB");
+    expect(records[1].textContent).toContain("14 de septiembre de 2026");
+    expect(window.document.title).toBe("Microsoft Patch Tuesday - 2026-09");
+  });
+
+  it("shows complete content, official links, and no project identity", () => {
+    const { container } = renderApp({ reports: [septemberReport] });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const document = container.querySelector<HTMLElement>(".client-report")!;
+    const firstRecord = document.querySelector<HTMLElement>(".client-update")!;
+    const firstUpdate = septemberReport.updates[0];
+
+    expect(firstRecord.textContent).toContain(firstUpdate.changesSummary);
+    expect(firstRecord.textContent).toContain(
+      firstUpdate.resolvedIssuesSummary,
+    );
+    expect(firstRecord.textContent).toContain(firstUpdate.knownIssuesSummary);
+    expect(firstRecord.textContent).toContain(
+      KNOWN_ISSUES_LABELS[firstUpdate.knownIssuesStatus],
+    );
+    expect(firstRecord.querySelectorAll("h4")).toHaveLength(4);
+    expect(
+      [...firstRecord.querySelectorAll("a")].map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(firstUpdate.sources.map((source) => source.url));
+    expect(document.outerHTML).not.toMatch(
+      /Facu Villagra|f4cus|github\.com\/f4cus|linkedin\.com\/in\/fvillagra|windows-patch-dashboard/i,
+    );
+    expect(container.querySelector(".app-nav")).toBeNull();
+    expect(container.querySelector(".app-footer")).toBeNull();
+    expect(container.querySelector(".report-table")).toBeNull();
+  });
+
+  it("uses the existing month and OS selection and returns to Interactive Mode", () => {
+    const { container } = renderApp({
+      reports: [augustReport, julyReport],
+    });
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-07" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    expect(container.querySelector(".client-report")?.textContent).toContain(
+      "julio de 2026",
+    );
+    expect(container.querySelector(".client-report")?.textContent).toContain(
+      "KB5000001",
+    );
+    expect(
+      container.querySelector(".client-report")?.textContent,
+    ).not.toContain("KB5120233");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Volver a vista interactiva" }),
+    );
+    expect(window.document.title).toBe("Windows Patch Dashboard");
+    fireEvent.change(screen.getByLabelText("Mes del informe"), {
+      target: { value: "2026-08" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar" }));
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: "Windows Server 2022" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    expect(container.querySelectorAll(".client-os")).toHaveLength(1);
+    expect(container.querySelector(".client-os h2")?.textContent).toBe(
+      "Windows Server 2022",
+    );
+    expect(container.querySelector(".client-update h3")?.textContent).toBe(
+      "KB5120242",
+    );
+  });
+
+  it("opens browser print and keeps Report Mode and PNG export available", async () => {
+    const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
+    const exporter = vi.fn().mockResolvedValue(undefined);
+    const { container } = renderApp({ exporter });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Imprimir / Guardar PDF" }),
+    );
+
+    expect(print).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.getByRole("button", { name: "Modo informe" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+    expect(container.querySelectorAll("thead th")).toHaveLength(5);
+    fireEvent.keyDown(window, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "Exportar PNG" }));
+    await waitFor(() => expect(exporter).toHaveBeenCalledTimes(1));
+  });
+
+  it("does not print an empty OS selection", () => {
+    const { container } = renderApp();
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    expect(container.querySelectorAll(".client-update")).toHaveLength(0);
+    expect(
+      screen.getByRole<HTMLButtonElement>("button", {
+        name: "Imprimir / Guardar PDF",
+      }).disabled,
+    ).toBe(true);
   });
 });

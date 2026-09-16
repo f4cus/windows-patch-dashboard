@@ -193,3 +193,18 @@ The fixture should remain available for tests without replacing fresher producti
 
 ### Status
 Active.
+
+## D011 - Client PDF comes from printable HTML
+
+### Decision
+Render Client Report from the existing filtered monthly report model and use browser print/Save as PDF with A4 print CSS. Keep PNG export and the existing Report Mode separate.
+
+### Context
+Months with additive OOB records can make the five-column PNG very tall. A client deliverable needs readable pagination, selectable text, and official hyperlinks without personal project attribution.
+
+### Consequences
+- Client Report has neutral content and its own document layout; it does not change JSON loading or collection.
+- The browser controls final PDF generation and may add its own metadata, headers, or footers according to print settings.
+
+### Status
+Active.

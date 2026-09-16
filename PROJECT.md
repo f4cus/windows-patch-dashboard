@@ -12,7 +12,7 @@ It provides:
 - supported Windows 11 branches represented for a report month;
 - KB, OS, key changes, resolved issues, and known issues in five canonical report columns;
 - official-source provenance for generated production records;
-- interactive filtering, Report Mode, and client-side PNG export.
+- interactive filtering, Report Mode, Client Report for browser print/Save as PDF, and client-side PNG export.
 
 It does **not** provide device inventory, patch compliance, authentication/accounts, a vulnerability-management backend, a database-backed API, or runtime AI analysis.
 
@@ -85,6 +85,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - Light/dark theme with system preference and persisted explicit choice.
 - Report Mode optimized for a dense shareable artifact.
 - High-resolution client-side PNG export of the filtered report.
+- Neutral Client Report with OS/KB sections, official links, and selectable text in browser-generated PDFs.
 - Daily/manual report refresh and semantic change detection.
 
 ## Current State

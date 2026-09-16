@@ -1,4 +1,9 @@
-import type { ReportSource } from "./data/model";
+import type {
+  KnownIssuesStatus,
+  ReportSource,
+  ReportStatus,
+  UpdateType,
+} from "./data/model";
 
 export const REPORT_COLUMN_LABELS = [
   "KB",
@@ -12,6 +17,32 @@ export const SOURCE_LABELS: Readonly<Record<ReportSource["type"], string>> = {
   "microsoft-support": "Microsoft Support",
   msrc: "MSRC",
   "release-health": "Windows Release Health",
+};
+
+export const KNOWN_ISSUES_LABELS: Readonly<Record<KnownIssuesStatus, string>> =
+  {
+    none: "Microsoft no reporta problemas conocidos.",
+    open: "Abierto",
+    resolved: "Resuelto",
+    "not-published": "No publicado",
+    unknown: "No verificado",
+  };
+
+export const REPORT_STATUS_LABELS: Readonly<Record<ReportStatus, string>> = {
+  generated: "Informe generado",
+  verified: "Informe verificado",
+  partial: "Informe parcial",
+  "manual-golden-fixture": "Informe de prueba",
+};
+
+export const PARTIAL_REPORT_EXPLANATION =
+  "Parte de la información no pudo verificarse completamente en las fuentes oficiales.";
+
+export const UPDATE_TYPE_LABELS: Readonly<Record<UpdateType, string>> = {
+  security: "Seguridad",
+  oob: "OOB",
+  preview: "Preview",
+  unknown: "Tipo desconocido",
 };
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("es-AR", {

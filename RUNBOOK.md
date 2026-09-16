@@ -66,6 +66,14 @@ npm run dev
 
 Vite prints the local URL. Local base path is `/`.
 
+### Create a client PDF
+
+1. In Interactive Mode, select the report month and operating systems. Use all systems for a complete monthly document.
+2. Open **Client Report** and review its OS and KB sections. Monthly security and OOB KBs remain separate.
+3. Choose **Imprimir / Guardar PDF**, then select the browser's PDF destination with A4 portrait paper. Disable browser headers and footers if the PDF must contain only report content.
+
+The browser produces the PDF from HTML, preserving selectable text and usually preserving official source links. Client Report excludes dashboard navigation and personal attribution. The page title is `Microsoft Patch Tuesday - YYYY-MM` while this mode is open; browser-specific author metadata cannot be controlled by the application.
+
 ## Testing
 
 ### Python tests

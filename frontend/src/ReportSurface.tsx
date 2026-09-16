@@ -2,17 +2,19 @@ import { forwardRef, useId, useState } from "react";
 import type {
   KnownIssuesStatus,
   MonthlyReport,
-  ReportStatus,
   ReportSource,
   UpdateRecord,
-  UpdateType,
 } from "./data/model";
 import {
   formatDate,
   formatDateTime,
   formatReportMonth,
+  KNOWN_ISSUES_LABELS,
+  PARTIAL_REPORT_EXPLANATION,
   REPORT_COLUMN_LABELS,
+  REPORT_STATUS_LABELS,
   SOURCE_LABELS,
+  UPDATE_TYPE_LABELS,
 } from "./reportPresentation";
 import type { ColorTheme } from "./useTheme";
 
@@ -20,30 +22,13 @@ const STATUS_PRESENTATION: Readonly<
   Record<KnownIssuesStatus, { readonly label: string; readonly symbol: string }>
 > = {
   none: {
-    label: "Microsoft no reporta problemas conocidos.",
+    label: KNOWN_ISSUES_LABELS.none,
     symbol: "—",
   },
-  open: { label: "Abierto", symbol: "!" },
-  resolved: { label: "Resuelto", symbol: "✓" },
-  "not-published": { label: "No publicado", symbol: "—" },
-  unknown: { label: "No verificado", symbol: "?" },
-};
-
-const REPORT_STATUS_LABELS: Readonly<Record<ReportStatus, string>> = {
-  generated: "Informe generado",
-  verified: "Informe verificado",
-  partial: "Informe parcial",
-  "manual-golden-fixture": "Informe de prueba",
-};
-
-const PARTIAL_REPORT_EXPLANATION =
-  "Parte de la información no pudo verificarse completamente en las fuentes oficiales.";
-
-const UPDATE_TYPE_LABELS: Readonly<Record<UpdateType, string>> = {
-  security: "Seguridad",
-  oob: "OOB",
-  preview: "Preview",
-  unknown: "Tipo desconocido",
+  open: { label: KNOWN_ISSUES_LABELS.open, symbol: "!" },
+  resolved: { label: KNOWN_ISSUES_LABELS.resolved, symbol: "✓" },
+  "not-published": { label: KNOWN_ISSUES_LABELS["not-published"], symbol: "—" },
+  unknown: { label: KNOWN_ISSUES_LABELS.unknown, symbol: "?" },
 };
 
 const SOURCE_LINK_LABELS: Readonly<Record<ReportSource["type"], string>> = {

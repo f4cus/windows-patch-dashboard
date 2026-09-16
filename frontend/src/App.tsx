@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ClientReport } from "./ClientReport";
 import type { MonthlyReport } from "./data/model";
 import { localReports } from "./data/reportCatalog";
 import { exportReportAsPng } from "./exportReport";
@@ -7,7 +8,7 @@ import { formatReportMonth } from "./reportPresentation";
 import { useTheme } from "./useTheme";
 import "./styles.css";
 
-type ViewMode = "interactive" | "report";
+type ViewMode = "interactive" | "report" | "client";
 type ExportState = "idle" | "exporting" | "error";
 
 export type ReportExporter = (
@@ -128,7 +129,7 @@ export default function App({
   );
 
   useEffect(() => {
-    if (mode !== "report") {
+    if (mode === "interactive") {
       return undefined;
     }
 
@@ -141,6 +142,18 @@ export default function App({
     window.addEventListener("keydown", exitReportMode);
     return () => window.removeEventListener("keydown", exitReportMode);
   }, [mode]);
+
+  useEffect(() => {
+    if (mode !== "client") {
+      return undefined;
+    }
+
+    const previousTitle = document.title;
+    document.title = `Microsoft Patch Tuesday - ${selectedMonth}`;
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [mode, selectedMonth]);
 
   if (report === undefined) {
     return (
@@ -234,6 +247,36 @@ export default function App({
     );
   }
 
+  if (mode === "client") {
+    return (
+      <main className="client-report-shell">
+        <div className="client-report-actions">
+          <button
+            className="button button--secondary"
+            type="button"
+            aria-label="Volver a vista interactiva"
+            onClick={() => setMode("interactive")}
+          >
+            ← Volver
+          </button>
+          <button
+            className="button button--primary"
+            type="button"
+            disabled={updates.length === 0}
+            onClick={() => window.print()}
+          >
+            Imprimir / Guardar PDF
+          </button>
+        </div>
+        <ClientReport
+          report={currentReport}
+          updates={updates}
+          scopeLabel={scopeLabel}
+        />
+      </main>
+    );
+  }
+
   return (
     <div className="interactive-shell">
       <header className="app-nav" aria-label="Cabecera de la aplicación">
@@ -266,6 +309,13 @@ export default function App({
             onClick={() => setMode("report")}
           >
             Modo informe
+          </button>
+          <button
+            className="button button--secondary"
+            type="button"
+            onClick={() => setMode("client")}
+          >
+            Client Report
           </button>
         </div>
       </header>
