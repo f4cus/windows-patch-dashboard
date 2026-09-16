@@ -85,7 +85,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - Light/dark theme with system preference and persisted explicit choice.
 - Report Mode optimized for a dense shareable artifact.
 - High-resolution client-side PNG export of the filtered report.
-- Neutral Client Report with OS/KB sections, official links, and selectable text in browser-generated PDFs.
+- Neutral Client Report with an executive summary per KB, followed by full OS/KB sections, official links, and selectable text in browser-generated PDFs.
 - Daily/manual report refresh and semantic change detection.
 
 ## Current State

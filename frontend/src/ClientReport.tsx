@@ -1,5 +1,6 @@
 import type { MonthlyReport, UpdateRecord } from "./data/model";
 import {
+  formatCompactDate,
   formatDate,
   formatDateTime,
   formatReportMonth,
@@ -85,9 +86,19 @@ export function ClientReport({
   updates,
   scopeLabel,
 }: ClientReportProps) {
+  const operatingSystemGroups = [...groupByOperatingSystem(updates)];
+  const orderedUpdates = operatingSystemGroups.flatMap(
+    ([, records]) => records,
+  );
   const unknownKnownIssues = updates.filter(
     (update) => update.knownIssuesStatus === "unknown",
   );
+  const securityCount = updates.filter(
+    (update) => update.updateType === "security",
+  ).length;
+  const oobCount = updates.filter(
+    (update) => update.updateType === "oob",
+  ).length;
 
   return (
     <article className="client-report" aria-labelledby="client-report-title">
@@ -116,13 +127,73 @@ export function ClientReport({
         </dl>
       </header>
 
+      {updates.length > 0 ? (
+        <section
+          className="client-report__summary"
+          aria-labelledby="client-summary-title"
+        >
+          <h2 id="client-summary-title">Resumen ejecutivo</h2>
+          <p className="client-report__summary-metrics">
+            {operatingSystemGroups.length}{" "}
+            {operatingSystemGroups.length === 1
+              ? "sistema operativo"
+              : "sistemas operativos"}{" "}
+            · {securityCount}{" "}
+            {securityCount === 1
+              ? "actualización de seguridad"
+              : "actualizaciones de seguridad"}{" "}
+            · {oobCount} OOB ·{" "}
+            {unknownKnownIssues.length === 0
+              ? "Sin estados no verificados"
+              : `${unknownKnownIssues.length} ${unknownKnownIssues.length === 1 ? "estado no verificado" : "estados no verificados"}`}
+          </p>
+          <table className="client-report__summary-table">
+            <colgroup>
+              <col className="client-report__summary-os" />
+              <col className="client-report__summary-kb" />
+              <col className="client-report__summary-type" />
+              <col className="client-report__summary-date" />
+              <col className="client-report__summary-status" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Sistema operativo</th>
+                <th scope="col">KB</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Publicación</th>
+                <th scope="col">Problemas conocidos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderedUpdates.map((update, index) => (
+                <tr key={`${update.os.displayName}-${update.kb}-${index}`}>
+                  <td>{update.os.displayName}</td>
+                  <td>{update.kb}</td>
+                  <td>{UPDATE_TYPE_LABELS[update.updateType]}</td>
+                  <td>{formatCompactDate(update.releaseDate)}</td>
+                  <td>
+                    {update.knownIssuesStatus === "none"
+                      ? "Sin problemas conocidos"
+                      : KNOWN_ISSUES_LABELS[update.knownIssuesStatus]}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      ) : null}
+
       {updates.length === 0 ? (
         <p className="client-report__empty">
           Seleccione al menos un sistema operativo para incluir registros.
         </p>
       ) : (
-        [...groupByOperatingSystem(updates)].map(
-          ([operatingSystem, records]) => (
+        <section
+          className="client-report__detail"
+          aria-labelledby="client-detail-title"
+        >
+          <h2 id="client-detail-title">Detalle por sistema operativo</h2>
+          {operatingSystemGroups.map(([operatingSystem, records]) => (
             <section className="client-os" key={operatingSystem}>
               <h2>{operatingSystem}</h2>
               {records.map((update, index) => (
@@ -132,8 +203,8 @@ export function ClientReport({
                 />
               ))}
             </section>
-          ),
-        )
+          ))}
+        </section>
       )}
 
       {report.status === "partial" ? (

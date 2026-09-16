@@ -985,6 +985,79 @@ a {
   margin-block-start: 1rem;
 }
 
+.client-report__summary {
+  margin-block-start: 1.5rem;
+}
+
+.client-report__summary h2,
+.client-report__detail > h2 {
+  color: #344863;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.client-report .client-report__summary-metrics {
+  margin-block: 0.55rem 0.7rem;
+  color: #344863;
+  font-size: 0.9rem;
+}
+
+.client-report__summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.83rem;
+  line-height: 1.25;
+}
+
+.client-report__summary-os {
+  width: 30%;
+}
+
+.client-report__summary-kb {
+  width: 15%;
+}
+
+.client-report__summary-type {
+  width: 13%;
+}
+
+.client-report__summary-date {
+  width: 17%;
+}
+
+.client-report__summary-status {
+  width: 25%;
+}
+
+.client-report__summary-table th,
+.client-report__summary-table td {
+  padding: 0.32rem 0.38rem;
+  border-block-end: 1px solid #d5d9df;
+  text-align: start;
+  vertical-align: top;
+}
+
+.client-report__summary-table th {
+  border-block-start: 1px solid #aeb9c8;
+  border-block-end-color: #aeb9c8;
+  background: #eef1f5;
+  color: #263b5d;
+  font-weight: 700;
+}
+
+.client-report__summary-table td:first-child {
+  font-weight: 600;
+}
+
+.client-report__detail {
+  margin-block-start: 2rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid #aeb9c8;
+}
+
 .client-report__verification {
   margin-block-start: 2rem;
   padding-block-start: 0.75rem;
@@ -1286,6 +1359,15 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .client-report__summary-table {
+    font-size: 0.76rem;
+  }
+
+  .client-report__summary-table th,
+  .client-report__summary-table td {
+    padding: 0.28rem 0.18rem;
+  }
+
   .app-nav {
     gap: var(--space-sm);
   }
@@ -1383,8 +1465,31 @@ a {
   .client-report__header,
   .client-os h2,
   .client-update__header,
-  .client-update__detail h4 {
+  .client-update__detail h4,
+  .client-report__summary h2,
+  .client-report__detail > h2 {
     break-after: avoid;
+  }
+
+  .client-report__summary-table {
+    font-size: 9pt;
+  }
+
+  .client-report__summary-table thead {
+    display: table-header-group;
+  }
+
+  .client-report__summary-table tr {
+    break-inside: avoid;
+  }
+
+  .client-report__summary-table th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .client-report__detail {
+    break-before: page;
   }
 
   .client-update__header,

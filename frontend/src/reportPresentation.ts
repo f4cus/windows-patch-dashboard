@@ -58,6 +58,13 @@ const MONTH_FORMATTER = new Intl.DateTimeFormat("es-AR", {
   year: "numeric",
 });
 
+const COMPACT_DATE_FORMATTER = new Intl.DateTimeFormat("es-AR", {
+  day: "2-digit",
+  month: "2-digit",
+  timeZone: "UTC",
+  year: "numeric",
+});
+
 function parseIsoDate(value: string): Date {
   return new Date(`${value}T00:00:00Z`);
 }
@@ -70,6 +77,12 @@ export function formatDate(value: string | null): string {
   return value === null
     ? "No publicado"
     : DATE_FORMATTER.format(parseIsoDate(value));
+}
+
+export function formatCompactDate(value: string | null): string {
+  return value === null
+    ? "No publicado"
+    : COMPACT_DATE_FORMATTER.format(parseIsoDate(value));
 }
 
 export function formatDateTime(value: string | null): string {

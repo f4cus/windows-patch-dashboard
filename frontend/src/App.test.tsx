@@ -14,7 +14,11 @@ import septemberData from "../../data/reports/2026-09.json";
 import App from "./App";
 import { loadMonthlyReport } from "./data/loadMonthlyReport";
 import type { MonthlyReport, UpdateRecord } from "./data/model";
-import { formatDateTime, KNOWN_ISSUES_LABELS } from "./reportPresentation";
+import {
+  formatCompactDate,
+  formatDateTime,
+  KNOWN_ISSUES_LABELS,
+} from "./reportPresentation";
 import { THEME_STORAGE_KEY } from "./useTheme";
 
 const augustReport = loadMonthlyReport(augustFixture);
@@ -754,6 +758,112 @@ describe("V1 report experience", () => {
 });
 
 describe("Client Report", () => {
+  it("summarizes each filtered KB in detail order with dynamic counts and statuses", () => {
+    const firstOs = augustReport.updates[0].os;
+    const secondOs = augustReport.updates.find(
+      (update) => update.os.displayName !== firstOs.displayName,
+    )!.os;
+    const updates = [
+      updateWith({
+        kb: "KB9000001",
+        os: firstOs,
+        updateType: "security",
+        releaseDate: "2026-08-11",
+        knownIssuesStatus: "none",
+      }),
+      updateWith({
+        kb: "KB9000002",
+        os: firstOs,
+        updateType: "oob",
+        releaseDate: "2026-08-13",
+        knownIssuesStatus: "open",
+      }),
+      updateWith({
+        kb: "KB9000003",
+        os: firstOs,
+        updateType: "oob",
+        releaseDate: "2026-08-15",
+        knownIssuesStatus: "unknown",
+      }),
+      updateWith({
+        kb: "KB9000004",
+        os: secondOs,
+        updateType: "security",
+        releaseDate: "2026-08-11",
+        knownIssuesStatus: "resolved",
+      }),
+      updateWith({
+        kb: "KB9000005",
+        os: secondOs,
+        updateType: "oob",
+        releaseDate: null,
+        knownIssuesStatus: "not-published",
+      }),
+    ];
+    const { container } = renderApp({
+      reports: [reportWith({ status: "partial" }, updates)],
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const document = container.querySelector<HTMLElement>(".client-report")!;
+    const summary = document.querySelector<HTMLElement>(
+      ".client-report__summary",
+    )!;
+    const detail = document.querySelector<HTMLElement>(
+      ".client-report__detail",
+    )!;
+    const rows = [...summary.querySelectorAll<HTMLTableRowElement>("tbody tr")];
+    const labels = [
+      "Sin problemas conocidos",
+      "Abierto",
+      "No verificado",
+      "Resuelto",
+      "No publicado",
+    ];
+
+    expect(document.children[0].className).toBe("client-report__header");
+    expect(document.children[1]).toBe(summary);
+    expect(document.children[2]).toBe(detail);
+    expect(
+      within(summary).getByRole("heading", { name: "Resumen ejecutivo" }),
+    ).toBeTruthy();
+    expect(
+      within(detail).getByRole("heading", {
+        name: "Detalle por sistema operativo",
+      }),
+    ).toBeTruthy();
+    expect(summary.textContent).toContain(
+      "2 sistemas operativos · 2 actualizaciones de seguridad · 3 OOB · 1 estado no verificado",
+    );
+    expect(
+      [...summary.querySelectorAll("thead th")].map((cell) => cell.textContent),
+    ).toEqual([
+      "Sistema operativo",
+      "KB",
+      "Tipo",
+      "Publicación",
+      "Problemas conocidos",
+    ]);
+    expect(rows).toHaveLength(updates.length);
+    rows.forEach((row, index) => {
+      expect([...row.cells].map((cell) => cell.textContent)).toEqual([
+        updates[index].os.displayName,
+        updates[index].kb,
+        index === 0 || index === 3 ? "Seguridad" : "OOB",
+        formatCompactDate(updates[index].releaseDate),
+        labels[index],
+      ]);
+    });
+    expect(
+      [...detail.querySelectorAll(".client-update h3")].map(
+        (heading) => heading.textContent,
+      ),
+    ).toEqual(updates.map((update) => update.kb));
+    expect(document.lastElementChild?.className).toBe(
+      "client-report__verification",
+    );
+  });
+
   it("explains only the included unknown known-issue records in a final note", () => {
     const monthly = updateWith({
       kb: "KB9000001",
@@ -880,6 +990,13 @@ describe("Client Report", () => {
     );
     expect(records[1].querySelector("[data-type]")?.textContent).toBe("OOB");
     expect(records[1].textContent).toContain("14 de septiembre de 2026");
+    const summary = document.querySelector<HTMLElement>(
+      ".client-report__summary",
+    )!;
+    expect(summary.querySelectorAll("tbody tr")).toHaveLength(18);
+    expect(summary.textContent).toContain(
+      "9 sistemas operativos · 9 actualizaciones de seguridad · 9 OOB · 2 estados no verificados",
+    );
     expect(window.document.title).toBe("Microsoft Patch Tuesday - 2026-09");
   });
 
@@ -951,6 +1068,14 @@ describe("Client Report", () => {
     expect(container.querySelector(".client-update h3")?.textContent).toBe(
       "KB5120242",
     );
+    const summary = container.querySelector<HTMLElement>(
+      ".client-report__summary",
+    )!;
+    expect(summary.querySelectorAll("tbody tr")).toHaveLength(1);
+    expect(summary.textContent).toContain(
+      "1 sistema operativo · 1 actualización de seguridad · 0 OOB · Sin estados no verificados",
+    );
+    expect(summary.textContent).not.toContain("KB5120233");
   });
 
   it("opens browser print and keeps Report Mode and PNG export available", async () => {
