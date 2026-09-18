@@ -85,6 +85,9 @@ a {
 }
 
 .wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   min-width: 0;
 }
 
@@ -130,6 +133,58 @@ a {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.75;
+}
+
+.about-toggle {
+  flex: none;
+  font-size: 1.4rem;
+}
+
+.about-dialog {
+  width: min(36rem, calc(100% - 2rem));
+  max-height: min(80dvh, 44rem);
+  padding: var(--space-lg);
+  border: var(--rule-thin) solid var(--color-rule-2);
+  border-radius: var(--radius-control);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.about-dialog::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.about-dialog__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.about-dialog h2,
+.about-dialog h3,
+.about-dialog p {
+  margin-block: 0;
+}
+
+.about-dialog h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.about-dialog h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+}
+
+.about-dialog section {
+  margin-block-start: var(--space-md);
+}
+
+.about-dialog p {
+  margin-block-start: var(--space-xs);
 }
 
 .wordmark > span {

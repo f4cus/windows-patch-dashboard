@@ -1,8 +1,16 @@
 # Windows Patch Dashboard
 
-## Product
+## What it is / Qué es
 
-Windows Patch Dashboard turns official Microsoft Patch Tuesday information into a concise, traceable monthly report for Windows Server 2012 ESU and newer, plus supported Windows 11 branches. A deterministic Python collector produces validated, versioned JSON; a static React application presents it without a database, backend API, or runtime AI dependency.
+Windows Patch Dashboard brings official Microsoft update information for Windows Server and supported Windows 11 branches into one concise monthly view. Infrastructure teams can review published patches, changes, fixes, and known issues without manually comparing multiple sources before patching.
+
+## How it works / Cómo funciona
+
+Official Microsoft sources → Python collector → validation and normalization → versioned JSON in Git → React/TypeScript/Vite frontend → GitHub Actions build and deployment → GitHub Pages. GitHub Actions also schedules collection and validation; the frontend bundles the validated reports at build time.
+
+## Why this architecture / Por qué esta arquitectura
+
+Automation and static hosting keep the dashboard reproducible and low maintenance without servers or other infrastructure to operate. Separating collection from presentation keeps the browser from calling Microsoft directly, while Git provides an auditable history of report changes.
 
 ## Screenshot / usage
 
@@ -19,22 +27,6 @@ Production reports use only official Microsoft content:
 - official Microsoft Support KB articles for highlights, fixes, and known issues.
 
 Microsoft Support `es-ES` content is preferred per KB, with the official `en-US` article used only when Spanish content cannot be retrieved and parsed reliably. No third-party content populates production reports. The source evaluation and August comparison are documented in [docs/phase-3-source-evaluation.md](docs/phase-3-source-evaluation.md) and [docs/phase-3-august-2026-comparison.md](docs/phase-3-august-2026-comparison.md).
-
-## Architecture
-
-```text
-MSRC + Microsoft Support
-          →
-Python collector
-          →
-validated JSON in Git
-          →
-React + Vite
-          →
-GitHub Pages
-```
-
-The frontend bundles the validated report catalog at build time and never calls or scrapes Microsoft. Git history is the audit trail for production report changes.
 
 ## Local development
 

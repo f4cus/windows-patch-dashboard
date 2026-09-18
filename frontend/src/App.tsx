@@ -84,6 +84,7 @@ export default function App({
   const [mode, setMode] = useState<ViewMode>("interactive");
   const [exportState, setExportState] = useState<ExportState>("idle");
   const reportRef = useRef<HTMLElement>(null);
+  const aboutDialogRef = useRef<HTMLDialogElement>(null);
   const { theme, toggleTheme } = useTheme();
 
   const report = useMemo(
@@ -282,6 +283,17 @@ export default function App({
       <header className="app-nav" aria-label="Cabecera de la aplicación">
         <div className="wordmark">
           <span>Windows Patch Dashboard</span>
+          <button
+            className="theme-toggle about-toggle"
+            type="button"
+            aria-label="Acerca del dashboard"
+            aria-haspopup="dialog"
+            aria-controls="about-dashboard"
+            title="Acerca del dashboard"
+            onClick={() => aboutDialogRef.current?.showModal()}
+          >
+            <span aria-hidden="true">ⓘ</span>
+          </button>
         </div>
         <div className="app-actions">
           <button
@@ -319,6 +331,53 @@ export default function App({
           </button>
         </div>
       </header>
+
+      <dialog
+        ref={aboutDialogRef}
+        id="about-dashboard"
+        className="about-dialog"
+        aria-labelledby="about-dashboard-title"
+      >
+        <div className="about-dialog__header">
+          <h2 id="about-dashboard-title">Acerca del dashboard</h2>
+          <button
+            className="button button--secondary"
+            type="button"
+            onClick={() => aboutDialogRef.current?.close()}
+          >
+            Cerrar
+          </button>
+        </div>
+        <section>
+          <h3>Qué es</h3>
+          <p>
+            Windows Patch Dashboard reúne información oficial de Microsoft sobre
+            actualizaciones de Windows Server y Windows 11: parches publicados,
+            cambios, correcciones y problemas conocidos. Ayuda a los equipos de
+            infraestructura a analizar el parchado sin buscar y cruzar fuentes
+            manualmente.
+          </p>
+        </section>
+        <section>
+          <h3>Cómo funciona</h3>
+          <p>
+            Un collector en Python consulta fuentes oficiales de Microsoft,
+            normaliza y valida los datos, y genera reportes JSON versionados en
+            Git. La aplicación estática en React, TypeScript y Vite los
+            presenta; GitHub Actions automatiza la actualización, validación,
+            construcción y publicación en GitHub Pages.
+          </p>
+        </section>
+        <section>
+          <h3>Por qué está construido así</h3>
+          <p>
+            Esta separación mantiene la solución simple, reproducible y de bajo
+            mantenimiento. El navegador no consulta directamente a Microsoft,
+            Git conserva el historial de los datos y GitHub Pages evita operar
+            servidores propios.
+          </p>
+        </section>
+      </dialog>
 
       <main className="app-main">
         <section className="operator-bar" aria-label="Controles del informe">

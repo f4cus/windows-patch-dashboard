@@ -95,6 +95,53 @@ afterEach(() => {
 });
 
 describe("V1 report experience", () => {
+  it("opens and closes the dashboard explanation without changing the report", () => {
+    const { container } = renderApp();
+    const trigger = screen.getByRole("button", {
+      name: "Acerca del dashboard",
+    });
+    const dialog = container.querySelector("dialog")!;
+    // jsdom does not implement the native dialog methods.
+    dialog.showModal = vi.fn(() => {
+      dialog.open = true;
+    });
+    dialog.close = vi.fn(() => {
+      dialog.open = false;
+    });
+
+    expect(trigger.getAttribute("title")).toBe("Acerca del dashboard");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(dialog.open).toBe(false);
+    expect(container.querySelectorAll("thead th")).toHaveLength(5);
+
+    fireEvent.click(trigger);
+
+    expect(dialog.showModal).toHaveBeenCalledTimes(1);
+    expect(dialog.open).toBe(true);
+    expect(screen.getByRole("dialog", { name: "Acerca del dashboard" })).toBe(
+      dialog,
+    );
+    expect(
+      within(dialog).getByRole("heading", { name: "Qué es" }),
+    ).toBeTruthy();
+    expect(
+      within(dialog).getByRole("heading", { name: "Cómo funciona" }),
+    ).toBeTruthy();
+    expect(
+      within(dialog).getByRole("heading", {
+        name: "Por qué está construido así",
+      }),
+    ).toBeTruthy();
+    expect(dialog.textContent).toContain("Windows Server y Windows 11");
+    expect(dialog.textContent).toContain("GitHub Pages");
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cerrar" }));
+
+    expect(dialog.close).toHaveBeenCalledTimes(1);
+    expect(dialog.open).toBe(false);
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(9);
+  });
+
   it("removes the secondary editorial tagline", () => {
     renderApp();
 
