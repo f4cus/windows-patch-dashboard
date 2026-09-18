@@ -133,7 +133,18 @@ describe("V1 report experience", () => {
       }),
     ).toBeTruthy();
     expect(dialog.textContent).toContain("Windows Server y Windows 11");
+    expect(dialog.textContent).toContain(
+      "Cuando la evidencia no es suficiente, el dashboard lo indica explícitamente",
+    );
     expect(dialog.textContent).toContain("GitHub Pages");
+    expect(
+      [...dialog.querySelectorAll("strong")].map(
+        (element) => element.textContent,
+      ),
+    ).toEqual([
+      "recolección y validación de los datos",
+      "presentación en el dashboard",
+    ]);
 
     fireEvent.click(within(dialog).getByRole("button", { name: "Cerrar" }));
 

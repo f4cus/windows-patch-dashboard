@@ -357,13 +357,19 @@ export default function App({
             infraestructura a analizar el parchado sin buscar y cruzar fuentes
             manualmente.
           </p>
+          <p>
+            La información se obtiene y contrasta entre fuentes oficiales de
+            Microsoft, se valida antes de publicarse y mantiene trazabilidad de
+            su origen. Cuando la evidencia no es suficiente, el dashboard lo
+            indica explícitamente en lugar de asumir información.
+          </p>
         </section>
         <section>
           <h3>Cómo funciona</h3>
           <p>
             Un collector en Python consulta fuentes oficiales de Microsoft,
             normaliza y valida los datos, y genera reportes JSON versionados en
-            Git. La aplicación estática en React, TypeScript y Vite los
+            Git. Una aplicación estática en React, TypeScript y Vite los
             presenta; GitHub Actions automatiza la actualización, validación,
             construcción y publicación en GitHub Pages.
           </p>
@@ -371,10 +377,12 @@ export default function App({
         <section>
           <h3>Por qué está construido así</h3>
           <p>
-            Esta separación mantiene la solución simple, reproducible y de bajo
-            mantenimiento. El navegador no consulta directamente a Microsoft,
-            Git conserva el historial de los datos y GitHub Pages evita operar
-            servidores propios.
+            Separar la <strong>recolección y validación de los datos</strong> de
+            su <strong>presentación en el dashboard</strong> mantiene la
+            solución simple, reproducible y de bajo mantenimiento. El navegador
+            no consulta directamente a Microsoft, Git conserva el historial y la
+            trazabilidad de los datos, y GitHub Pages evita operar
+            infraestructura propia.
           </p>
         </section>
       </dialog>
