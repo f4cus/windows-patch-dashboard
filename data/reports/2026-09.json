@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-09",
   "patchTuesdayDate": "2026-09-08",
-  "generatedAt": "2026-09-23T20:59:35.352947Z",
+  "generatedAt": "2026-09-24T21:04:36.488288Z",
   "status": "partial",
   "updates": [
     {
@@ -24,12 +24,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/09/kb5123065-windows-server-2012-mr",
-          "retrievedAt": "2026-09-23T20:59:32.661037Z"
+          "retrievedAt": "2026-09-24T21:04:34.713095Z"
         }
       ]
     },
@@ -52,12 +52,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/09/kb5129244-windows-server-2012-standalone-cbs",
-          "retrievedAt": "2026-09-23T20:59:35.315388Z"
+          "retrievedAt": "2026-09-24T21:04:36.450608Z"
         }
       ]
     },
@@ -80,12 +80,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/09/kb5123066-windows-8-1-mr",
-          "retrievedAt": "2026-09-23T20:59:32.890940Z"
+          "retrievedAt": "2026-09-24T21:04:34.805790Z"
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/09/kb5129243-windows-8-1-standalone-cbs",
-          "retrievedAt": "2026-09-23T20:59:35.155073Z"
+          "retrievedAt": "2026-09-24T21:04:36.347409Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5123099-windows-10-1607-security-update",
-          "retrievedAt": "2026-09-23T20:59:33.147416Z"
+          "retrievedAt": "2026-09-24T21:04:34.962475Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5129239-windows-10-1607-update",
-          "retrievedAt": "2026-09-23T20:59:34.615141Z"
+          "retrievedAt": "2026-09-24T21:04:35.999595Z"
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5122876-windows-10-1809-security-update",
-          "retrievedAt": "2026-09-23T20:59:31.983247Z"
+          "retrievedAt": "2026-09-24T21:04:34.249051Z"
         }
       ]
     },
@@ -220,12 +220,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/09/kb5129238-windows-10-1809-update",
-          "retrievedAt": "2026-09-23T20:59:34.397775Z"
+          "retrievedAt": "2026-09-24T21:04:35.833985Z"
         }
       ]
     },
@@ -248,12 +248,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5122882-windows-server-2022-security-update",
-          "retrievedAt": "2026-09-23T20:59:32.429362Z"
+          "retrievedAt": "2026-09-24T21:04:34.610129Z"
         }
       ]
     },
@@ -276,12 +276,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5129237-windows-server-2022-update",
-          "retrievedAt": "2026-09-23T20:59:34.176647Z"
+          "retrievedAt": "2026-09-24T21:04:35.719977Z"
         }
       ]
     },
@@ -304,12 +304,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5122871-windows-server-2025-security-update",
-          "retrievedAt": "2026-09-23T20:59:31.645728Z"
+          "retrievedAt": "2026-09-24T21:04:34.142568Z"
         }
       ]
     },
@@ -332,12 +332,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5129235-windows-server-2025-update",
-          "retrievedAt": "2026-09-23T20:59:34.024854Z"
+          "retrievedAt": "2026-09-24T21:04:35.600811Z"
         }
       ]
     },
@@ -360,12 +360,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5122880-windows-11-22h2-23h2-security-update",
-          "retrievedAt": "2026-09-23T20:59:32.205679Z"
+          "retrievedAt": "2026-09-24T21:04:34.520795Z"
         }
       ]
     },
@@ -381,19 +381,19 @@
       "releaseDate": "2026-09-14",
       "changesSummary": "No disponible: Microsoft Support no expuso cambios verificables en una sección compatible.",
       "resolvedIssuesSummary": "[Servicios de escritorio remoto (problema conocido)] Corregido: esta actualización soluciona un problema que afecta a los Servicios de escritorio remoto (RDS) después de instalar la actualización de seguridad de Windows ( KB5122880 ) de septiembre de 2026. En los entornos afectados, RDS podría volverse inestable, lo que provocaría errores de conexión RDP e inicio de sesión o que los servidores dejaran de responder durante la configuración de Escritorio remoto. Herramientas relacionadas, como Microsoft Management Console (MMC), el Diagnóstico de licencias RDS, el Explorador de archivos y la página de Windows Update, también podrían dejar de responder. [Hyper-V (problema conocido)] Corregido: Algunas aplicaciones que usan máquinas virtuales administradas por HCS experimentaron problemas al compartir la carpeta del host con máquinas virtuales de Linux mediante Plan9. Las carpetas compartidas desde el host de Windows con Plan9 no aparecían o no se podía acceder a ellas en el entorno de invitado. [Modos de audio de 8 canales o 3D] Corregido: Algunos dispositivos de clase de audio USB 1.0 que funcionaban como se esperaba en configuraciones estéreo estándar no podían utilizarse al usar funciones de audio multicanal, incluidos los modos de audio de 8 canales o 3D. (Nota: Hay otros síntomas de audio que no se resuelven en esta actualización de OOB. Consulte la sección \"Problemas conocidos en esta actualización\" para obtener más información).",
-      "knownIssuesSummary": "Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Microsoft está buscando una resolución y actualizará esta documentación cuando haya más información disponible.",
+      "knownIssuesSummary": "Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Microsoft está buscando una resolución y actualizará esta documentación cuando haya más información disponible. Es posible que el historial de archivos deje de funcionar después de instalar la actualización de Windows de septiembre de 2026 Síntomas Después de instalar la actualización de seguridad de Windows de septiembre de 2026 KB5124008, es posible que algunos clientes que usan el historial de archivos no puedan crear o actualizar copias de seguridad. El historial de archivos, disponible a través del Panel de control del sistema y el historial de archivos de seguridad>, se usa para hacer copias de seguridad de los archivos en una unidad externa o ubicación de > red. Los dispositivos afectados pueden mostrar incorrectamente un mensaje de \"Reconectar la unidad\" incluso cuando una unidad de copia de seguridad compatible está conectada y funciona correctamente. Además, es posible que la marca de tiempo de \"Última copia de seguridad\" no se actualice y que los archivos de copia de seguridad anteriores muestren \"No hay versión anterior disponible\". En algunos casos, el Visor de eventos puede grabar eventos de bloqueo de la aplicación que hacen FileHistory.exe referencia a . KERNELBASE.dll Resolución Microsoft está trabajando en una solución para este problema en una futura actualización de Windows y proporcionará más información cuando esté disponible.",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5129242-windows-11-23h2-update",
-          "retrievedAt": "2026-09-23T20:59:35.002301Z"
+          "retrievedAt": "2026-09-24T21:04:36.252565Z"
         }
       ]
     },
@@ -416,12 +416,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5124008-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-09-23T20:59:33.272326Z"
+          "retrievedAt": "2026-09-24T21:04:35.107397Z"
         }
       ]
     },
@@ -444,12 +444,12 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-09-23T20:59:31.548819Z"
+          "retrievedAt": "2026-09-24T21:04:34.006257Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5129195-windows-11-24h2-25h2-security-update",
-          "retrievedAt": "2026-09-23T20:59:33.833684Z"
+          "retrievedAt": "2026-09-24T21:04:35.470296Z"
         }
       ]
     },
@@ -472,12 +472,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5124012-windows-11-26h1-security-update",
-          "retrievedAt": "2026-09-23T20:59:33.533231Z"
+          "retrievedAt": "2026-09-24T21:04:35.215405Z"
         }
       ]
     },
@@ -500,12 +500,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Sep",
-          "retrievedAt": "2026-09-23T20:59:30.507100Z"
+          "retrievedAt": "2026-09-24T21:04:32.789472Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/09/kb5129194-windows-11-26h1-security-update",
-          "retrievedAt": "2026-09-23T20:59:33.743049Z"
+          "retrievedAt": "2026-09-24T21:04:35.365992Z"
         }
       ]
     }
