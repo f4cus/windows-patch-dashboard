@@ -45,7 +45,7 @@ Collect one explicit report month:
 
 The month must be strict `YYYY-MM`.
 
-Resolve the automatic target month (latest Patch Tuesday that has occurred):
+Resolve the automatic target month (current month opens at D 14:15 ART; otherwise the previous month):
 
 ```powershell
 .venv\Scripts\python -m windows_patch_collector target-month
@@ -184,17 +184,33 @@ Deployment is defined in `.github/workflows/pages.yml`.
 
 - Push to `main`: validate repository data, build frontend, deploy Pages. **No live Microsoft collection** on this path.
 - `workflow_dispatch`: refresh + deploy; optional strict `YYYY-MM` input.
-- Schedule: daily at `15:00 ART` (Argentina, UTC-3), equivalent to `18:00 UTC` (`0 18 * * *`).
+- Schedule: adaptive around D, the dynamically calculated second Tuesday, using ART (fixed UTC-3).
+
+| Window | ART slots | UTC slots |
+| --- | --- | --- |
+| D | 14:15–22:15 hourly | 17:15–23:15 on D, then 00:15 and 01:15 on D+1 |
+| D+1 | 09:00–21:00 every two hours | 12:00–22:00 every two hours, then 00:00 on D+2 |
+| D+2 | 09:00–21:00 every four hours | 12:00, 16:00, 20:00, then 00:00 on D+3 |
+| D+3 | 09:00 and 15:00 | 12:00 and 18:00 |
+| Otherwise | 15:00 daily | 18:00 daily |
+
+The daily slot continues refreshing the previous month before the next D. UTC crons produce candidates on the relevant weekdays; `Check refresh window` filters their dates dynamically. The 18:00 UTC daily cron supplies D+1 15:00 and D+3 15:00, avoiding duplicate triggers. It is disabled on D and D+2.
+
+The gate reads the workflow's original `created_at` through the GitHub API with `actions: read`, associates it with the latest occurrence of the triggering cron, and accepts delays up to six hours from that slot to the gate. It skips older jobs, rejects unknown crons and fails safely if the API cannot be read. There is no current-minute equality check and no replay of missed slots; GitHub can delay or drop scheduled runs ([GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)). Manual dispatch bypasses the schedule gate and keeps its optional month override. Push still builds/deploys without collection.
+
+Microsoft normally publishes monthly security updates at [10:00 Pacific on D](https://learn.microsoft.com/en-us/windows/deployment/update/release-cycle). In November 2026 that is 15:00 ART: the 14:15 attempt may precede publication. `reconcile-report --require-release` prevents automated publication before that PST/PDT boundary or without any Support-verified monthly security row. Such a run fails before commit/build/deploy and leaves the last deployed report in place; the next slot retries through the normal collector. This guard also applies to manual refresh publication and does not claim that all articles are complete at the nominal release time.
+
+The production CLI's canonical Support URL fallback can remain insufficient when `/help/` returns 403, while a manual call supplied with prior canonical URLs can succeed. This independent resilience debt remains pending; WPD-INC-003 does not change source discovery or parsers. Required classification/verification failures still fail safely.
 
 ### Scheduled/manual refresh flow
 
-1. Checkout the default branch.
-2. Install the collector.
-3. Resolve requested/latest eligible Patch Tuesday month.
+1. Run the lightweight schedule/manual planner and resolve the requested/latest enabled month without Microsoft access or installing collector dependencies.
+2. If enabled, checkout the default branch and install the collector. Disabled candidates skip refresh, build and deploy.
+3. Use the planner's target month, anchored to the scheduled slot even if the runner starts later.
 4. Preserve the committed report if it exists.
 5. Collect official Microsoft data.
 6. Validate all repository data.
-7. Ignore only `generatedAt` / `retrievedAt` when deciding whether data changed meaningfully.
+7. Check the publication boundary and verified monthly evidence; then ignore only `generatedAt` / `retrievedAt` when deciding whether data changed meaningfully.
 8. If substantive, stage only the expected monthly report, commit as `github-actions[bot]`, and push to the default branch with `GITHUB_TOKEN`.
 9. Record the exact resulting commit SHA.
 10. Validate/build the frontend from that exact state.
@@ -303,10 +319,12 @@ Treat `partial` as a valid fail-safe output. Fix the source parser/rule only whe
 
 In GitHub Actions inspect `Refresh Microsoft report`, especially:
 
-- `Determine target report`;
+- `Check refresh window` / `Determine enabled refresh and target month`;
 - `Collect official Microsoft data`;
 - `Validate generated repository data`;
 - `Commit substantive report update`.
+
+A skipped refresh on a candidate outside an enabled slot is expected. A failed `Detect meaningful report changes` can indicate a pre-release attempt or missing monthly publication evidence; inspect its exact error and wait for the next slot rather than bypassing the guard.
 
 **Likely Cause**
 

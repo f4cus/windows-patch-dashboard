@@ -122,7 +122,7 @@ The current parser supports both Spanish and English headings/date patterns and 
 ### Status
 Active.
 
-## D007 - Semantic daily refresh, not timestamp churn
+## D007 - Adaptive semantic refresh, not timestamp churn
 
 ### Decision
 GitHub Actions performs scheduled/manual collection and compares reports while ignoring only `generatedAt` and source `retrievedAt`. It commits only substantive report changes and stages only the expected `data/reports/YYYY-MM.json` path.
@@ -134,9 +134,13 @@ Live collection naturally changes retrieval timestamps even when Microsoft facts
 Keeping timestamp-only commits would create noise in Git history without changing the dashboard's meaning.
 
 ### Consequences
-- Scheduled refreshes run daily at 15:00 ART (Argentina, UTC-3), equivalent to 18:00 UTC (`0 18 * * *`), without necessarily committing daily.
+- WPD-INC-003 uses Argentina's fixed UTC-3 offset: D (second Tuesday) hourly at 14:15–22:15; D+1 every two hours at 09:00–21:00; D+2 every four hours at 09:00–21:00; D+3 at 09:00 and 15:00; otherwise daily at 15:00, including the days before the next month's D.
+- Non-overlapping UTC cron candidates are filtered by a dependency-free planning job before installing the collector. Automatic month selection opens at D 14:15 ART; a manual month override remains available.
+- The planner associates the triggering cron with its latest occurrence at or before the workflow's API `created_at`, then tolerates up to six hours from that slot to the gate. It never requires the runner's current minute to match. Older runs are skipped, and dropped slots are not replayed; the next approved slot tries again. This is bounded best-effort scheduling, not guaranteed delivery or an exactly-once queue.
+- Automated publication additionally waits until D 10:00 America/Los_Angeles (PST/PDT) and requires a monthly security row with MSRC and verified Support provenance. Thus the November 14:15 ART attempt may collect, but cannot publish before 15:00 ART. Existing schema, partial/unknown semantics and candidate verification remain in force.
 - Meaningful changes use `github-actions[bot]` and the built-in `GITHUB_TOKEN`.
 - A refresh failure prevents that run from deploying newly collected data.
+- The known difference between production Support URL discovery and manual canonical fallback URLs remains independent resilience debt; it does not block scheduling. A missing required verification still fails safely under D001/D003/D004.
 
 ### Status
 Active.

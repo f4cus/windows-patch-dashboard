@@ -7,18 +7,63 @@ on:
   workflow_dispatch:
     inputs:
       month:
-        description: Optional report month (YYYY-MM); defaults to the latest occurred Patch Tuesday
+        description: Optional report month (YYYY-MM); defaults to the latest enabled Patch Tuesday
         required: false
         type: string
   schedule:
+    # UTC candidates; the plan job enables only approved ART slots.
     - cron: "0 18 * * *"
+    - cron: "15 17-23 * * 2"
+    - cron: "15 0,1 * * 3"
+    - cron: "0 12,14,16,20,22 * * 3"
+    - cron: "0 12,16,20 * * 4"
+    - cron: "0 0 * * 4,5"
+    - cron: "0 12 * * 5"
 
 permissions: {}
 
 jobs:
+  plan:
+    name: Check refresh window
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      enabled: ${{ steps.plan.outputs.enabled }}
+      month: ${{ steps.plan.outputs.month }}
+      report_path: ${{ steps.plan.outputs.report_path }}
+    steps:
+      - name: Check out scheduling rules
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+
+      - name: Determine enabled refresh and target month
+        id: plan
+        shell: bash
+        env:
+          PYTHONPATH: collector/src
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          REQUESTED_MONTH: ${{ inputs.month }}
+          GH_TOKEN: ${{ github.token }}
+          RUN_API_URL: ${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          args=(--event "$EVENT_NAME" --schedule "$EVENT_SCHEDULE")
+          if [[ "$EVENT_NAME" == "schedule" ]]; then
+            created_at="$(curl --fail --silent --show-error --retry 2 --max-time 30 \
+              -H "Authorization: Bearer $GH_TOKEN" "$RUN_API_URL" | jq -er '.created_at')"
+            args+=(--at "$created_at")
+          fi
+          if [[ -n "$REQUESTED_MONTH" ]]; then
+            args+=(--month "$REQUESTED_MONTH")
+          fi
+          python3 -m windows_patch_collector.refresh_schedule "${args[@]}" >> "$GITHUB_OUTPUT"
+
   refresh:
     name: Refresh Microsoft report
-    if: github.event_name != 'push'
+    needs: plan
+    if: needs.plan.outputs.enabled == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -44,31 +89,17 @@ jobs:
       - name: Install collector
         run: python -m pip install -e collector
 
-      - name: Determine target report
-        id: target
-        shell: bash
-        env:
-          REQUESTED_MONTH: ${{ inputs.month }}
-        run: |
-          if [[ -n "$REQUESTED_MONTH" ]]; then
-            month="$(python -m windows_patch_collector target-month --month "$REQUESTED_MONTH")"
-          else
-            month="$(python -m windows_patch_collector target-month)"
-          fi
-          echo "month=$month" >> "$GITHUB_OUTPUT"
-          echo "report_path=data/reports/$month.json" >> "$GITHUB_OUTPUT"
-
       - name: Preserve committed report for comparison
         shell: bash
         env:
-          REPORT_PATH: ${{ steps.target.outputs.report_path }}
+          REPORT_PATH: ${{ needs.plan.outputs.report_path }}
         run: |
           if [[ -f "$REPORT_PATH" ]]; then
             cp -- "$REPORT_PATH" "$RUNNER_TEMP/committed-report.json"
           fi
 
       - name: Collect official Microsoft data
-        run: python -m windows_patch_collector collect --month "${{ steps.target.outputs.month }}"
+        run: python -m windows_patch_collector collect --month "${{ needs.plan.outputs.month }}"
 
       - name: Validate generated repository data
         run: python -m windows_patch_collector validate
@@ -78,8 +109,8 @@ jobs:
         shell: bash
         run: |
           changed="$(python -m windows_patch_collector reconcile-report \
-            --month "${{ steps.target.outputs.month }}" \
-            --baseline "$RUNNER_TEMP/committed-report.json")"
+            --month "${{ needs.plan.outputs.month }}" \
+            --baseline "$RUNNER_TEMP/committed-report.json" --require-release)"
           if [[ "$changed" != "true" && "$changed" != "false" ]]; then
             echo "Unexpected comparison result: $changed" >&2
             exit 1
@@ -91,8 +122,8 @@ jobs:
         shell: bash
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          REPORT_MONTH: ${{ steps.target.outputs.month }}
-          REPORT_PATH: ${{ steps.target.outputs.report_path }}
+          REPORT_MONTH: ${{ needs.plan.outputs.month }}
+          REPORT_PATH: ${{ needs.plan.outputs.report_path }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

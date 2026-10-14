@@ -7,8 +7,12 @@ from collections.abc import Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from windows_patch_collector.automation import reconcile_generated_report, report_path
-from windows_patch_collector.calendar import parse_report_month, resolve_report_month
+from windows_patch_collector.automation import (
+    ensure_refresh_publishable,
+    reconcile_generated_report,
+    report_path,
+)
+from windows_patch_collector.calendar import ART, parse_report_month, resolve_report_month_at
 from windows_patch_collector.collector import collect_month
 from windows_patch_collector.errors import CollectorError
 from windows_patch_collector.http_client import MicrosoftHttpClient
@@ -60,6 +64,9 @@ def _parser() -> argparse.ArgumentParser:
         "--baseline", required=True, type=Path, help="pre-collection report copy"
     )
     reconcile.add_argument("--root", type=Path, help="repository root")
+    reconcile.add_argument(
+        "--require-release", action="store_true", help="guard automated publication"
+    )
     return parser
 
 
@@ -69,8 +76,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     arguments = _parser().parse_args(argv)
     try:
         if arguments.command == "target-month":
-            today = arguments.today or datetime.now(UTC).date()
-            print(resolve_report_month(today, arguments.month))
+            instant = (
+                datetime.combine(arguments.today, datetime.min.time(), ART)
+                if arguments.today
+                else datetime.now(UTC)
+            )
+            print(resolve_report_month_at(instant, arguments.month))
             return 0
 
         root_value = getattr(arguments, "root", None)
@@ -82,6 +93,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         if arguments.command == "reconcile-report":
             destination = report_path(repository_root, str(arguments.month))
+            if arguments.require_release:
+                ensure_refresh_publishable(destination, datetime.now(UTC))
             changed = reconcile_generated_report(arguments.baseline.resolve(), destination)
             print(str(changed).lower())
             return 0

@@ -6,10 +6,31 @@ import json
 import os
 import tempfile
 from copy import deepcopy
+from datetime import datetime, time
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
-from windows_patch_collector.calendar import parse_report_month
+from windows_patch_collector.calendar import parse_report_month, patch_tuesday
+
+
+def ensure_refresh_publishable(report: Path, now: datetime) -> None:
+    """Keep pre-release/empty monthly attempts out of automatic commits and Pages."""
+
+    with report.open(encoding="utf-8") as handle:
+        document = json.load(handle)
+    release_day = patch_tuesday(document["reportMonth"])
+    release_at = datetime.combine(release_day, time(10), ZoneInfo("America/Los_Angeles"))
+    if now.tzinfo is None or now < release_at:
+        raise ValueError("Monthly publication is not enabled before 10:00 Pacific on Patch Tuesday")
+    if not any(
+        update["kb"] != "NO PUBLICADO"
+        and update["updateType"] == "security"
+        and update["releaseDate"] == release_day.isoformat()
+        and {source["type"] for source in update["sources"]} >= {"msrc", "microsoft-support"}
+        for update in document["updates"]
+    ):
+        raise ValueError("No Support-verified monthly security update is available for publication")
 
 
 def report_path(repository_root: Path, month: str) -> Path:

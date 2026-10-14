@@ -38,13 +38,13 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 
 ## Data Flow
 
-1. A strict `YYYY-MM` report month is selected. Automation chooses the latest month whose second Tuesday has already occurred when no month is supplied.
+1. A strict `YYYY-MM` report month is selected. Automatic selection enables the current month at its second Tuesday's 14:15 ART (UTC-3) window; before then it selects the preceding month. Manual dispatch preserves an explicit month override.
 2. The collector retrieves the monthly MSRC CVRF document for monthly KBs and the official Windows message center for dated OOB announcement links. It maps supported product/OS labels to normalized identities and excludes hotpatch-only packages through their official Support path. Generic ESU security candidates are retained for Monthly Rollup verification; verified Support titles exclude SSU, security-only, and auxiliary packages from principal monthly rows.
 3. Each discovered KB is verified against official Microsoft Support. `es-ES` content is preferred; `en-US` is the fallback when Spanish content cannot be retrieved and parsed reliably.
 4. Microsoft Support provides deterministic article content for changes, fixes, and known issues. Hotpatch exclusions require an official Support redirect under Microsoft's `/hotpatch/` path.
 5. Normalization applies product rules, canonical ordering, provenance, known-issue semantics, `NO PUBLICADO` behavior for missing 2012/2012 R2 ESU monthly rollups, and fail-safe conflict checks. Explicit OOB labels from CVRF, message center announcements, or the verified Microsoft Support article title add a separate record; supersedence is linked only when CVRF states it.
 6. The report is schema/semantics validated and atomically written to `data/reports/YYYY-MM.json`. An existing report is preserved if collection or validation fails.
-7. Scheduled/manual automation compares the generated report with the committed report while ignoring only `generatedAt` and source `retrievedAt`. Only substantive changes are committed.
+7. A lightweight schedule gate enables the approved ART slots before collection. Scheduled/manual automation validates the report, waits for D 10:00 Pacific and requires verified monthly publication evidence before comparing it with the committed report while ignoring only `generatedAt` and source `retrievedAt`. Only substantive changes are committed.
 8. Vite imports `data/fixtures/*.json` and `data/reports/*.json` at build time. A production report overrides a same-month fixture.
 9. GitHub Pages serves the resulting static React application.
 
@@ -86,7 +86,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - Report Mode optimized for a dense shareable artifact.
 - High-resolution client-side PNG export of the filtered report.
 - Neutral Client Report with an executive summary per KB, followed by full OS/KB sections, official links, and selectable text in browser-generated PDFs.
-- Daily/manual report refresh and semantic change detection.
+- Adaptive Patch Tuesday/manual report refresh and semantic change detection.
 
 ## Current State
 
@@ -94,7 +94,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - `data/reports/2026-08.json` and `data/reports/2026-09.json` are production reports; September is the newest.
 - `data/fixtures/2026-08.json` is the manual golden fixture; the production report takes precedence for the same month.
 - The September production report has status `partial`: all nine monthly and nine officially announced standard OOB KBs are present, while at least one article-level fact remains incomplete under collector rules.
-- `.github/workflows/pages.yml` is active for pushes to `main`, daily schedule, and manual dispatch. Recent inspected scheduled runs completed successfully.
+- `.github/workflows/pages.yml` handles pushes to `main`, the adaptive ART schedule and manual dispatch. D has nine hourly slots; D+1 seven; D+2 four; D+3 two; otherwise one daily slot. GitHub delays are tolerated for six hours, with no replay of omitted slots.
 - The public project URL encoded in the frontend is `https://f4cus.github.io/windows-patch-dashboard/`.
 
 ## Known Limitations / Technical Debt
@@ -102,6 +102,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - V1 monthly discovery depends on CVRF; there is no automatic bulk-CSAF fallback.
 - CSAF parsing exists and is tested, but it is complementary and is not used by the production monthly collection path.
 - Microsoft Support extraction depends on recognizable article structure. Unverifiable known-issue evidence remains `unknown` rather than being guessed.
+- Production Support URL recovery can lack canonical links available to a manually supplied fallback, especially for ESU when `/help/` returns 403. This remains independent resilience debt, not a scheduling blocker; required verification failures preserve the deployed report.
 - OOB discovery is intentionally conservative and requires an explicit official label from CVRF, the Windows message center, or the verified Microsoft Support article title. Missing supersedence evidence leaves the link null. The message center is a recent-announcements source, so older OOB records remain discoverable only while their announcements are retained there or CVRF lists them.
 - The month selector currently offers the committed August and September reports.
 - The report contract is validated both in Python and again by the TypeScript loader. This is useful defense in depth but creates contract-sync maintenance work.

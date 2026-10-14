@@ -65,7 +65,9 @@ The month format is strict `YYYY-MM`. The collector validates and atomically wri
 
 ## Automation
 
-`.github/workflows/pages.yml` deploys a validated frontend artifact on every push to `main` without performing live collection. It also runs daily at 18:00 UTC, equivalent to 15:00 in Argentina (ART, UTC-3), and supports manual dispatch with an optional `YYYY-MM` input. Scheduled or month-less manual runs select the most recent Patch Tuesday that has already occurred, so dates before the current month's Patch Tuesday continue to refresh the preceding report.
+`.github/workflows/pages.yml` deploys a validated frontend artifact on every push to `main` without performing live collection. WPD-INC-003 schedules refreshes around D (the dynamically calculated second Tuesday) in Argentina time (ART, UTC-3): D hourly at 14:15–22:15; D+1 every two hours at 09:00–21:00; D+2 every four hours at 09:00–21:00; D+3 at 09:00 and 15:00; otherwise daily at 15:00. Manual dispatch retains its optional `YYYY-MM` override. Automatic selection enables the new month only from D 14:15 ART; earlier runs refresh the previous report.
+
+A lightweight gate filters non-overlapping UTC cron candidates before collection, anchors queued jobs to their original creation time and tolerates delays of up to six hours. Dropped slots are not replayed; the next approved slot tries again. Publication waits until D 10:00 Pacific (PST/PDT) and requires a Support-verified monthly security row. The November 2026 attempt at 14:15 ART precedes the normal 15:00 ART publication boundary and cannot publish early. Failed attempts preserve the last deployed report. See [RUNBOOK.md](RUNBOOK.md#deployment) for the UTC mapping and operating limits.
 
 Refresh runs collect and validate first, then compare reports while ignoring only `generatedAt` and source `retrievedAt`. Timestamp-only refreshes restore the committed file and create no commit. Meaningful changes stage only the expected monthly report, commit with `github-actions[bot]` using `GITHUB_TOKEN`, and build/deploy that exact commit in the same workflow run. The Pages artifact contains only `frontend/dist`; no `gh-pages` branch is used.
 
@@ -77,6 +79,7 @@ To enable deployment, set the repository Pages source to **GitHub Actions** and 
 - KB numbers, dates, fixes, issues, and supersedence are never inferred.
 - Missing or ambiguous evidence remains `unknown` or `not-published`, never silently becomes `none`.
 - Extraction and aggregation are deterministic; Spanish Support is preferred with official English fallback.
+- Canonical Microsoft Support URL recovery remains independent resilience debt: production fallback indexes may lack links supplied to a validated manual call when `/help/` is unavailable. Scheduling does not alter that mechanism; required verification failures remain safe failures.
 - Generalized OOB discovery is intentionally conservative and requires explicit official evidence.
 - The static V1 provides report reading and export, not device inventory, patch compliance, accounts, analytics, or a vulnerability-management backend.
 
