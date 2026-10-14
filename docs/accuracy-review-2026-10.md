@@ -152,3 +152,32 @@ Los dos defectos de selección y el defecto de clasificación solicitado están
 corregidos y validados. La implementación y el reporte fueron aprobados para
 publicación, condicionada a revisar el diff, sincronizar con `origin/main` y
 verificar CI, GitHub Pages y la aplicación pública.
+
+## Nota de cierre — 14/10/2026
+
+El incidente de octubre, el hotfix de timestamps UTC-3 y WPD-INC-003 están
+publicados en `main` y GitHub Pages, con CI y despliegues exitosos:
+
+- `1ed5718`: corrección y publicación del informe de octubre de 2026, con
+  10 registros, estado `generated` y problemas conocidos: nueve `open`, uno `none`.
+- `68bebb5`: timestamps en UTC-3; verificados en Report Mode y Client Report con
+  el formato `13-oct-2026, 21:41 (UTC-3)`.
+- `d2abd2e`: calendario escalonado WPD-INC-003, selección automática del mes desde
+  D a las 14:15 ART y controles de publicación que preservan el último informe
+  válido ante fallos. El calendario y los procedimientos vigentes están en
+  `DECISIONS.md`, `RUNBOOK.md` y `README.md`.
+
+Los apartados anteriores conservan los antecedentes técnicos y el estado previo
+a estas publicaciones; las referencias a WPD-INC-003 sin implementar o a una
+publicación condicionada corresponden a esa etapa histórica.
+
+De estos incrementos, únicamente sigue pendiente la resiliencia del fallback de
+Microsoft Support: recuperación automática y validada de URLs canónicas ante
+HTTP 403 en `/help/`. Es deuda técnica independiente y no bloquea el calendario
+ya publicado. Ese es el próximo trabajo previsto, manteniendo D001, D003, D004
+y las demás garantías de integridad: fuentes oficiales, verificación de KB y
+producto, validación antes de escribir y fallo seguro cuando no se pueda
+verificar la evidencia requerida.
+
+Este cierre es exclusivamente documental; no modifica datos ni ejecuta una nueva
+recolección.

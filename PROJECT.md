@@ -90,10 +90,12 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 
 ## Current State
 
+As of 2026-10-14:
+
 - `main` is the default branch.
-- `data/reports/2026-08.json` and `data/reports/2026-09.json` are production reports; September is the newest.
+- `data/reports/2026-08.json`, `data/reports/2026-09.json` and `data/reports/2026-10.json` are published production reports; October 2026 is the newest.
 - `data/fixtures/2026-08.json` is the manual golden fixture; the production report takes precedence for the same month.
-- The September production report has status `partial`: all nine monthly and nine officially announced standard OOB KBs are present, while at least one article-level fact remains incomplete under collector rules.
+- The October production report has 10 records and status `generated`; known-issue statuses are nine `open` and one `none`.
 - `.github/workflows/pages.yml` handles pushes to `main`, the adaptive ART schedule and manual dispatch. D has nine hourly slots; D+1 seven; D+2 four; D+3 two; otherwise one daily slot. GitHub delays are tolerated for six hours, with no replay of omitted slots.
 - The public project URL encoded in the frontend is `https://f4cus.github.io/windows-patch-dashboard/`.
 
@@ -104,7 +106,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 - Microsoft Support extraction depends on recognizable article structure. Unverifiable known-issue evidence remains `unknown` rather than being guessed.
 - Production Support URL recovery can lack canonical links available to a manually supplied fallback, especially for ESU when `/help/` returns 403. This remains independent resilience debt, not a scheduling blocker; required verification failures preserve the deployed report.
 - OOB discovery is intentionally conservative and requires an explicit official label from CVRF, the Windows message center, or the verified Microsoft Support article title. Missing supersedence evidence leaves the link null. The message center is a recent-announcements source, so older OOB records remain discoverable only while their announcements are retained there or CVRF lists them.
-- The month selector currently offers the committed August and September reports.
+- The month selector currently offers the committed August, September and October 2026 reports.
 - The report contract is validated both in Python and again by the TypeScript loader. This is useful defense in depth but creates contract-sync maintenance work.
 - The report JSON does not preserve structured reasons for a `partial` status; adding them is deferred to Phase 3.
 - CVRF vulnerability entries discover and deduplicate KB/product relationships, but the monthly contract does not retain CVE identifiers or severity. A future phase must decide whether to rename the column to "Cambios destacados" or extend the contract with verifiable CVE data.
