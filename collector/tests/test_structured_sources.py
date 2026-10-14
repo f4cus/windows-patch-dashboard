@@ -1,18 +1,25 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
+from pathlib import Path
 
 import pytest
 
 from windows_patch_collector.errors import SourceParseError
+from windows_patch_collector.models import SupportArticle
+from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.sources.microsoft_release_health import parse_message_center
 from windows_patch_collector.sources.msrc_csaf import parse_csaf
 from windows_patch_collector.sources.msrc_cvrf import parse_cvrf
+from windows_patch_collector.validation import validate_document
 
 RETRIEVED = datetime(2026, 8, 13, 12, tzinfo=UTC)
 CVRF_URL = "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug"
 CSAF_URL = "https://api.msrc.microsoft.com/csaf/advisories/2026/msrc_cve-test.json"
+OCTOBER_CVRF_URL = "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct"
+OCTOBER_RETRIEVED = datetime(2026, 10, 13, 22, tzinfo=UTC)
+OCTOBER_FIXTURE = Path(__file__).parent / "fixtures" / "cvrf-2026-Oct-KB5127648.xml"
 
 
 def _remediation(kb: str, product: str, subtype: str = "Security Update") -> str:
@@ -57,6 +64,101 @@ def test_cvrf_rejects_wrong_month_metadata() -> None:
     <InitialReleaseDate>2026-07-14T07:00:00Z</InitialReleaseDate></DocumentTracking></Document>"""
     with pytest.raises(SourceParseError, match="does not match"):
         parse_cvrf(xml, month="2026-08", source_url=CVRF_URL, retrieved_at=RETRIEVED)
+
+
+def test_cvrf_october_shared_kb_preserves_branch_supersedence(
+    schema: dict[str, object],
+) -> None:
+    parsed = parse_cvrf(
+        OCTOBER_FIXTURE.read_bytes(),
+        month="2026-10",
+        source_url=OCTOBER_CVRF_URL,
+        retrieved_at=OCTOBER_RETRIEVED,
+    )
+    by_version = {update.os.version: update for update in parsed.updates}
+    assert len(parsed.updates) == 2
+    assert set(by_version) == {"24H2/25H2", "26H2"}
+    assert by_version["24H2/25H2"].supersedes == "KB5124008"
+    assert by_version["26H2"].supersedes is None
+    assert all(update.kb == "KB5127648" for update in parsed.updates)
+    assert all(update.update_type == "security" for update in parsed.updates)
+    assert all(update.source_subtype == "Security Update" for update in parsed.updates)
+    assert all(update.release_date == date(2026, 10, 13) for update in parsed.updates)
+    assert all(not update.release_date_explicit for update in parsed.updates)
+
+    # Synthetic Support content tests the report boundary without a live HTTP dependency.
+    article = SupportArticle(
+        "KB5127648",
+        date(2026, 10, 13),
+        "https://support.microsoft.com/help/5127648",
+        OCTOBER_RETRIEVED,
+        "Test changes.",
+        "Test fixes.",
+        "Test known issues unavailable.",
+        "unknown",
+    )
+    normalized = normalize_report(
+        month="2026-10",
+        structured=parsed,
+        support_articles={article.kb: article},
+        support_failures={},
+        generated_at=OCTOBER_RETRIEVED,
+    )
+    validate_document(normalized.document, schema)
+    rows = [row for row in normalized.document["updates"] if row["kb"] == article.kb]
+    assert [row["os"]["version"] for row in rows] == ["24H2/25H2", "26H2"]
+    assert all(row["supersededBy"] is None for row in rows)
+    assert all(
+        [source["type"] for source in row["sources"]] == ["msrc", "microsoft-support"]
+        for row in rows
+    )
+
+
+@pytest.mark.parametrize(
+    ("original", "replacement"),
+    [
+        (b"<ns2:Supercedence>5124008</ns2:Supercedence>", b""),
+        (
+            b"<ns2:SubType>Security Update</ns2:SubType>",
+            b"<ns2:SubType>Monthly Rollup</ns2:SubType>",
+        ),
+    ],
+)
+def test_cvrf_still_rejects_conflicting_metadata_within_one_branch(
+    original: bytes,
+    replacement: bytes,
+) -> None:
+    # The fixture repeats the 24H2 products across vulnerability remediations.
+    content = OCTOBER_FIXTURE.read_bytes().replace(original, replacement, 1)
+    with pytest.raises(SourceParseError, match="Conflicting CVRF remediation metadata"):
+        parse_cvrf(
+            content,
+            month="2026-10",
+            source_url=OCTOBER_CVRF_URL,
+            retrieved_at=OCTOBER_RETRIEVED,
+        )
+
+
+def test_cvrf_keeps_oob_branch_metadata_separate() -> None:
+    content = OCTOBER_FIXTURE.read_bytes().replace(
+        b"<ns2:SubType>Security Update</ns2:SubType>",
+        b"<ns2:SubType>Out-of-band Security Update</ns2:SubType>"
+        b"<ns2:Date>2026-10-15T07:00:00Z</ns2:Date>",
+    )
+    parsed = parse_cvrf(
+        content,
+        month="2026-10",
+        source_url=OCTOBER_CVRF_URL,
+        retrieved_at=OCTOBER_RETRIEVED,
+    )
+    assert len(parsed.updates) == 2
+    assert {update.os.version: update.supersedes for update in parsed.updates} == {
+        "24H2/25H2": "KB5124008",
+        "26H2": None,
+    }
+    assert all(update.update_type == "oob" for update in parsed.updates)
+    assert all(update.release_date == date(2026, 10, 15) for update in parsed.updates)
+    assert all(update.release_date_explicit for update in parsed.updates)
 
 
 def test_cvrf_keeps_implicit_remediation_date_and_explicit_supersedence() -> None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from functools import partial
 
 from windows_patch_collector.errors import (
     CollectionConflictError,
@@ -14,7 +15,10 @@ from windows_patch_collector.errors import (
 from windows_patch_collector.http_client import MicrosoftHttpClient
 from windows_patch_collector.models import StructuredResult, SupportArticle
 from windows_patch_collector.normalization import NormalizedReport, normalize_report
-from windows_patch_collector.sources.microsoft_release_health import fetch_message_center
+from windows_patch_collector.sources.microsoft_release_health import (
+    fetch_message_center,
+    fetch_support_links,
+)
 from windows_patch_collector.sources.microsoft_support import fetch_support_article
 from windows_patch_collector.sources.msrc_cvrf import fetch_cvrf
 
@@ -68,9 +72,38 @@ def collect_month(
     articles: dict[str, SupportArticle] = {}
     failures: dict[str, str] = {}
     excluded_kbs: set[str] = set()
+    support_links: dict[str, tuple[str, ...]] | None = None
+    link_failure: CollectorError | None = None
+
+    def linked_urls(kb: str) -> tuple[str, ...]:
+        nonlocal support_links, link_failure
+        if link_failure is not None:
+            raise link_failure
+        if support_links is None:
+            try:
+                support_links = fetch_support_links(client)
+            except CollectorError as error:
+                link_failure = error
+                raise
+        return tuple(
+            dict.fromkeys(
+                tuple(
+                    update.support_url
+                    for update in structured.updates
+                    if update.kb == kb and update.support_url is not None
+                )
+                + support_links.get(kb, ())
+            )
+        )
+
     for kb in kbs:
         try:
-            articles[kb] = support_fetcher(client, kb)
+            if support_fetcher is fetch_support_article:
+                articles[kb] = fetch_support_article(
+                    client, kb, fallback_urls=partial(linked_urls, kb)
+                )
+            else:
+                articles[kb] = support_fetcher(client, kb)
         except UnsupportedHotpatchError:
             excluded_kbs.add(kb)
         except CollectorError as error:

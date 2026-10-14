@@ -1,0 +1,26 @@
+{
+  "description": "Literal h1 and Applies To fragments captured from official Support; CVRF fixture contains original Vendor Fix elements and matching ProductTree entries.",
+  "cvrf_source_url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+  "articles": {
+    "KB5126835": {
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
+      "retrieved_at": "2026-10-14T00:15:36.792564+00:00",
+      "html": "<h1 id=\"october-13-2026kb5126835-monthly-rollup\">October 13, 2026—KB5126835 (Monthly Rollup)</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Applies To</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2012 ESU</span> </div></details>"
+    },
+    "KB5126836": {
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
+      "retrieved_at": "2026-10-14T00:15:36.150361+00:00",
+      "html": "<h1 id=\"october-13-2026kb5126836-monthly-rollup\">October 13, 2026—KB5126836 (Monthly Rollup)</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Applies To</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2012 R2 ESU</span> </div></details>"
+    },
+    "KB5126868": {
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/10/kb5126868-windows-10-1607-security-update",
+      "retrieved_at": "2026-10-14T00:16:23.625740+00:00",
+      "html": "<h1 id=\"october-13-2026kb5126868-os-build-143939612\">October 13, 2026—KB5126868 (OS Build 14393.9612)</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Applies To</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2016, all editions</span> <span class=\"appliesToItem\" role=\"listitem\">Win 10 Ent LTSB 2016</span> <span class=\"appliesToItem\" role=\"listitem\">Win 10 IoT Ent LTSB 2016</span> </div></details>"
+    },
+    "KB5126649": {
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/windows/ssu/2026/10/kb5126649-windows-10-1607-ssu",
+      "retrieved_at": "2026-10-14T00:15:36.965748+00:00",
+      "html": "<h1 id=\"kb5126649-servicing-stack-update-for-windows-10-version-1607-and-windows-server-2016-october-13-2026\">KB5126649: Servicing stack update for Windows 10, version 1607 and Windows Server 2016: October 13, 2026</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Applies To</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Win 10 Ent LTSB 2016</span> <span class=\"appliesToItem\" role=\"listitem\">Win 10 IoT Ent LTSB 2016</span> <span class=\"appliesToItem\" role=\"listitem\">Windows Server 2016, all editions</span> </div></details>"
+    }
+  }
+}

@@ -8,6 +8,8 @@ import pytest
 from windows_patch_collector.errors import SourceParseError, UnsupportedHotpatchError
 from windows_patch_collector.http_client import MicrosoftHttpClient
 from windows_patch_collector.models import SupportArticle
+from windows_patch_collector.products import WINDOWS_SERVER_2012, WINDOWS_SERVER_2022
+from windows_patch_collector.sources.microsoft_release_health import parse_support_links
 from windows_patch_collector.sources.microsoft_support import (
     fetch_support_article,
     parse_support_article,
@@ -471,3 +473,169 @@ def test_official_hotpatch_redirect_is_excluded_before_article_parsing() -> None
         pytest.raises(UnsupportedHotpatchError, match="hotpatch"),
     ):
         fetch_support_article(client, "KB5123303")
+
+
+def test_support_reads_explicit_applies_to_without_guessing_product() -> None:
+    content = _article(None).replace(
+        b"</body>",
+        b"""<details id="supAppliesToList">
+    <span class="appliesToItem">Windows Server 2012 ESU</span>
+    <span class="appliesToItem">Windows Server 2022, all editions</span>
+    <span class="appliesToItem" hidden>Windows Server 2025, all editions</span>
+    </details></body>""",
+    )
+    assert _parse(content).applies_to == (WINDOWS_SERVER_2012, WINDOWS_SERVER_2022)
+    assert _parse(_article(None)).applies_to is None
+
+
+@pytest.mark.parametrize("status", [403, 404])
+def test_inaccessible_legacy_routes_recover_only_from_an_official_link(status: int) -> None:
+    canonical = "https://support.microsoft.com/en-us/servicing/os/windows-server/verified-article"
+    index = f'<a href="{canonical}">KB5120242</a>'.encode()
+    urls = parse_support_links(
+        index,
+        source_url="https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+    )
+    requested: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested.append(str(request.url))
+        return httpx.Response(
+            status if "/help/" in request.url.path else 200,
+            request=request,
+            content=_article(None),
+        )
+
+    with MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client:
+        article = fetch_support_article(
+            client, "KB5120242", fallback_urls=lambda: urls["KB5120242"]
+        )
+    assert len(requested) == 3
+    assert article.source_url == canonical
+    assert article.retrieved_at.tzinfo is not None
+    assert article.known_issues_status == "unknown"
+
+
+def test_fallback_prefers_official_spanish_link_and_retains_locale() -> None:
+    urls = (
+        "https://support.microsoft.com/en-us/canonical",
+        "https://support.microsoft.com/es-es/canonico",
+    )
+    spanish = """<h1>11 de agosto de 2026: KB5120242</h1>
+    <h2>Mejoras</h2><p>Contenido de prueba en español.</p>""".encode()
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            403 if "/help/" in request.url.path else 200, request=request, content=spanish
+        )
+
+    with MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client:
+        article = fetch_support_article(client, "KB5120242", fallback_urls=lambda: urls)
+    assert article.locale == "es-ES"
+    assert article.source_url == urls[1]
+
+
+@pytest.mark.parametrize("url", ["http://support.microsoft.com/kb", "https://example.com/kb"])
+def test_fallback_rejects_untrusted_url_before_request(url: str) -> None:
+    requested: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested.append(str(request.url))
+        return httpx.Response(403, request=request)
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="non-Microsoft URL"),
+    ):
+        fetch_support_article(client, "KB5120242", fallback_urls=lambda: (url,))
+    assert len(requested) == 2
+
+
+def test_unavailable_canonical_article_retains_http_error() -> None:
+    canonical = "https://support.microsoft.com/en-us/unavailable"
+    with (
+        MicrosoftHttpClient(
+            transport=httpx.MockTransport(lambda request: httpx.Response(403, request=request))
+        ) as client,
+        pytest.raises(SourceParseError, match="HTTP 403"),
+    ):
+        fetch_support_article(client, "KB5120242", fallback_urls=lambda: (canonical,))
+
+
+def test_fallback_hotpatch_is_excluded_only_after_official_domain_validation() -> None:
+    canonical = "https://support.microsoft.com/en-us/servicing/os/hotpatch/verified"
+    with (
+        MicrosoftHttpClient(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    403 if "/help/" in request.url.path else 200, request=request
+                )
+            )
+        ) as client,
+        pytest.raises(UnsupportedHotpatchError),
+    ):
+        fetch_support_article(client, "KB5120242", fallback_urls=lambda: (canonical,))
+
+
+def test_redirect_to_external_hotpatch_url_is_not_an_official_exclusion() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "support.microsoft.com":
+            return httpx.Response(
+                302, request=request, headers={"Location": "https://example.com/hotpatch/kb"}
+            )
+        return httpx.Response(200, request=request)
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="non-Microsoft URL"),
+    ):
+        fetch_support_article(client, "KB5120242")
+
+
+def test_kb_prefix_in_title_is_not_an_exact_match() -> None:
+    with pytest.raises(SourceParseError, match="does not identify"):
+        _parse(b"<h1>August 11, 2026 - KB51202420</h1>")
+
+
+def test_canonical_fallback_still_requires_the_requested_kb() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            403 if "/help/" in request.url.path else 200,
+            request=request,
+            content=b"<h1>August 11, 2026 - KB5999999</h1>",
+        )
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="does not identify KB5120242"),
+    ):
+        fetch_support_article(
+            client,
+            "KB5120242",
+            fallback_urls=lambda: ("https://support.microsoft.com/en-us/wrong-article",),
+        )
+
+
+def test_support_applies_to_preserves_all_windows_11_branches() -> None:
+    content = b"""<h1>August 11, 2026 - KB5120242</h1>
+    <details id="supAppliesToList">
+    <span class="appliesToItem">Windows 11 version 24H2, all editions</span>
+    <span class="appliesToItem">Windows 11 version 25H2, all editions</span>
+    <span class="appliesToItem">Windows 11 version 26H2, all editions</span></details>"""
+    article = _parse(content)
+    assert article.applies_to is not None
+    assert [identity.version for identity in article.applies_to] == ["24H2", "25H2", "26H2"]
+
+
+@pytest.mark.parametrize("url", ["http://learn.microsoft.com/index", "https://example.com/index"])
+def test_release_index_redirect_must_remain_official(url: str) -> None:
+    with pytest.raises(SourceParseError, match="non-Microsoft URL"):
+        parse_support_links(b"", source_url=url)
+
+
+def test_release_index_does_not_accept_external_kb_link() -> None:
+    with pytest.raises(SourceParseError, match="non-Support KB link"):
+        parse_support_links(
+            b'<a href="https://example.com/kb">KB5120242</a>',
+            source_url="https://learn.microsoft.com/en-us/windows/release-health/index",
+        )

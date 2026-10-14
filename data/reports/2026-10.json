@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "1.0.0",
+  "reportMonth": "2026-10",
+  "patchTuesdayDate": "2026-10-13",
+  "generatedAt": "2026-10-14T00:41:29.068022Z",
+  "status": "generated",
+  "updates": [
+    {
+      "kb": "KB5126835",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 (ESU)"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening . [Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129244) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
+          "retrievedAt": "2026-10-14T00:41:22.419362Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126836",
+      "os": {
+        "family": "Windows Server",
+        "version": "2012 R2",
+        "channel": "ESU",
+        "displayName": "Windows Server 2012 R2 (ESU)"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening . [Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129243) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
+          "retrievedAt": "2026-10-14T00:41:23.542598Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126868",
+      "os": {
+        "family": "Windows Server",
+        "version": "2016",
+        "channel": null,
+        "displayName": "Windows Server 2016"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Time and Date] This update enables permanent Daylight Savings Time (DST) support for British Columbia and Alberta starting in November 2026. This update introduces the new time zone Manitoba Standard Time \"(UTC-5:00) Manitoba\". [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening . [Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported device.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "USB Audio Class 1.0 devices with error Code 10 or no output Symptoms After installing the September 8, 2026, Windows security update, some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026. This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/10/kb5126868-windows-10-1607-security-update",
+          "retrievedAt": "2026-10-14T00:41:24.739751Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126651",
+      "os": {
+        "family": "Windows Server",
+        "version": "2019",
+        "channel": null,
+        "displayName": "Windows Server 2019"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Time and Date] This update enables permanent Daylight Savings Time (DST) support for British Columbia and Alberta starting in November 2026. This update introduces the new time zone Manitoba Standard Time \"(UTC-5:00) Manitoba\". [Authentication] Enhanced NTLM auditing is now available on Windows Server 2022 and 2019. The new auditing capabilities provide greater visibility into NTLM authentication, helping administrators identify who is using NTLM, why NTLM was selected, and where NTLM authentication is occurring. This additional visibility can help organizations identify legacy NTLM dependencies and prepare their environments to move toward more secure authentication protocols such as Kerberos. To learn more, see: Overview of NTLM auditing enhancements in Windows 11, version 24H2, Windows Server 2019, and later versions . [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening . [Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported device.",
+      "resolvedIssuesSummary": "[BitLocker] This update fixes an issue in which drives encrypted by BitLocker To Go on newer systems were not recognized by older systems. Now, you can access encrypted data on these drives when using older systems.",
+      "knownIssuesSummary": "USB Audio Class 1.0 devices with error Code 10 or no output Symptoms After installing the September 8, 2026, Windows security update, some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026. This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/10/kb5126651-windows-10-1809-security-update",
+          "retrievedAt": "2026-10-14T00:41:18.086611Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126655",
+      "os": {
+        "family": "Windows Server",
+        "version": "2022",
+        "channel": null,
+        "displayName": "Windows Server 2022"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Authentication] Enhanced NTLM auditing is now available on Windows Server 2022 and 2019. The new auditing capabilities provide greater visibility into NTLM authentication, helping administrators identify who is using NTLM, why NTLM was selected, and where NTLM authentication is occurring. This additional visibility can help organizations identify legacy NTLM dependencies and prepare their environments to move toward more secure authentication protocols such as Kerberos. Learn more here: Overview of NTLM auditing enhancements in Windows 11, version 24H2, Windows Server 2019, and later versions . [Date and Time] This update enables permanent Daylight Savings Time (DST) support for British Columbia and Alberta starting in November 2026. This update introduces the new time zone Manitoba Standard Time \"(UTC-5:00) Manitoba\". [Security] This update upgrades the version of cURL included with Windows to version 8.21.0. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Storage Spaces] Addresses an issue that might cause some Storage Spaces Direct virtual disks to remain offline after installing a Windows update. This issue occurs when valid tiered storage metadata is incorrectly identified as invalid during recovery, preventing affected virtual disks and dependent workloads from coming online. [Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening .",
+      "resolvedIssuesSummary": "[Audio (known issue)] Fixed: This update addresses an issue where some USB Audio Class 1.0 devices might fail to start or produce audio.",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) does not display error details After installing KB5070884 or later updates, Windows Server Update Services (WSUS) does not display synchronization error details within its error reporting. This functionality is temporarily removed to address the Remote Code Execution Vulnerability, CVE-2025-59287 .",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/10/kb5126655-windows-server-2022-security-update",
+          "retrievedAt": "2026-10-14T00:41:21.282056Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126646",
+      "os": {
+        "family": "Windows Server",
+        "version": "2025",
+        "channel": null,
+        "displayName": "Windows Server 2025"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Quick machine recovery] New! Quick machine recovery is now supported on Windows Server 2025. During outages, Quick machine recovery helps recover devices from critical boot failures by using Windows Recovery Environment (WinRE) to find and apply targeted remediations from Windows Update. The feature is disabled by default on Windows Server 2025 editions. Administrators can enable the feature through Group Policy to support streamlined recovery during widespread outages and reduce the need for manual intervention. Recovery depends on an applicable remediation being available. To learn more, see Quick machine recovery . [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Security] This update adds support for ML-KEM post-quantum key exchange in Transport Layer Security (TLS) 1.3, helping protect encrypted connections against future quantum-computing threats. [Time and Date] This update updates Windows time-zone data to support permanent daylight-saving time (DST) in British Columbia and Alberta starting in November 2026. This update introduces the new time zone Manitoba Standard Time \"(UTC-5:00) Manitoba\". [Security] This update upgrades the version of cURL included with Windows to version 8.21.0. [Networking] This update improves the NetUseAdd function, helping it establish SMB network connections successfully during NULL session attempts. [Authentication] This update improves Netlogon secure channel connections, helping member servers connect successfully to domain controllers that were set up before Windows Server 2025. [Emoji] This update improves security for emoji search in the Expressive Input Panel by updating the libraries used by EmojiSearchData. [Hyper-V] This update improves the reliability of Intel Trusted Domain Extensions (TDX) confidential virtual machines in Hyper-V reliability issues affecting TDX operation. [Distributed Key Manager (DKM)] This update automatically remediates insecure DKM container ACL configurations in AD FS by default. Administrators can opt out of automatic remediation by setting RemediateDkmAcl to 0 . This change helps address an elevation of privilege vulnerability that can occur when the DKM container ACL is overly permissive. For more information about how to manage this change, see CVE-2026-56155: AD FS Distributed Key Manager container ACL hardening . [Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices.",
+      "resolvedIssuesSummary": "No disponible: Microsoft Support no documentó correcciones verificables en una sección compatible.",
+      "knownIssuesSummary": "Windows Server Update Services (WSUS) does not display error details After installing KB5070881 or later updates, Windows Server Update Services (WSUS) does not display synchronization error details within its error reporting. This functionality is temporarily removed to address the Remote Code Execution Vulnerability, CVE-2025-59287 .",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/10/kb5126646-windows-server-2025-security-update",
+          "retrievedAt": "2026-10-14T00:41:15.773196Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5126653",
+      "os": {
+        "family": "Windows 11",
+        "version": "23H2",
+        "channel": null,
+        "displayName": "Windows 11 23H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices. [Date and Time] This update enables permanent Daylight Savings Time (DST) support for British Columbia and Alberta starting in November 2026. This update introduces the new time zone Manitoba Standard Time \"(UTC-5:00) Manitoba\". [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 .",
+      "resolvedIssuesSummary": "[File History (known issue)] Fixed : This update addresses an issue where File History might fail to back up or restore files to an external drive or network location. Affected devices might incorrectly display a “Reconnect your drive” message even when a compatible backup drive is connected and working properly. [Storage Spaces] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable.",
+      "knownIssuesSummary": "Microsoft is not currently aware of any issues with this update.",
+      "knownIssuesStatus": "none",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5126653-windows-11-23h2-security-update",
+          "retrievedAt": "2026-10-14T00:41:19.187692Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5127648",
+      "os": {
+        "family": "Windows 11",
+        "version": "24H2/25H2",
+        "channel": null,
+        "displayName": "Windows 11 24H2/25H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices. [Date and Time] This update introduces the new (UTC-05:00) Manitoba time zone to support Manitoba’s November 1, 2026, time zone change. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Audio (known issue)] Fixed This update fixes an issue that affects AC-3 audio playback in some applications. [Always On VPN] This update fixes an issue that affects Always On VPN connections after installing KB5124008. When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Printing] This update resolves an issue where printing could fail in some applications and on devices using RAW or Generic Text Only printer drivers after installing the August 2026 security update. [Gaming] This update fixes an issue that could cause mouse input to stutter in some games. [Windows Hello] This update fixes an issue where fingerprint sign-in might not work after a cold boot on some devices.",
+      "knownIssuesSummary": "USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129195) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
+          "retrievedAt": "2026-10-14T00:41:29.041886Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5127646",
+      "os": {
+        "family": "Windows 11",
+        "version": "26H1",
+        "channel": null,
+        "displayName": "Windows 11 26H1"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Always On VPN] This update fixes an issue that affect Always On VPN connections after installing KB5124008 . When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces Direct] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Gaming] This update resolves an issue that could cause mouse input to stutter in some games.",
+      "knownIssuesSummary": "USB audio devices might fail to start or produce no sound ​​​​​​​​​ Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: ​The device displays an error in Device Manager: \"This device cannot start (Code 10).” ​ No audio output. ​ Volume controls are unresponsive or remain at zero. ​ Sound settings are unresponsive or unavailable. ​ Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129194) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127646-windows-11-26h1-security-update",
+          "retrievedAt": "2026-10-14T00:41:27.963307Z"
+        }
+      ]
+    },
+    {
+      "kb": "KB5127648",
+      "os": {
+        "family": "Windows 11",
+        "version": "26H2",
+        "channel": null,
+        "displayName": "Windows 11 26H2"
+      },
+      "updateType": "security",
+      "releaseDate": "2026-10-13",
+      "changesSummary": "[Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices. [Date and Time] This update introduces the new (UTC-05:00) Manitoba time zone to support Manitoba’s November 1, 2026, time zone change. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Audio (known issue)] Fixed This update fixes an issue that affects AC-3 audio playback in some applications. [Always On VPN] This update fixes an issue that affects Always On VPN connections after installing KB5124008. When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Printing] This update resolves an issue where printing could fail in some applications and on devices using RAW or Generic Text Only printer drivers after installing the August 2026 security update. [Gaming] This update fixes an issue that could cause mouse input to stutter in some games. [Windows Hello] This update fixes an issue where fingerprint sign-in might not work after a cold boot on some devices.",
+      "knownIssuesSummary": "USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129195) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
+      "supersededBy": null,
+      "sources": [
+        {
+          "type": "msrc",
+          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
+          "retrievedAt": "2026-10-14T00:41:03.627255Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
+          "retrievedAt": "2026-10-14T00:41:29.041886Z"
+        }
+      ]
+    }
+  ]
+}

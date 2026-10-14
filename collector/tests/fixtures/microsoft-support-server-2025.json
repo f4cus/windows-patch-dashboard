@@ -1,0 +1,17 @@
+{
+  "note": "Reduced official Microsoft Support responses retrieved 2026-10-13; original h1 and Applies To retained. Article content omitted.",
+  "articles": {
+    "KB5099536": {
+      "source_url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/07/july-14-2026-kb5099536-os-build-26100-33158",
+      "html": "<h1 id=\"july-14-2026kb5099536-os-build-2610033158\">14 de julio de 2026: KB5099536 (compilación del SO 26100.33158)</h1>\n<details id=\"supAppliesToList\"><summary class=\"contentToggle\">Se aplica a</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2025, all editions</span> </div></details>"
+    },
+    "KB5122871": {
+      "source_url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/09/kb5122871-windows-server-2025-security-update",
+      "html": "<h1 id=\"september-8-2026kb5122871-os-build-2610033438\">8 de septiembre de 2026: KB5122871 (compilación del sistema operativo 26100.33438)</h1>\n<details id=\"supAppliesToList\"><summary class=\"contentToggle\">Se aplica a</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2025, all editions</span> </div></details>"
+    },
+    "KB5126646": {
+      "source_url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/10/kb5126646-windows-server-2025-security-update",
+      "html": "<h1 id=\"october-13-2026kb5126646-os-build-2610033650\">October 13, 2026—KB5126646 (OS Build 26100.33650)</h1>\n<details id=\"supAppliesToList\"><summary class=\"contentToggle\">Applies To</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2025, all editions</span> </div></details>"
+    }
+  }
+}

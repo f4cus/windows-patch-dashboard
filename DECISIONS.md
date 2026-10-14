@@ -66,7 +66,7 @@ Active.
 ## D004 - Explicit product normalization and conservative candidate resolution
 
 ### Decision
-Map only supported Microsoft product aliases to normalized Windows Server/Windows 11 identities. Combine Windows 11 branches only when they share the same verified KB. If CVRF returns multiple normal monthly KB candidates for the same normalized OS, select one only when **exactly one** candidate has a successfully verified Microsoft Support article; otherwise fail with a conflict.
+Map only supported Microsoft product aliases to normalized Windows Server/Windows 11 identities. Combine Windows 11 branches only when they share the same verified KB and matching structured metadata. Exclude SSU, security-only, and auxiliary packages only when the verified Support article title identifies that package type. If CVRF returns multiple remaining normal monthly KB candidates for the same normalized OS, select one only when **exactly one** candidate has a Support-verified principal package type (cumulative or Monthly Rollup), Patch Tuesday date, and matching product applicability; otherwise fail with a conflict.
 
 ### Context
 Microsoft structured data can contain multiple package/remediation candidates that cannot safely be distinguished by KB number alone.
@@ -77,6 +77,8 @@ Historical rationale for every product-mapping rule is not fully documented; the
 ### Consequences
 - No "highest KB wins" or similar heuristic is allowed.
 - A single unverified candidate can still produce the existing partial behavior; the tie-breaker applies only to duplicate monthly candidates.
+- CVRF can label ESU Monthly Rollups as generic `Security Update`. Retain those candidates for Support verification; a generic ESU candidate requires a Support-confirmed Monthly Rollup and product applicability. Unresolved classification fails collection rather than claiming `NO PUBLICADO`. An explicit CVRF `Monthly Rollup` can retain partial behavior when Support is unavailable.
+- Support classification uses the article title, not references to prerequisites in its body. Unknown package types cannot break a monthly tie and remain partial for a single candidate. No KB-specific exclusions are used.
 - Windows Server, version 23H2 remains representable historically but is not in the current expected monthly server set.
 
 ### Status

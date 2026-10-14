@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from datetime import date, datetime
 from typing import cast
 from urllib.parse import urlparse
@@ -16,7 +17,14 @@ from windows_patch_collector.errors import (
     UnsupportedHotpatchError,
 )
 from windows_patch_collector.http_client import MicrosoftHttpClient
-from windows_patch_collector.models import KnownIssuesStatus, SupportArticle, SupportLocale
+from windows_patch_collector.models import (
+    KnownIssuesStatus,
+    OsIdentity,
+    PackageKind,
+    SupportArticle,
+    SupportLocale,
+)
+from windows_patch_collector.products import map_microsoft_product_name
 
 SUPPORT_HELP_URL = "https://support.microsoft.com/{locale}/help/{kb_number}"
 _ENGLISH_DATE_PATTERN = re.compile(
@@ -86,16 +94,57 @@ _NONE_PATTERNS = (
     "por el momento no hemos identificado ningún problema con respecto a esta actualización.",
 )
 _RESOLVED_PATTERNS = (
-    "resolved in",
-    "issue is resolved",
-    "this issue was resolved",
-    "resolved by",
-    "se resolvió en",
-    "este problema se resolvió",
-    "este problema se resuelve en",
-    "este problema se ha resuelto",
-    "este problema está resuelto",
-    "problema resuelto en",
+    re.compile(
+        r"\b(?:this|the) (?:issue|problem) (?:is|was|has been) "
+        r"(?:(?:fully|completely) )?(?:resolved|fixed)\b"
+    ),
+    re.compile(r"(?:^|[.!?]\s+|\bresolution[:\s]+)resolved (?:in|by)\b"),
+    re.compile(
+        r"\b(?:este|el) problema (?:se (?:resolvió|resuelve|corrigió|solucionó|"
+        r"ha (?:resuelto|corregido|solucionado))|está (?:resuelto|corregido|solucionado))\b"
+    ),
+    re.compile(r"(?:^|[.!?]\s+)problema resuelto en\b"),
+)
+# Explicit remaining symptoms override resolution evidence. Generic symptom prose can
+# describe the history of a fully resolved issue, so it is checked separately below.
+_PENDING_PATTERNS = (
+    re.compile(r"\b(?:partially|partly) (?:resolved|fixed|addressed|mitigated)\b"),
+    re.compile(r"\b(?:not|never) (?:(?:yet|fully|completely) )?(?:resolved|fixed|addressed)\b"),
+    re.compile(r"\b(?:unresolved|remaining symptoms|symptoms not addressed yet)\b"),
+    re.compile(r"\b(?:resolved|fixed) (?:only|for some|in some)\b"),
+    re.compile(r"\b(?:not all symptoms|resolution is incomplete)\b"),
+    re.compile(r"\b(?:symptoms?|issues?|problems?) (?:remain(?:s)?|persist(?:s)?|continue)\b"),
+    re.compile(r"\b(?:is|are) still (?:affected|unable|unresolved|pending)\b"),
+    re.compile(r"\bstill (?:experience|experiencing|fail|fails|failing|occur|occurs)\b"),
+    re.compile(r"\bis working (?:to address|on (?:a |the )?(?:resolution|fix))\b"),
+    re.compile(r"\b(?:resuelto|corregido|solucionado|mitigado) (?:parcialmente|en parte)\b"),
+    re.compile(r"\bparcialmente (?:resuelto|corregido|solucionado|mitigado)\b"),
+    re.compile(r"\b(?:no|aún no|todavía no) (?:se ha |está )?(?:resuelto|corregido)\b"),
+    re.compile(r"\b(?:síntomas|problemas) (?:pendientes|persisten|continúan|siguen)\b"),
+    re.compile(r"\b(?:siguen|continúan) (?:afectados|sin resolver|experimentando)\b"),
+    re.compile(r"\b(?:está trabajando|trabaja) (?:para (?:resolver|solucionar)|en una solución)\b"),
+)
+_NO_PENDING_PATTERN = re.compile(
+    r"\b(?:no remaining symptoms|no unresolved (?:symptoms|issues|problems)|"
+    r"no (?:hay|quedan) (?:síntomas|problemas) pendientes)\b"
+)
+_UNCERTAIN_RESOLUTION_PATTERNS = (
+    re.compile(
+        r"\b(?:may|might|could|should|will|would|can) (?:be |have been )?"
+        r"(?:(?:fully|completely) )?(?:resolved|fixed)\b"
+    ),
+    re.compile(r"\b(?:expected|scheduled|planned) to (?:be )?(?:resolved|fixed)\b"),
+    re.compile(r"\b(?:podría|puede|debería) (?:estar |ser )?(?:resuelto|corregido)\b"),
+    re.compile(r"\b(?:se resolverá|se espera que|debería resolverse)\b"),
+    re.compile(r"\b(?:no confirmation|cannot confirm|not confirmed|unclear whether)\b"),
+    re.compile(r"\b(?:no se ha confirmado|no hay confirmación|no está claro si)\b"),
+)
+_ACTIVE_SYMPTOM_PATTERN = re.compile(
+    r"\b(?:users?|devices?|systems?) (?:cannot|are unable to)\b|"
+    r"\b(?:might|may) (?:fail|experience|encounter)\b|"
+    r"\b(?:usuarios?|dispositivos?|sistemas?) (?:no pueden|pueden experimentar)\b|"
+    r"\bpodrían (?:experimentar|encontrar|fallar)\b|"
+    r"\b(?:puede|podría) (?:fallar|producirse)\b"
 )
 _OPEN_PATTERNS = (
     "after installing",
@@ -366,12 +415,28 @@ def _is_generic_security_update(value: str) -> bool:
 
 
 def _classify_known_issue_item(value: str) -> KnownIssuesStatus:
-    normalized = value.casefold()
-    if any(pattern in normalized for pattern in _RESOLVED_PATTERNS):
+    normalized = " ".join(value.casefold().split())
+    pending_text = _NO_PENDING_PATTERN.sub("", normalized)
+    if any(pattern.search(pending_text) for pattern in _PENDING_PATTERNS):
+        return "open"
+    if any(pattern.search(normalized) for pattern in _UNCERTAIN_RESOLUTION_PATTERNS):
+        return "unknown"
+    resolutions = [
+        match for pattern in _RESOLVED_PATTERNS for match in pattern.finditer(normalized)
+    ]
+    confirms_none = any(pattern in normalized for pattern in _NONE_PATTERNS)
+    if resolutions:
+        if confirms_none:
+            return "unknown"
+        # A symptom description before the resolution is historical. Symptom
+        # evidence after it can identify another issue in the same table row/details.
+        after_resolution = normalized[max(match.end() for match in resolutions) :]
+        if _ACTIVE_SYMPTOM_PATTERN.search(after_resolution):
+            return "open"
         return "resolved"
     if any(pattern in normalized for pattern in _OPEN_PATTERNS):
         return "open"
-    if any(pattern in normalized for pattern in _NONE_PATTERNS):
+    if confirms_none:
         return "none"
     return "unknown"
 
@@ -404,6 +469,54 @@ def _assert_support_url(url: str) -> None:
         raise SourceParseError(f"Support request resolved to a non-Microsoft URL: {url}")
 
 
+def _applies_to(soup: BeautifulSoup) -> tuple[OsIdentity, ...] | None:
+    section = soup.select_one("#supAppliesToList")
+    if section is None or _is_hidden(section):
+        return None
+    identities: set[OsIdentity] = set()
+    for item in section.select(".appliesToItem"):
+        if _is_hidden(item):
+            continue
+        label = " ".join(item.get_text(" ", strip=True).split())
+        label = label.removesuffix(", all editions")
+        if re.fullmatch(r"Windows Server 2012(?: R2)? ESU", label) is not None:
+            label = label.removesuffix(" ESU")
+        identity = map_microsoft_product_name(label)
+        branch = re.fullmatch(r"Windows 11 version ([0-9]{2}H[12])", label, re.IGNORECASE)
+        if branch is not None:
+            version = branch.group(1).upper()
+            identity = OsIdentity("Windows 11", version, None, f"Windows 11 {version}")
+        if identity is not None:
+            identities.add(identity)
+    return tuple(sorted(identities))
+
+
+def _package_kind(title: str) -> PackageKind:
+    """Classify this article's package, never an SSU mentioned in the LCU body."""
+
+    if re.search(r"servicing stack|pila de mantenimiento", title, re.IGNORECASE):
+        return "ssu"
+    if re.search(
+        r"\.net|dynamic update|setup update|safe os|recovery environment|"
+        r"licensing preparation|hotpatch|preview|vista previa",
+        title,
+        re.IGNORECASE,
+    ):
+        return "auxiliary"
+    if re.search(r"security.only|solo de seguridad", title, re.IGNORECASE):
+        return "security-only"
+    if re.search(r"monthly rollup|paquete acumulativo mensual", title, re.IGNORECASE):
+        return "monthly-rollup"
+    if re.search(
+        r"OS Builds?\s+[0-9]|compilaci[oó]n(?:es)? del (?:SO|sistema operativo)\s+[0-9]|"
+        r"cumulative update|actualizaci[oó]n acumulativa",
+        title,
+        re.IGNORECASE,
+    ):
+        return "cumulative"
+    return "unknown"
+
+
 def parse_support_article(
     content: bytes,
     *,
@@ -423,7 +536,7 @@ def parse_support_article(
     if not isinstance(h1_raw, Tag):
         raise SourceParseError(f"Microsoft Support article for {expected_kb} lacks an h1")
     title = " ".join(h1_raw.get_text(" ", strip=True).split())
-    if expected_kb.casefold() not in title.casefold():
+    if re.search(rf"\b{re.escape(expected_kb)}\b", title, re.IGNORECASE) is None:
         raise SourceParseError(f"Microsoft Support article title does not identify {expected_kb}")
     release_date = _parse_article_date(title)
     article_locale = _article_locale(soup)
@@ -458,32 +571,62 @@ def parse_support_article(
         known_status,
         article_locale,
         _OOB_TITLE_PATTERN.search(title) is not None,
+        _applies_to(soup),
+        _package_kind(title),
     )
 
 
-def fetch_support_article(client: MicrosoftHttpClient, kb: str) -> SupportArticle:
+def fetch_support_article(
+    client: MicrosoftHttpClient,
+    kb: str,
+    *,
+    fallback_urls: Callable[[], tuple[str, ...]] | None = None,
+) -> SupportArticle:
     """Prefer verified Spanish content and fall back to the official English article."""
 
     if re.fullmatch(r"KB[0-9]{6,8}", kb) is None:
         raise ValueError(f"Invalid verified KB {kb!r}")
 
+    errors: list[str] = []
     try:
         spanish_article = _fetch_support_locale(client, kb, "es-es")
         if spanish_article.locale == "es-ES":
             return spanish_article
-    except (HttpFetchError, SourceParseError):
-        pass
+    except (HttpFetchError, SourceParseError) as error:
+        errors.append(str(error))
 
     try:
         return _fetch_support_locale(client, kb, "en-us")
     except (HttpFetchError, SourceParseError) as error:
-        raise SourceParseError(
-            f"{kb} could not be verified in es-ES or en-US Microsoft Support"
-        ) from error
+        errors.append(str(error))
+
+    if fallback_urls is not None:
+        try:
+            urls = fallback_urls()
+        except (HttpFetchError, SourceParseError) as error:
+            errors.append(str(error))
+        else:
+            # Prefer a Spanish link when the official index supplies one.
+            for url in sorted(set(urls), key=lambda url: "/es-es/" not in url.casefold()):
+                try:
+                    return _fetch_support_url(client, kb, url)
+                except (HttpFetchError, SourceParseError) as error:
+                    errors.append(str(error))
+    raise SourceParseError(
+        f"{kb} could not be verified in es-ES or en-US Microsoft Support: " + "; ".join(errors)
+    )
 
 
 def _fetch_support_locale(client: MicrosoftHttpClient, kb: str, locale: str) -> SupportArticle:
-    response = client.get(SUPPORT_HELP_URL.format(locale=locale, kb_number=kb.removeprefix("KB")))
+    return _fetch_support_url(
+        client, kb, SUPPORT_HELP_URL.format(locale=locale, kb_number=kb.removeprefix("KB"))
+    )
+
+
+def _fetch_support_url(client: MicrosoftHttpClient, kb: str, url: str) -> SupportArticle:
+    _assert_support_url(url)
+    response = client.get(url)
+    _assert_support_url(response.url)
     if "/hotpatch/" in urlparse(response.url).path.casefold():
         raise UnsupportedHotpatchError(f"{kb} resolves to Microsoft's hotpatch publication path")
     return parse_support_article(

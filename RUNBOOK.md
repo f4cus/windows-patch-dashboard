@@ -141,6 +141,10 @@ Production collection currently uses:
 - monthly MSRC CVRF: `https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/<YYYY-Mon>`;
 - Windows message center: `https://learn.microsoft.com/en-us/windows/release-health/windows-message-center` for dated OOB announcements;
 - Microsoft Support KB articles, preferring `es-ES` and falling back to `en-US`;
+- official Windows Server/Windows 11 release-information indexes on Microsoft Learn,
+  used only to locate linked Support articles when the locale-specific `/help/` routes fail.
+  Linked articles still require HTTPS on `support.microsoft.com`, matching KB metadata,
+  and the existing locale/hotpatch checks; canonical paths are never constructed from guesses;
 - the CSAF parser exists and is tested, but the production monthly collector does not use a bulk CSAF collection path.
 
 ### Output
@@ -253,6 +257,12 @@ Use `.venv\Scripts\python` for collector commands.
 
 - Read the exact conflict from collector/workflow logs.
 - Check whether each candidate has a successfully parsed official Microsoft Support article.
+- Check its Support release date and explicit **Applies To** product list. A CVRF date
+  inherited from the monthly document is not an explicit KB release date.
+- Check the Support article title's package type. CVRF `Security Update` can describe
+  an SSU or an ESU Monthly Rollup; a parseable article alone is not evidence of an LCU.
+  Generic ESU candidates require a Support-confirmed Monthly Rollup and matching product.
+  Missing classification fails collection instead of claiming `NO PUBLICADO`.
 - Check whether Support explicitly labels a candidate Out-of-band in its article title.
 - If an expected OOB is missing from CVRF, check the dated Windows message center announcement and its official KB link.
 - Do not choose by KB number/date proximity.
@@ -261,9 +271,15 @@ Use `.venv\Scripts\python` for collector commands.
 
 CVRF can expose more than one candidate for a normalized OS. A generic `Security Update` subtype may include an OOB; normalization uses an explicit Support article title to classify it before resolving monthly candidates. Other OOB KBs may be absent from CVRF and are discovered from dated, OS-labelled message center announcements. Multiple actual monthly candidates still require the existing tie-breaker.
 
+CVRF can also retain KBs from earlier months without per-remediation dates. The collector
+discards such a candidate only when Support verifies both its earlier release month and
+the matching product. Contradictions with explicit CVRF dates or explicit Support products
+remain fatal. Multiple remaining monthly candidates require exactly one Support-verified
+Patch Tuesday date and product; missing applicability cannot break a tie.
+
 **Resolution**
 
-For a confirmed monthly plus OOB pair, retain both records and their own release dates. A supersedence link requires independent official evidence. If multiple actual monthly candidates remain, exactly one Support-verified candidate is selected and unverified candidates are warned about; zero or multiple verified candidates cause a deliberate conflict. Investigate official Microsoft evidence before changing classification rules.
+For a confirmed monthly plus OOB pair, retain both records and their own release dates. A supersedence link requires independent official evidence. Exclude packages explicitly identified by Support as SSU, security-only, or auxiliary. If multiple actual monthly candidates remain, exactly one Support-verified principal package with the matching Patch Tuesday date and product is selected and unverified candidates are warned about; zero or multiple verified candidates cause a deliberate conflict. Investigate official Microsoft evidence before changing classification rules.
 
 ### Symptom: Generated report status is `partial`
 

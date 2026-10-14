@@ -134,10 +134,10 @@ def parse_cvrf(
         }
         if not identities:
             continue
-        if (
-            identities & {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}
-            and normalized_subtype != "monthly rollup"
-        ):
+        if identities & {
+            WINDOWS_SERVER_2012,
+            WINDOWS_SERVER_2012_R2,
+        } and normalized_subtype not in {"monthly rollup", "security update"}:
             identities -= {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}
         if not identities:
             continue
@@ -162,16 +162,17 @@ def parse_cvrf(
                 raise SourceParseError(f"Conflicting CVRF remediation metadata for {kb}")
             candidates[key] = value
 
-    # Microsoft normally publishes one KB for multiple Windows 11 architectures and branches.
+    # Branches sharing a KB can have different supersedence or date evidence.
+    # Combine only matching metadata; keep the other branches as separate updates.
     server_candidates = {
         key: value for key, value in candidates.items() if key[1].family == "Windows Server"
     }
     windows_candidates: dict[
-        tuple[str, date, UpdateType], list[tuple[OsIdentity, tuple[str, str | None, bool]]]
+        tuple[str, date, UpdateType, tuple[str, str | None, bool]], list[OsIdentity]
     ] = defaultdict(list)
     for (kb, identity, release_date, update_type), value in candidates.items():
         if identity.family == "Windows 11":
-            windows_candidates[(kb, release_date, update_type)].append((identity, value))
+            windows_candidates[(kb, release_date, update_type, value)].append(identity)
 
     updates: list[StructuredUpdate] = []
     for (kb, identity, release_date, update_type), (
@@ -192,15 +193,12 @@ def parse_cvrf(
                 release_date_explicit=release_date_explicit,
             )
         )
-    for (kb, release_date, update_type), values in windows_candidates.items():
-        metadata = {value for _, value in values}
-        if len(metadata) != 1:
-            raise SourceParseError(f"Conflicting Windows 11 CVRF metadata for {kb}")
-        subtype, supersedes, release_date_explicit = metadata.pop()
+    for (kb, release_date, update_type, metadata), branches in windows_candidates.items():
+        subtype, supersedes, release_date_explicit = metadata
         updates.append(
             StructuredUpdate(
                 kb,
-                combine_windows_11_identities(identity for identity, _ in values),
+                combine_windows_11_identities(branches),
                 release_date,
                 update_type,
                 source_url,

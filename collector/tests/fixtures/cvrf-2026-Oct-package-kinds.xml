@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Document xmlns:ns0="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:ns1="http://www.icasi.org/CVRF/schema/prod/1.1" xmlns:ns2="http://www.icasi.org/CVRF/schema/vuln/1.1">
+  <ns0:DocumentTracking>
+    <ns0:Identification>
+      <ns0:ID>2026-Oct</ns0:ID>
+      <ns0:Alias>2026-Oct</ns0:Alias>
+    </ns0:Identification>
+    <ns0:Status>Final</ns0:Status>
+    <ns0:Version>1.0</ns0:Version>
+    <ns0:RevisionHistory>
+      <ns0:Revision>
+        <ns0:Number>678</ns0:Number>
+        <ns0:Date>2026-10-13T18:45:51</ns0:Date>
+        <ns0:Description>October 2026 Security Updates</ns0:Description>
+      </ns0:Revision>
+    </ns0:RevisionHistory>
+    <ns0:InitialReleaseDate>2026-10-13T07:00:00</ns0:InitialReleaseDate>
+    <ns0:CurrentReleaseDate>2026-10-13T18:45:51</ns0:CurrentReleaseDate>
+  </ns0:DocumentTracking>
+  <ProductTree>
+    <ns1:FullProductName ProductID="10855">Windows Server 2016 (Server Core installation)</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10816">Windows Server 2016</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10378">Windows Server 2012</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10379">Windows Server 2012 (Server Core installation)</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10483">Windows Server 2012 R2</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10543">Windows Server 2012 R2 (Server Core installation)</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10378" CPE="cpe:2.3:o:microsoft:windows_server_2012:6.2.9200.26434:*:*:*:*:*:x64:*">Windows Server 2012</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10379" CPE="cpe:2.3:o:microsoft:windows_server_2012:6.2.9200.26434:*:*:*:*:*:x64:*">Windows Server 2012 (Server Core installation)</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10483" CPE="cpe:2.3:o:microsoft:windows_server_2012_R2:6.3.9600.23470:*:*:*:*:*:x64:*">Windows Server 2012 R2</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10543" CPE="cpe:2.3:o:microsoft:windows_server_2012_R2:6.3.9600.23470:*:*:*:*:*:x64:*">Windows Server 2012 R2 (Server Core installation)</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10816" CPE="cpe:2.3:o:microsoft:windows_server_2016:*:*:*:*:*:*:*:*">Windows Server 2016</ns1:FullProductName>
+    <ns1:FullProductName ProductID="10855" CPE="cpe:2.3:o:microsoft:windows_server_2016:*:*:*:*:*:*:*:*">Windows Server 2016 (Server Core installation)</ns1:FullProductName>
+  </ProductTree>
+  <Vulnerability>
+    <Remediations>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5126835</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5126835</ns2:URL>
+        <ns2:Supercedence>5123065</ns2:Supercedence>
+        <ns2:ProductID>10378</ns2:ProductID>
+        <ns2:ProductID>10379</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>6.2.9200.26434</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5126836</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5126836</ns2:URL>
+        <ns2:Supercedence>5123066</ns2:Supercedence>
+        <ns2:ProductID>10483</ns2:ProductID>
+        <ns2:ProductID>10543</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>6.3.9600.23470</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5126868</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5126868</ns2:URL>
+        <ns2:Supercedence>5123099</ns2:Supercedence>
+        <ns2:ProductID>10852</ns2:ProductID>
+        <ns2:ProductID>10853</ns2:ProductID>
+        <ns2:ProductID>10816</ns2:ProductID>
+        <ns2:ProductID>10855</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.14393.9612</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5126649</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5126649</ns2:URL>
+        <ns2:Supercedence>5122874</ns2:Supercedence>
+        <ns2:ProductID>10852</ns2:ProductID>
+        <ns2:ProductID>10853</ns2:ProductID>
+        <ns2:ProductID>10816</ns2:ProductID>
+        <ns2:ProductID>10855</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.14393.9596</ns2:FixedBuild>
+      </ns2:Remediation>
+    </Remediations>
+  </Vulnerability>
+</Document>

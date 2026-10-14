@@ -39,7 +39,7 @@ The browser does not call Microsoft. Collection happens in Python locally or in 
 ## Data Flow
 
 1. A strict `YYYY-MM` report month is selected. Automation chooses the latest month whose second Tuesday has already occurred when no month is supplied.
-2. The collector retrieves the monthly MSRC CVRF document for monthly KBs and the official Windows message center for dated OOB announcement links. It maps supported product/OS labels to normalized identities and excludes hotpatch-only packages through their official Support path.
+2. The collector retrieves the monthly MSRC CVRF document for monthly KBs and the official Windows message center for dated OOB announcement links. It maps supported product/OS labels to normalized identities and excludes hotpatch-only packages through their official Support path. Generic ESU security candidates are retained for Monthly Rollup verification; verified Support titles exclude SSU, security-only, and auxiliary packages from principal monthly rows.
 3. Each discovered KB is verified against official Microsoft Support. `es-ES` content is preferred; `en-US` is the fallback when Spanish content cannot be retrieved and parsed reliably.
 4. Microsoft Support provides deterministic article content for changes, fixes, and known issues. Hotpatch exclusions require an official Support redirect under Microsoft's `/hotpatch/` path.
 5. Normalization applies product rules, canonical ordering, provenance, known-issue semantics, `NO PUBLICADO` behavior for missing 2012/2012 R2 ESU monthly rollups, and fail-safe conflict checks. Explicit OOB labels from CVRF, message center announcements, or the verified Microsoft Support article title add a separate record; supersedence is linked only when CVRF states it.

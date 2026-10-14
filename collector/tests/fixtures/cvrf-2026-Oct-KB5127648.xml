@@ -1,0 +1,112 @@
+<!-- Reduced from https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct
+     Retrieved 2026-10-13. Original product/remediation elements retained; duplicates omitted. -->
+<ns0:cvrfdoc xmlns:ns0="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:ns1="http://www.icasi.org/CVRF/schema/prod/1.1" xmlns:ns2="http://www.icasi.org/CVRF/schema/vuln/1.1">
+  <ns0:DocumentTracking>
+    <ns0:Identification>
+      <ns0:ID>2026-Oct</ns0:ID>
+      <ns0:Alias>2026-Oct</ns0:Alias>
+    </ns0:Identification>
+    <ns0:Status>Final</ns0:Status>
+    <ns0:Version>1.0</ns0:Version>
+    <ns0:RevisionHistory>
+      <ns0:Revision>
+        <ns0:Number>678</ns0:Number>
+        <ns0:Date>2026-10-13T18:45:51</ns0:Date>
+        <ns0:Description>October 2026 Security Updates</ns0:Description>
+      </ns0:Revision>
+    </ns0:RevisionHistory>
+    <ns0:InitialReleaseDate>2026-10-13T07:00:00</ns0:InitialReleaseDate>
+    <ns0:CurrentReleaseDate>2026-10-13T18:45:51</ns0:CurrentReleaseDate>
+  </ns0:DocumentTracking>
+  <ProductTree>
+    <ns1:FullProductName ProductID="12389">Windows 11 Version 24H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="12390">Windows 11 Version 24H2 for x64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="20437">Windows 11 Version 25H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="20438">Windows 11 Version 25H2 for x64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="21945">Windows 11 Version 26H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="21946">Windows 11 Version 26H2 for x64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="12389" CPE="cpe:2.3:o:microsoft:windows_11_24H2:*:*:*:*:*:*:arm64:*">Windows 11 Version 24H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="12390" CPE="cpe:2.3:o:microsoft:windows_11_24H2:*:*:*:*:*:*:x64:*">Windows 11 Version 24H2 for x64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="20437" CPE="cpe:2.3:o:microsoft:windows_11_25H2:*:*:*:*:*:*:arm64:*">Windows 11 Version 25H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="20438" CPE="cpe:2.3:o:microsoft:windows_11_25H2:*:*:*:*:*:*:x64:*">Windows 11 Version 25H2 for x64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="21945" CPE="cpe:2.3:a:microsoft:windows_11_version_26h2_for_arm64-based_systems:*:*:*:*:*:*:*:*">Windows 11 Version 26H2 for ARM64-based Systems</ns1:FullProductName>
+    <ns1:FullProductName ProductID="21946" CPE="cpe:2.3:a:microsoft:windows_11_version_26h2_for_x64-based_systems:*:*:*:*:*:*:*:*">Windows 11 Version 26H2 for x64-based Systems</ns1:FullProductName>
+  </ProductTree>
+  <Vulnerability>
+    <Remediations>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:Supercedence>5124008</ns2:Supercedence>
+        <ns2:ProductID>12389</ns2:ProductID>
+        <ns2:ProductID>12390</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26100.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:Supercedence>5124008</ns2:Supercedence>
+        <ns2:ProductID>20437</ns2:ProductID>
+        <ns2:ProductID>20438</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26200.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:ProductID>21945</ns2:ProductID>
+        <ns2:ProductID>21946</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26300.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:ProductID>21946</ns2:ProductID>
+        <ns2:ProductID>21945</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26300.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:Supercedence>5124008</ns2:Supercedence>
+        <ns2:ProductID>20438</ns2:ProductID>
+        <ns2:ProductID>20437</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26200.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:Supercedence>5124008</ns2:Supercedence>
+        <ns2:ProductID>12390</ns2:ProductID>
+        <ns2:ProductID>12389</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26100.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+      <ns2:Remediation Type="Vendor Fix">
+        <ns2:Description>5127648</ns2:Description>
+        <ns2:URL>https://catalog.update.microsoft.com/v7/site/Search.aspx?q=KB5127648</ns2:URL>
+        <ns2:ProductID>21946</ns2:ProductID>
+        <ns2:AffectedFiles />
+        <ns2:RestartRequired>Yes</ns2:RestartRequired>
+        <ns2:SubType>Security Update</ns2:SubType>
+        <ns2:FixedBuild>10.0.26300.9711</ns2:FixedBuild>
+      </ns2:Remediation>
+    </Remediations>
+  </Vulnerability>
+</ns0:cvrfdoc>

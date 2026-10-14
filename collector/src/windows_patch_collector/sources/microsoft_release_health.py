@@ -26,6 +26,10 @@ from windows_patch_collector.products import (
 MESSAGE_CENTER_URL = (
     "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center"
 )
+RELEASE_INFO_URLS = (
+    "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+    "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+)
 _KB = re.compile(r"\bKB[0-9]{6,8}\b", re.IGNORECASE)
 _BRANCH = re.compile(r"\b[0-9]{2}H[12]\b", re.IGNORECASE)
 _OOB = re.compile(r"\bout-of-band\b", re.IGNORECASE)
@@ -138,3 +142,36 @@ def fetch_message_center(client: MicrosoftHttpClient, month: str) -> StructuredR
         source_url=response.url,
         retrieved_at=response.retrieved_at,
     )
+
+
+def parse_support_links(content: bytes, *, source_url: str) -> dict[str, tuple[str, ...]]:
+    """Read literal Support links from an official release-information index."""
+
+    parsed = urlparse(source_url)
+    if parsed.scheme != "https" or parsed.hostname != "learn.microsoft.com":
+        raise SourceParseError(f"Release information resolved to a non-Microsoft URL: {source_url}")
+    links: dict[str, list[str]] = {}
+    for link in BeautifulSoup(content, "lxml").select("a[href]"):
+        label = link.get_text(" ", strip=True)
+        if _KB.fullmatch(label) is None:
+            continue
+        url = str(link["href"])
+        target = urlparse(url)
+        if target.scheme != "https" or target.hostname != "support.microsoft.com":
+            raise SourceParseError(f"Release information has a non-Support KB link: {url}")
+        urls = links.setdefault(label.upper(), [])
+        if url not in urls:
+            urls.append(url)
+    return {kb: tuple(urls) for kb, urls in links.items()}
+
+
+def fetch_support_links(client: MicrosoftHttpClient) -> dict[str, tuple[str, ...]]:
+    """Locate articles without constructing unverified canonical URL patterns."""
+
+    links: dict[str, tuple[str, ...]] = {}
+    for url in RELEASE_INFO_URLS:
+        response = client.get(url)
+        parsed = parse_support_links(response.content, source_url=response.url)
+        for kb, urls in parsed.items():
+            links[kb] = tuple(dict.fromkeys(links.get(kb, ()) + urls))
+    return links

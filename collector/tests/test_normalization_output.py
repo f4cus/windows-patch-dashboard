@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 
+import httpx
 import pytest
 
 from windows_patch_collector.collector import collect_month
@@ -17,7 +19,9 @@ from windows_patch_collector.models import (
 )
 from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.output import write_report_atomic
-from windows_patch_collector.products import WINDOWS_SERVER_2022
+from windows_patch_collector.products import WINDOWS_SERVER_2022, WINDOWS_SERVER_2025
+from windows_patch_collector.sources.microsoft_release_health import RELEASE_INFO_URLS
+from windows_patch_collector.sources.microsoft_support import parse_support_article
 from windows_patch_collector.validation import ReportValidationError, load_schema, validate_document
 
 MSRC_URL = "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Aug"
@@ -49,7 +53,13 @@ def _update(
     )
 
 
-def _article(kb: str, release: date, *, is_out_of_band: bool = False) -> SupportArticle:
+def _article(
+    kb: str,
+    release: date,
+    *,
+    is_out_of_band: bool = False,
+    identity: OsIdentity = WINDOWS_SERVER_2022,
+) -> SupportArticle:
     return SupportArticle(
         kb,
         release,
@@ -60,6 +70,8 @@ def _article(kb: str, release: date, *, is_out_of_band: bool = False) -> Support
         "Microsoft is not currently aware of any issues with this update.",
         "none",
         is_out_of_band=is_out_of_band,
+        applies_to=(identity,),
+        package_kind="cumulative",
     )
 
 
@@ -108,7 +120,9 @@ def test_multiple_monthly_candidates_selects_only_support_verified_candidate() -
     result = normalize_report(
         month="2026-08",
         structured=StructuredResult((verified, unverified), MSRC_URL, STAMP),
-        support_articles={verified.kb: _article(verified.kb, verified.release_date)},
+        support_articles={
+            verified.kb: _article(verified.kb, verified.release_date, identity=WINDOWS_11_23H2)
+        },
         support_failures={unverified.kb: "HTTP 404"},
         generated_at=STAMP,
     )
@@ -132,8 +146,8 @@ def test_multiple_monthly_candidates_with_both_support_verified_conflicts() -> N
             month="2026-08",
             structured=StructuredResult((first, second), MSRC_URL, STAMP),
             support_articles={
-                first.kb: _article(first.kb, first.release_date),
-                second.kb: _article(second.kb, second.release_date),
+                first.kb: _article(first.kb, first.release_date, identity=WINDOWS_11_23H2),
+                second.kb: _article(second.kb, second.release_date, identity=WINDOWS_11_23H2),
             },
             support_failures={},
             generated_at=STAMP,
@@ -152,6 +166,197 @@ def test_multiple_monthly_candidates_with_neither_support_verified_conflicts() -
             support_failures={first.kb: "HTTP 404", second.kb: "HTTP 404"},
             generated_at=STAMP,
         )
+
+
+def test_server_2025_october_ignores_verified_historical_implicit_candidates(
+    schema: dict[str, object],
+) -> None:
+    evidence = json.loads(
+        (Path(__file__).parent / "fixtures" / "microsoft-support-server-2025.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    stamp = datetime(2026, 10, 13, 23, tzinfo=UTC)
+    source_url = "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct"
+    articles = {
+        kb: parse_support_article(
+            value["html"].encode(),
+            expected_kb=kb,
+            source_url=value["source_url"],
+            retrieved_at=stamp,
+        )
+        for kb, value in evidence["articles"].items()
+    }
+    assert {kb: article.release_date.isoformat() for kb, article in articles.items()} == {
+        "KB5099536": "2026-07-14",
+        "KB5122871": "2026-09-08",
+        "KB5126646": "2026-10-13",
+    }
+    candidates = tuple(
+        replace(
+            _update(
+                kb,
+                release=date(2026, 10, 13),
+                identity=WINDOWS_SERVER_2025,
+                release_date_explicit=False,
+            ),
+            source_url=source_url,
+            retrieved_at=stamp,
+        )
+        for kb in articles
+    )
+    result = normalize_report(
+        month="2026-10",
+        structured=StructuredResult(candidates, source_url, stamp),
+        support_articles=articles,
+        support_failures={},
+        generated_at=stamp,
+    )
+    validate_document(result.document, schema)
+    rows = [row for row in result.document["updates"] if row["kb"] != "NO PUBLICADO"]
+    assert len(rows) == 1
+    assert rows[0]["kb"] == "KB5126646"
+    assert rows[0]["os"]["version"] == "2025"
+    assert rows[0]["releaseDate"] == "2026-10-13"
+    assert rows[0]["knownIssuesStatus"] == "unknown"
+    assert result.document["status"] == "partial"
+    assert sum("ignored historical CVRF candidate" in w for w in result.warnings) == 2
+
+
+def test_historical_candidate_with_higher_kb_never_wins() -> None:
+    current = _update("KB5000000", release_date_explicit=False)
+    old = _update("KB5999999", release_date_explicit=False)
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((old, current), MSRC_URL, STAMP),
+        support_articles={
+            current.kb: _article(current.kb, current.release_date),
+            old.kb: _article(old.kb, date(2026, 7, 14)),
+        },
+        support_failures={},
+        generated_at=STAMP,
+    )
+    assert [r["kb"] for r in result.document["updates"] if r["kb"] != "NO PUBLICADO"] == [
+        current.kb
+    ]
+
+
+@pytest.mark.parametrize("update_type", ["security", "oob"])
+def test_explicit_date_contradiction_is_fatal_before_candidate_resolution(
+    update_type: str,
+) -> None:
+    conflicting = _update("KB5999999", update_type=update_type)
+    with pytest.raises(CollectionConflictError, match="Official date conflict"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((_update(), conflicting), MSRC_URL, STAMP),
+            support_articles={
+                "KB5120242": _article("KB5120242", date(2026, 8, 11)),
+                conflicting.kb: _article(conflicting.kb, date(2026, 7, 14)),
+            },
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+
+@pytest.mark.parametrize("applies_to", [None, ()])
+def test_missing_or_wrong_product_cannot_resolve_multiple_candidates(
+    applies_to: tuple[OsIdentity, ...] | None,
+) -> None:
+    article = replace(_article("KB5120242", date(2026, 8, 11)), applies_to=applies_to)
+    with pytest.raises(CollectionConflictError):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((_update(), _update("KB5999999")), MSRC_URL, STAMP),
+            support_articles={article.kb: article},
+            support_failures={"KB5999999": "HTTP 403"},
+            generated_at=STAMP,
+        )
+
+
+def test_wrong_product_conflict_is_fatal_even_for_historical_candidate() -> None:
+    with pytest.raises(CollectionConflictError, match="Official product conflict"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((_update(release_date_explicit=False),), MSRC_URL, STAMP),
+            support_articles={
+                "KB5120242": _article("KB5120242", date(2026, 7, 14), identity=WINDOWS_SERVER_2025)
+            },
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+
+def test_single_article_with_unknown_applicability_stays_partial() -> None:
+    article = replace(_article("KB5120242", date(2026, 8, 11)), applies_to=None)
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((_update(),), MSRC_URL, STAMP),
+        support_articles={article.kb: article},
+        support_failures={},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    assert any("product applicability unavailable" in warning for warning in result.warnings)
+
+
+def test_collector_recovers_linked_articles_and_loads_indexes_once(
+    schema: dict[str, object],
+) -> None:
+    current = _update("KB5000000", release_date_explicit=False)
+    old = _update("KB5999999", release_date_explicit=False)
+    requested: list[str] = []
+    canonical_urls = {
+        current.kb: "https://support.microsoft.com/en-us/verified-current",
+        old.kb: "https://support.microsoft.com/en-us/verified-old",
+    }
+    index = "".join(f'<a href="{url}">{kb}</a>' for kb, url in canonical_urls.items())
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested.append(str(request.url))
+        if request.url.host == "learn.microsoft.com":
+            return httpx.Response(200, request=request, text=index)
+        if "/help/" in request.url.path:
+            return httpx.Response(403, request=request)
+        kb = current.kb if request.url.path == "/en-us/verified-current" else old.kb
+        release = "August 11, 2026" if kb == current.kb else "July 14, 2026"
+        content = f"""<h1>{release} - {kb}</h1>
+        <details id="supAppliesToList"><span class="appliesToItem">
+        Windows Server 2022, all editions</span></details>"""
+        return httpx.Response(200, request=request, text=content)
+
+    with MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client:
+        result = collect_month(
+            "2026-08",
+            client=client,
+            structured_fetcher=lambda _client, _month: StructuredResult(
+                (old, current), MSRC_URL, STAMP
+            ),
+            message_center_fetcher=lambda _client, _month: StructuredResult((), MSRC_URL, STAMP),
+            now=lambda: STAMP,
+        )
+    validate_document(result.normalized.document, schema)
+    assert result.support_verified == 2
+    rows = [r for r in result.normalized.document["updates"] if r["kb"] != "NO PUBLICADO"]
+    assert [r["kb"] for r in rows] == [current.kb]
+    assert rows[0]["sources"][1]["url"] == canonical_urls[current.kb]
+    assert all(requested.count(url) == 1 for url in RELEASE_INFO_URLS)
+
+
+def test_prior_month_implicit_oob_is_not_included_in_current_report() -> None:
+    current = _update()
+    old = _update("KB5999999", release_date_explicit=False)
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((current, old), MSRC_URL, STAMP),
+        support_articles={
+            current.kb: _article(current.kb, current.release_date),
+            old.kb: _article(old.kb, date(2026, 7, 20), is_out_of_band=True),
+        },
+        support_failures={},
+        generated_at=STAMP,
+    )
+    assert all(row["kb"] != old.kb for row in result.document["updates"])
 
 
 def test_duplicate_conflict_is_rejected() -> None:
@@ -235,7 +440,7 @@ def test_support_confirmed_oob_is_additive_with_independent_supersedence(
 def test_later_support_date_without_explicit_oob_does_not_reclassify() -> None:
     monthly = _update()
     candidate = _update("KB5120999", release_date_explicit=False)
-    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
+    with pytest.raises(CollectionConflictError, match="Support does not identify an OOB"):
         normalize_report(
             month="2026-08",
             structured=StructuredResult((monthly, candidate), MSRC_URL, STAMP),

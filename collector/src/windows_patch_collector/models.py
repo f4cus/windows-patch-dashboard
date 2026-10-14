@@ -9,6 +9,9 @@ from typing import Literal
 UpdateType = Literal["security", "oob"]
 KnownIssuesStatus = Literal["none", "open", "resolved", "unknown"]
 SupportLocale = Literal["es-ES", "en-US"]
+PackageKind = Literal[
+    "cumulative", "monthly-rollup", "ssu", "security-only", "auxiliary", "unknown"
+]
 
 
 @dataclass(frozen=True, slots=True, order=True)
@@ -72,3 +75,5 @@ class SupportArticle:
     known_issues_status: KnownIssuesStatus
     locale: SupportLocale = "en-US"
     is_out_of_band: bool = False
+    applies_to: tuple[OsIdentity, ...] | None = None
+    package_kind: PackageKind = "unknown"
