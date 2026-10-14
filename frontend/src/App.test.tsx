@@ -11,6 +11,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import augustFixture from "../../data/fixtures/2026-08.json";
 import septemberData from "../../data/reports/2026-09.json";
+import octoberData from "../../data/reports/2026-10.json";
 import App from "./App";
 import { loadMonthlyReport } from "./data/loadMonthlyReport";
 import type { MonthlyReport, UpdateRecord } from "./data/model";
@@ -24,6 +25,10 @@ import { THEME_STORAGE_KEY } from "./useTheme";
 
 const augustReport = loadMonthlyReport(augustFixture);
 const septemberReport = loadMonthlyReport(septemberData);
+const octoberReport = loadMonthlyReport({
+  ...octoberData,
+  generatedAt: "2026-10-14T00:41:29.068022Z",
+});
 
 function installMatchMedia(prefersDark = false) {
   Object.defineProperty(window, "matchMedia", {
@@ -327,7 +332,9 @@ describe("V1 report experience", () => {
     expect(
       [...metadata.querySelectorAll("dt")].map((item) => item.textContent),
     ).toEqual(["Patch Tuesday", "Datos actualizados", "Alcance", "Registros"]);
-    expect(within(metadata).getByText("29 de agosto de 2026")).toBeTruthy();
+    expect(
+      within(metadata).getByText("28-ago-2026, 23:49 (UTC-3)"),
+    ).toBeTruthy();
     expect(container.textContent).not.toMatch(/fixture|proveniencia/i);
     expect(container.textContent).not.toContain("Sin fecha");
   });
@@ -340,6 +347,64 @@ describe("V1 report experience", () => {
 
     expect(metadata.getByText("Datos actualizados")).toBeTruthy();
     expect(metadata.getByText("No disponible")).toBeTruthy();
+  });
+
+  it("keeps the October generation instant consistent across report views", () => {
+    const { container } = renderApp({ reports: [octoberReport] });
+    const expectedTimestamp = "13-oct-2026, 21:41 (UTC-3)";
+
+    function expectSurfaceMetadata() {
+      const metadata = within(container.querySelector(".report-metadata")!);
+      expect(metadata.getByText("Datos actualizados")).toBeTruthy();
+      expect(metadata.getByText(expectedTimestamp)).toBeTruthy();
+      expect(metadata.getByText("13 de octubre de 2026")).toBeTruthy();
+      expect(container.querySelector(".record-date")?.textContent).toBe(
+        "13 de octubre de 2026",
+      );
+    }
+
+    expectSurfaceMetadata();
+    fireEvent.click(screen.getByRole("button", { name: "Modo informe" }));
+    expectSurfaceMetadata();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Volver a vista interactiva" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Client Report" }));
+
+    const metadata = within(
+      container.querySelector(".client-report__metadata")!,
+    );
+    expect(metadata.getByText("Informe actualizado")).toBeTruthy();
+    expect(metadata.getByText(expectedTimestamp)).toBeTruthy();
+    expect(metadata.getByText("13 de octubre de 2026")).toBeTruthy();
+    expect(container.querySelector(".client-update__date")?.textContent).toBe(
+      "Publicada: 13 de octubre de 2026",
+    );
+    expect(
+      container.querySelector(
+        ".client-report__summary-table tbody td:nth-child(4)",
+      )?.textContent,
+    ).toBe("13/10/2026");
+  });
+
+  it("formats official source retrieval instants in Argentina time", () => {
+    const update = updateWith({
+      sources: [
+        {
+          ...octoberReport.updates[0].sources[0],
+          retrievedAt: octoberReport.generatedAt,
+        },
+      ],
+    });
+    renderApp({ reports: [reportWith({}, [update])] });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: `Ver detalle completo de ${update.kb}`,
+      }),
+    );
+    expect(
+      screen.getByText("Recuperada: 13-oct-2026, 21:41 (UTC-3)"),
+    ).toBeTruthy();
   });
 
   it.each([

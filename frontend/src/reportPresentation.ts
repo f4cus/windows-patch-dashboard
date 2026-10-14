@@ -62,6 +62,17 @@ const COMPACT_DATE_FORMATTER = new Intl.DateTimeFormat("es-AR", {
   year: "numeric",
 });
 
+const DATE_TIME_FORMATTER = new Intl.DateTimeFormat("es-AR", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+  timeZone: "America/Argentina/Buenos_Aires",
+  timeZoneName: "shortOffset",
+});
+
 function parseIsoDate(value: string): Date {
   return new Date(`${value}T00:00:00Z`);
 }
@@ -83,7 +94,16 @@ export function formatCompactDate(value: string | null): string {
 }
 
 export function formatDateTime(value: string | null): string {
-  return value === null
-    ? "No disponible"
-    : DATE_FORMATTER.format(new Date(value));
+  if (value === null) {
+    return "No disponible";
+  }
+
+  const parts = Object.fromEntries(
+    DATE_TIME_FORMATTER.formatToParts(new Date(value)).map(
+      ({ type, value }) => [type, value],
+    ),
+  );
+  const month = parts.month.toLowerCase().replace(/\./g, "");
+  const timeZone = parts.timeZoneName.replace("GMT", "UTC");
+  return `${parts.day}-${month}-${parts.year}, ${parts.hour}:${parts.minute} (${timeZone})`;
 }
