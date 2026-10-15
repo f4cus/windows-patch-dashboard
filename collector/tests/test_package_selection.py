@@ -77,6 +77,102 @@ def test_october_esu_security_subtype_and_server_2016_ssu_regression(schema) -> 
     assert any("ignored ssu" in w for w in result.normalized.warnings)
 
 
+@pytest.mark.parametrize(
+    ("old", "new", "error"),
+    [
+        pytest.param(b"", b"", None, id="valid"),
+        pytest.param(b"<h1", b"\xff<h1", "is not valid UTF-8", id="invalid-encoding"),
+        pytest.param(b"<h1", b"<h2", "lacks an h1", id="missing-title"),
+        pytest.param(b"KB5126835", b"KB5126836", "does not identify KB5126835", id="wrong-kb"),
+        pytest.param(
+            b"October 13, 2026",
+            b"Unknown date",
+            "lacks a recognizable release date",
+            id="missing-date",
+        ),
+        pytest.param(
+            b"October 13, 2026",
+            b"October 14, 2026",
+            "does not match Patch Tuesday",
+            id="wrong-date",
+        ),
+        pytest.param(
+            b"supAppliesToList",
+            b"unrecognized",
+            "Cannot verify ESU Monthly Rollup",
+            id="missing-product",
+        ),
+        pytest.param(
+            b"Windows Server 2012 ESU",
+            b"Windows Server 2022, all editions",
+            "Official product conflict",
+            id="wrong-product",
+        ),
+        pytest.param(
+            b"(Monthly Rollup)",
+            b"",
+            "Cannot classify ESU candidate",
+            id="unknown-classification",
+        ),
+    ],
+)
+def test_collect_esu_keeps_only_valid_english_article_from_spanish_route(
+    schema, old: bytes, new: bytes, error: str | None
+) -> None:
+    structured, _ = _evidence()
+    update = next(u for u in structured.updates if u.kb == "KB5126835")
+    structured = replace(structured, updates=(update,))
+    captured = json.loads((FIXTURES / "microsoft-support-package-kinds.json").read_text("utf-8"))
+    content = captured["articles"][update.kb]["html"].encode().replace(old, new)
+    requested: list[str] = []
+    spanish_url = f"https://support.microsoft.com/es-es/help/{update.kb.removeprefix('KB')}"
+    english_url = spanish_url.replace("/es-es/", "/en-us/")
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested.append(str(request.url))
+        if request.url.host == "learn.microsoft.com":
+            return httpx.Response(200, request=request, content=b"<html></html>")
+        if str(request.url) == spanish_url:
+            return httpx.Response(200, request=request, content=content)
+        assert str(request.url) == english_url
+        return httpx.Response(403, request=request)
+
+    with MicrosoftHttpClient(transport=httpx.MockTransport(handler), now=lambda: STAMP) as client:
+        if error is not None:
+            with pytest.raises(CollectionConflictError, match=error):
+                collect_month(
+                    "2026-10",
+                    client=client,
+                    structured_fetcher=lambda _c, _m: structured,
+                    message_center_fetcher=lambda _c, _m: StructuredResult((), URL, STAMP),
+                    now=lambda: STAMP,
+                )
+        else:
+            result = collect_month(
+                "2026-10",
+                client=client,
+                structured_fetcher=lambda _c, _m: structured,
+                message_center_fetcher=lambda _c, _m: StructuredResult((), URL, STAMP),
+                now=lambda: STAMP,
+            )
+
+    assert requested[:2] == [spanish_url, english_url]
+    assert len(requested) == 4  # Both official release indexes were consulted.
+    if error is not None:
+        return
+    assert result.support_verified == result.support_attempted == 1
+    report = result.normalized.document
+    validate_document(report, schema)
+    row = next(u for u in report["updates"] if u["kb"] == update.kb)
+    assert row["os"]["version"] == "2012"
+    assert row["releaseDate"] == "2026-10-13"
+    assert row["sources"][-1] == {
+        "type": "microsoft-support",
+        "url": spanish_url,
+        "retrievedAt": "2026-10-13T23:00:00Z",
+    }
+
+
 @pytest.mark.parametrize("missing", ["KB5126835", "KB5126836"])
 def test_unverified_generic_esu_candidate_fails_instead_of_no_publicado(missing) -> None:
     structured, articles = _evidence()

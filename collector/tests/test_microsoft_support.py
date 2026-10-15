@@ -448,6 +448,51 @@ def test_fetch_stops_after_parseable_spanish_article() -> None:
     assert "/es-es/" in article.source_url
 
 
+@pytest.mark.parametrize("alternative", ["spanish", "unavailable", "invalid", "index-error"])
+def test_english_content_from_spanish_route_is_only_the_last_resort(alternative: str) -> None:
+    canonical = "https://support.microsoft.com/es-es/canonico"
+    requested: list[str] = []
+    index_attempted = False
+
+    def fallback_urls() -> tuple[str, ...]:
+        nonlocal index_attempted
+        index_attempted = True
+        if alternative == "index-error":
+            raise SourceParseError("Official index could not be parsed")
+        return (canonical,)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested.append(str(request.url))
+        if request.url.path == "/es-es/help/5120242":
+            return httpx.Response(200, request=request, content=_article(None))
+        if str(request.url) == canonical:
+            if alternative == "spanish":
+                content = """<h1>11 de agosto de 2026: KB5120242</h1>
+                <h2>Mejoras</h2><p>Contenido de prueba en español.</p>""".encode()
+                return httpx.Response(200, request=request, content=content)
+            if alternative == "invalid":
+                return httpx.Response(200, request=request, content=b"<html></html>")
+        return httpx.Response(403, request=request)
+
+    with MicrosoftHttpClient(
+        transport=httpx.MockTransport(handler), now=lambda: RETRIEVED
+    ) as client:
+        article = fetch_support_article(client, "KB5120242", fallback_urls=fallback_urls)
+
+    assert index_attempted
+    assert requested[:2] == [
+        "https://support.microsoft.com/es-es/help/5120242",
+        "https://support.microsoft.com/en-us/help/5120242",
+    ]
+    assert requested[2:] == ([] if alternative == "index-error" else [canonical])
+    assert article.retrieved_at == RETRIEVED
+    if alternative == "spanish":
+        assert article.locale == "es-ES"
+        assert article.source_url == canonical
+    else:
+        assert article == _parse(_article(None), source_url=requested[0])
+
+
 def test_official_hotpatch_redirect_is_excluded_before_article_parsing() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/es-es/help/5123303":

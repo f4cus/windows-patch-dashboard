@@ -590,6 +590,7 @@ def fetch_support_article(
         raise ValueError(f"Invalid verified KB {kb!r}")
 
     errors: list[HttpFetchError | SourceParseError] = []
+    spanish_article: SupportArticle | None = None
     try:
         spanish_article = _fetch_support_locale(client, kb, "es-es")
         if spanish_article.locale == "es-ES":
@@ -614,6 +615,9 @@ def fetch_support_article(
                     return _fetch_support_url(client, kb, url)
                 except (HttpFetchError, SourceParseError) as error:
                     errors.append(error)
+    # The Spanish route can serve valid English content; retain it as a last resort.
+    if spanish_article is not None:
+        return spanish_article
     raise SourceParseError(
         f"{kb} could not be verified in es-ES or en-US Microsoft Support: "
         + "; ".join(str(error) for error in errors)
