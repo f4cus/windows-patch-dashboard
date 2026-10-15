@@ -12,7 +12,7 @@ from windows_patch_collector import cli
 from windows_patch_collector.collector import collect_month
 from windows_patch_collector.errors import CollectionConflictError
 from windows_patch_collector.http_client import MicrosoftHttpClient
-from windows_patch_collector.models import StructuredResult
+from windows_patch_collector.models import StructuredResult, StructuredUpdate
 from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.sources.microsoft_support import parse_support_article
 from windows_patch_collector.sources.msrc_cvrf import parse_cvrf
@@ -41,6 +41,71 @@ def _evidence():
         for kb, value in captured["articles"].items()
     }
     return structured, articles
+
+
+@pytest.fixture
+def spanish_package_articles():
+    captured = json.loads(
+        (FIXTURES / "microsoft-support-spanish-package-kinds.json").read_text("utf-8")
+    )
+    return {
+        kb: parse_support_article(
+            value["html"].encode(),
+            expected_kb=kb,
+            source_url=value["source_url"],
+            retrieved_at=datetime.fromisoformat(value["retrieved_at"]),
+        )
+        for kb, value in captured["articles"].items()
+    }
+
+
+@pytest.mark.parametrize(
+    ("kb", "kind", "version"),
+    [
+        ("KB5127357", "ssu", "2012"),
+        ("KB5127356", "ssu", "2012 R2"),
+        ("KB5126835", "monthly-rollup", "2012"),
+    ],
+)
+def test_official_spanish_package_titles(spanish_package_articles, kb, kind, version) -> None:
+    article = spanish_package_articles[kb]
+    assert article.kb == kb
+    assert article.package_kind == kind
+    assert article.release_date.isoformat() == "2026-10-13"
+    assert [identity.version for identity in article.applies_to] == [version]
+
+
+@pytest.mark.parametrize("ssu_kb", ["KB5127357", "KB5127356"])
+def test_verified_spanish_esu_ssu_is_excluded_from_monthly_report(
+    schema, spanish_package_articles, ssu_kb
+) -> None:
+    structured, articles = _evidence()
+    articles.update(spanish_package_articles)
+    ssu = articles[ssu_kb]
+    # Simulate a generic MSRC candidate; Support must determine its package kind.
+    candidate = StructuredUpdate(
+        kb=ssu.kb,
+        os=ssu.applies_to[0],
+        release_date=ssu.release_date,
+        update_type="security",
+        source_url=URL,
+        retrieved_at=STAMP,
+        source_subtype="Security Update",
+    )
+    result = normalize_report(
+        month="2026-10",
+        structured=replace(structured, updates=structured.updates + (candidate,)),
+        support_articles=articles,
+        support_failures={},
+        generated_at=STAMP,
+    )
+    validate_document(result.document, schema)
+    assert {row["kb"] for row in result.document["updates"]} == {
+        "KB5126835",
+        "KB5126836",
+        "KB5126868",
+    }
+    assert f"{ssu_kb}: ignored ssu package identified by Support" in result.warnings
 
 
 def test_october_esu_security_subtype_and_server_2016_ssu_regression(schema) -> None:
@@ -330,7 +395,10 @@ def test_verified_unknown_package_cannot_win_monthly_conflict() -> None:
 )
 def test_package_kind_uses_own_title_not_prerequisites(title, kind) -> None:
     article = parse_support_article(
-        f"<h1>{title}</h1><p>Install the servicing stack update KB5999999 first.</p>".encode(),
+        (
+            f"<h1>{title}</h1><p>Install the servicing stack update KB5999999 first.</p>"
+            "<p>Instale la actualización de la pila de servicio (SSU).</p>"
+        ).encode(),
         expected_kb="KB5000000",
         source_url="https://support.microsoft.com/en-us/test",
         retrieved_at=STAMP,

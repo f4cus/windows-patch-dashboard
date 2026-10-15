@@ -1,0 +1,20 @@
+{
+  "description": "Literal h1 and Applies To fragments captured from official Spanish Support articles. The Monthly Rollup also retains its SSU prerequisite paragraph; these are parser fixtures, not production reports.",
+  "articles": {
+    "KB5127357": {
+      "source_url": "https://support.microsoft.com/es-es/servicing/os/windows/ssu/2026/10/kb5127357-windows-server-2012-ssu",
+      "retrieved_at": "2026-10-15T23:45:48.276840+00:00",
+      "html": "<h1 id=\"kb5127357-servicing-stack-update-for-windows-server-2012-october-13-2026\">KB5127357: Actualización de la pila de servicio para Windows Server 2012: 13 de octubre de 2026</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Se aplica a</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2012 ESU</span> </div></details>"
+    },
+    "KB5127356": {
+      "source_url": "https://support.microsoft.com/es-es/servicing/os/windows/ssu/2026/10/kb5127356-windows-8-1-ssu",
+      "retrieved_at": "2026-10-15T23:45:48.600363+00:00",
+      "html": "<h1 id=\"kb5127356-servicing-stack-update-for-windows-server-2012-r2-october-13-2026\">KB5127356: Actualización de la pila de mantenimiento de Windows Server 2012 R2: 13 de octubre de 2026</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Se aplica a</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2012 R2 ESU</span> </div></details>"
+    },
+    "KB5126835": {
+      "source_url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
+      "retrieved_at": "2026-10-15T23:45:49.076950+00:00",
+      "html": "<h1 id=\"october-13-2026kb5126835-monthly-rollup\">13 de octubre de 2026: KB5126835 (paquete acumulativo mensual)</h1><details id=\"supAppliesToList\"><summary class=\"contentToggle\">Se aplica a</summary><div role=\"list\"><span class=\"appliesToItem\" role=\"listitem\">Windows Server 2012 ESU</span> </div></details><p>Para instalar cualquier paquete acumulativo mensual de Windows Server 2012 publicado el 14 de enero de 2025 o después, le recomendamos que primero instale la actualización de la pila de mantenimiento (SSU) más reciente. Si el dispositivo o la imagen sin conexión no tienen instalada la SSU más reciente, es posible que no pueda instalar esta actualización.</p>"
+    }
+  }
+}

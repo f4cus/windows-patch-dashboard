@@ -496,7 +496,7 @@ def _applies_to(soup: BeautifulSoup) -> tuple[OsIdentity, ...] | None:
 def _package_kind(title: str) -> PackageKind:
     """Classify this article's package, never an SSU mentioned in the LCU body."""
 
-    if re.search(r"servicing stack|pila de mantenimiento", title, re.IGNORECASE):
+    if re.search(r"servicing stack|pila de (?:mantenimiento|servicio)", title, re.IGNORECASE):
         return "ssu"
     if re.search(
         r"\.net|dynamic update|setup update|safe os|recovery environment|"
