@@ -16,7 +16,7 @@ from windows_patch_collector.errors import (
     SourceParseError,
     UnsupportedHotpatchError,
 )
-from windows_patch_collector.http_client import MicrosoftHttpClient
+from windows_patch_collector.http_client import MicrosoftHttpClient, diagnostic_url
 from windows_patch_collector.models import (
     KnownIssuesStatus,
     OsIdentity,
@@ -466,7 +466,9 @@ def _article_locale(soup: BeautifulSoup) -> SupportLocale:
 def _assert_support_url(url: str) -> None:
     parsed = urlparse(url)
     if parsed.scheme != "https" or parsed.hostname != "support.microsoft.com":
-        raise SourceParseError(f"Support request resolved to a non-Microsoft URL: {url}")
+        raise SourceParseError(
+            f"Support request resolved to a non-Microsoft URL: {diagnostic_url(url)}"
+        )
 
 
 def _applies_to(soup: BeautifulSoup) -> tuple[OsIdentity, ...] | None:
@@ -587,34 +589,35 @@ def fetch_support_article(
     if re.fullmatch(r"KB[0-9]{6,8}", kb) is None:
         raise ValueError(f"Invalid verified KB {kb!r}")
 
-    errors: list[str] = []
+    errors: list[HttpFetchError | SourceParseError] = []
     try:
         spanish_article = _fetch_support_locale(client, kb, "es-es")
         if spanish_article.locale == "es-ES":
             return spanish_article
     except (HttpFetchError, SourceParseError) as error:
-        errors.append(str(error))
+        errors.append(error)
 
     try:
         return _fetch_support_locale(client, kb, "en-us")
     except (HttpFetchError, SourceParseError) as error:
-        errors.append(str(error))
+        errors.append(error)
 
     if fallback_urls is not None:
         try:
             urls = fallback_urls()
         except (HttpFetchError, SourceParseError) as error:
-            errors.append(str(error))
+            errors.append(error)
         else:
             # Prefer a Spanish link when the official index supplies one.
             for url in sorted(set(urls), key=lambda url: "/es-es/" not in url.casefold()):
                 try:
                     return _fetch_support_url(client, kb, url)
                 except (HttpFetchError, SourceParseError) as error:
-                    errors.append(str(error))
+                    errors.append(error)
     raise SourceParseError(
-        f"{kb} could not be verified in es-ES or en-US Microsoft Support: " + "; ".join(errors)
-    )
+        f"{kb} could not be verified in es-ES or en-US Microsoft Support: "
+        + "; ".join(str(error) for error in errors)
+    ) from errors[-1]
 
 
 def _fetch_support_locale(client: MicrosoftHttpClient, kb: str, locale: str) -> SupportArticle:
@@ -626,12 +629,21 @@ def _fetch_support_locale(client: MicrosoftHttpClient, kb: str, locale: str) -> 
 def _fetch_support_url(client: MicrosoftHttpClient, kb: str, url: str) -> SupportArticle:
     _assert_support_url(url)
     response = client.get(url)
-    _assert_support_url(response.url)
-    if "/hotpatch/" in urlparse(response.url).path.casefold():
-        raise UnsupportedHotpatchError(f"{kb} resolves to Microsoft's hotpatch publication path")
-    return parse_support_article(
-        response.content,
-        expected_kb=kb,
-        source_url=response.url,
-        retrieved_at=response.retrieved_at,
-    )
+    try:
+        _assert_support_url(response.url)
+        if "/hotpatch/" in urlparse(response.url).path.casefold():
+            raise UnsupportedHotpatchError(
+                f"{kb} resolves to Microsoft's hotpatch publication path"
+            )
+        return parse_support_article(
+            response.content,
+            expected_kb=kb,
+            source_url=response.url,
+            retrieved_at=response.retrieved_at,
+        )
+    except SourceParseError as error:
+        raise SourceParseError(
+            f"kb={kb} request_url={diagnostic_url(url)!r} "
+            f"final_url={diagnostic_url(response.url)!r} http_status={response.status_code} "
+            f"error_type={type(error).__name__} reason={str(error)!r}"
+        ) from error

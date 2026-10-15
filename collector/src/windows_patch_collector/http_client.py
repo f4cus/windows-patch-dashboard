@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import re
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 
@@ -13,6 +15,37 @@ from windows_patch_collector.errors import HttpFetchError
 
 USER_AGENT = "windows-patch-dashboard/0.1 (+https://github.com/windows-patch-dashboard)"
 TRANSIENT_STATUS_CODES = frozenset({408, 425, 429, 500, 502, 503, 504})
+_PUBLIC_DIAGNOSTIC_PATHS = {
+    "support.microsoft.com": re.compile(
+        r"/(?:[a-z]{2}-[a-z]{2}/)?(?:help/[0-9]{6,8}|topic|servicing/os)(?=/|$)",
+        re.IGNORECASE,
+    ),
+    "api.msrc.microsoft.com": re.compile(
+        r"/(?:cvrf/v3\.0/cvrf/[0-9]{4}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+        r"|csaf/advisories/index\.txt)(?=/|$)",
+        re.IGNORECASE,
+    ),
+    "learn.microsoft.com": re.compile(
+        r"/(?:[a-z]{2}-[a-z]{2}/)?windows/release-health/(?:windows-message-center"
+        r"|windows-server-release-info|windows11-release-information)(?=/|$)",
+        re.IGNORECASE,
+    ),
+}
+
+
+def diagnostic_url(url: str) -> str:
+    """Keep known Microsoft routes; hide unknown paths, credentials and parameters."""
+
+    parsed = urlsplit(url)
+    path = parsed.path
+    if path not in {"", "/"}:
+        pattern = _PUBLIC_DIAGNOSTIC_PATHS.get(parsed.hostname or "")
+        match = pattern.match(path) if pattern is not None else None
+        if match is None:
+            path = "/[redacted]"
+        elif path[match.end() :] not in {"", "/"}:
+            path = match.group() + "/[redacted]"
+    return urlunsplit((parsed.scheme, parsed.netloc.rsplit("@", 1)[-1], path, "", ""))
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,6 +55,7 @@ class FetchedResponse:
     content: bytes
     url: str
     retrieved_at: datetime
+    status_code: int
 
 
 class MicrosoftHttpClient:
@@ -77,13 +111,29 @@ class MicrosoftHttpClient:
                 continue
             if response.is_error:
                 raise HttpFetchError(
-                    f"GET {url} returned HTTP {response.status_code} ({response.reason_phrase})"
+                    f"GET {diagnostic_url(url)} returned HTTP {response.status_code} "
+                    f"({response.reason_phrase}); http_status={response.status_code} "
+                    f"final_url={diagnostic_url(str(response.url))!r}"
                 )
             return FetchedResponse(
                 content=response.content,
                 url=str(response.url),
                 retrieved_at=self._now().astimezone(UTC),
+                status_code=response.status_code,
             )
 
-        detail = f": {last_error}" if last_error is not None else ""
-        raise HttpFetchError(f"GET {url} failed after {self._attempts} attempts{detail}")
+        detail = ""
+        if last_error is not None:
+            detail = f"; error_type={type(last_error).__name__}"
+            cause = last_error.__cause__ or last_error.__context__
+            cause_types: list[str] = []
+            for _ in range(5):
+                if cause is None:
+                    break
+                cause_types.append(type(cause).__name__)
+                cause = cause.__cause__ or cause.__context__
+            if cause_types:
+                detail += f"; cause_types={'->'.join(cause_types)}"
+        raise HttpFetchError(
+            f"GET {diagnostic_url(url)} failed after {self._attempts} attempts{detail}"
+        ) from last_error

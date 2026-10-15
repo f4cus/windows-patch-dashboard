@@ -562,6 +562,43 @@ def test_unavailable_canonical_article_retains_http_error() -> None:
         fetch_support_article(client, "KB5120242", fallback_urls=lambda: (canonical,))
 
 
+@pytest.mark.parametrize(
+    ("content", "reason"),
+    [
+        (b"<html>sensitive-body</html>", "lacks an h1"),
+        (b"\xff sensitive-body", "is not valid UTF-8"),
+    ],
+)
+def test_parse_failure_retains_response_context_and_original_cause(
+    content: bytes, reason: str
+) -> None:
+    final = "https://support.microsoft.com/en-us/session/path-secret?token=secret#private"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if "/help/" in request.url.path:
+            return httpx.Response(302, request=request, headers={"Location": final})
+        return httpx.Response(200, request=request, content=content)
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError) as raised,
+    ):
+        fetch_support_article(client, "KB5120242")
+
+    message = str(raised.value)
+    assert "kb=KB5120242" in message
+    assert "request_url='https://support.microsoft.com/es-es/help/5120242'" in message
+    assert "request_url='https://support.microsoft.com/en-us/help/5120242'" in message
+    assert "final_url='https://support.microsoft.com/[redacted]'" in message
+    assert "http_status=200" in message
+    assert "error_type=SourceParseError" in message
+    assert reason in message
+    assert isinstance(raised.value.__cause__, SourceParseError)
+    assert isinstance(raised.value.__cause__.__cause__, SourceParseError)
+    assert reason in str(raised.value.__cause__.__cause__)
+    assert all(sensitive not in message for sensitive in ("secret", "private", "body", "<html>"))
+
+
 def test_fallback_hotpatch_is_excluded_only_after_official_domain_validation() -> None:
     canonical = "https://support.microsoft.com/en-us/servicing/os/hotpatch/verified"
     with (

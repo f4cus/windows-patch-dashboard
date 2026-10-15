@@ -10,6 +10,7 @@ from typing import Any
 
 from windows_patch_collector.calendar import patch_tuesday
 from windows_patch_collector.errors import CollectionConflictError
+from windows_patch_collector.http_client import diagnostic_url
 from windows_patch_collector.models import (
     OsIdentity,
     StructuredResult,
@@ -73,6 +74,24 @@ def _supports_identity(article: SupportArticle, identity: OsIdentity) -> bool:
     return set(identity.version.split("/")) <= versions
 
 
+def _support_diagnostics(
+    update: StructuredUpdate,
+    article: SupportArticle | None,
+    support_failures: Mapping[str, str],
+) -> str:
+    details = (
+        f"kb={update.kb} os={update.os.display_name!r} msrc_subtype={update.source_subtype!r} "
+    )
+    if article is not None:
+        return (
+            details + f"support_verification=parsed package_kind={article.package_kind} "
+            f"final_url={diagnostic_url(article.source_url)!r}"
+        )
+    state = "failed" if update.kb in support_failures else "unavailable"
+    reason = support_failures.get(update.kb, "article unavailable")
+    return details + f"support_verification={state} support_error={reason!r}"
+
+
 def _select_updates(
     structured: StructuredResult,
     month: str,
@@ -97,12 +116,14 @@ def _select_updates(
                 raise CollectionConflictError(
                     f"Official date conflict for {update.kb}: "
                     f"MSRC={update.release_date.isoformat()}, "
-                    f"Support={article.release_date.isoformat()}"
+                    f"Support={article.release_date.isoformat()}; "
+                    + _support_diagnostics(update, article, support_failures)
                 )
             if article.applies_to is not None and not _supports_identity(article, update.os):
                 raise CollectionConflictError(
                     f"Official product conflict for {update.kb}: "
-                    f"Support does not apply to {update.os.display_name}"
+                    f"Support does not apply to {update.os.display_name}; "
+                    + _support_diagnostics(update, article, support_failures)
                 )
             if article.applies_to is None:
                 warnings.append(f"{update.kb}: Microsoft Support product applicability unavailable")
@@ -111,7 +132,8 @@ def _select_updates(
                     if not _supports_identity(article, update.os):
                         raise CollectionConflictError(
                             f"Cannot resolve historical candidate {update.kb} for "
-                            f"{update.os.display_name} without Support product applicability"
+                            f"{update.os.display_name} without Support product applicability; "
+                            + _support_diagnostics(update, article, support_failures)
                         )
                     warnings.append(
                         f"{update.kb}: ignored historical CVRF candidate for "
@@ -131,7 +153,8 @@ def _select_updates(
                 raise CollectionConflictError(
                     f"Support date {article.release_date.isoformat()} for {update.kb} "
                     f"does not match Patch Tuesday {expected_release.isoformat()} "
-                    "and Support does not identify an OOB"
+                    "and Support does not identify an OOB; "
+                    + _support_diagnostics(update, article, support_failures)
                 )
         if update.update_type == "security" and update.release_date != expected_release:
             continue
@@ -139,15 +162,20 @@ def _select_updates(
             if article is not None and article.package_kind == "monthly-rollup":
                 if not _supports_identity(article, update.os):
                     raise CollectionConflictError(
-                        f"Cannot verify ESU Monthly Rollup {update.kb} product applicability"
+                        f"Cannot verify ESU Monthly Rollup {update.kb} product applicability; "
+                        + _support_diagnostics(update, article, support_failures)
                     )
             elif update.source_subtype.casefold() != "monthly rollup":
                 raise CollectionConflictError(
                     f"Cannot classify ESU candidate {update.kb} as a Monthly Rollup; "
-                    "Microsoft Support verification required"
+                    "Microsoft Support verification required; "
+                    + _support_diagnostics(update, article, support_failures)
                 )
             elif article is not None and article.package_kind == "cumulative":
-                raise CollectionConflictError(f"Official package kind conflict for {update.kb}")
+                raise CollectionConflictError(
+                    f"Official package kind conflict for {update.kb}; "
+                    + _support_diagnostics(update, article, support_failures)
+                )
         key = (update.os, update.kb)
         existing = unique.get(key)
         if existing is not None and existing != update:
@@ -253,8 +281,10 @@ def normalize_report(
             resolved = _UNAVAILABLE_RESOLVED
             known = _UNAVAILABLE_KNOWN
             known_status = "unknown"
-            failure = support_failures.get(update.kb, "article unavailable")
-            warnings.append(f"{update.kb}: Microsoft Support unavailable ({failure})")
+            warnings.append(
+                f"{update.kb}: Microsoft Support unavailable; "
+                + _support_diagnostics(update, article, support_failures)
+            )
         else:
             sources.append(_source("microsoft-support", article.source_url, article.retrieved_at))
             changes = article.changes_summary

@@ -5,8 +5,10 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from pathlib import Path
 
+import httpx
 import pytest
 
+from windows_patch_collector import cli
 from windows_patch_collector.collector import collect_month
 from windows_patch_collector.errors import CollectionConflictError
 from windows_patch_collector.http_client import MicrosoftHttpClient
@@ -79,7 +81,7 @@ def test_october_esu_security_subtype_and_server_2016_ssu_regression(schema) -> 
 def test_unverified_generic_esu_candidate_fails_instead_of_no_publicado(missing) -> None:
     structured, articles = _evidence()
     del articles[missing]
-    with pytest.raises(CollectionConflictError, match="Cannot classify ESU candidate"):
+    with pytest.raises(CollectionConflictError, match="Cannot classify ESU candidate") as raised:
         normalize_report(
             month="2026-10",
             structured=structured,
@@ -87,6 +89,121 @@ def test_unverified_generic_esu_candidate_fails_instead_of_no_publicado(missing)
             support_failures={missing: "unavailable"},
             generated_at=STAMP,
         )
+    update = next(u for u in structured.updates if u.kb == missing)
+    assert f"kb={missing}" in str(raised.value)
+    assert f"os={update.os.display_name!r}" in str(raised.value)
+    assert "msrc_subtype='Security Update'" in str(raised.value)
+    assert "support_verification=failed support_error='unavailable'" in str(raised.value)
+
+
+@pytest.mark.parametrize("kb", ["KB5126835", "KB5126836"])
+@pytest.mark.parametrize("failure", ["http", "parse", "unknown-package"])
+def test_esu_failure_diagnostics_reach_cli_output(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+    kb: str,
+    failure: str,
+) -> None:
+    structured, _ = _evidence()
+    update = next(u for u in structured.updates if u.kb == kb)
+    structured = replace(structured, updates=(update,))
+    final = "https://support.microsoft.com/en-us/session/path-secret?token=secret#private"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "learn.microsoft.com":
+            return httpx.Response(200, request=request, content=b"<html></html>")
+        if "/help/" in request.url.path:
+            return httpx.Response(302, request=request, headers={"Location": final})
+        content = b"<html>sensitive-body</html>"
+        if failure == "unknown-package":
+            content = f"""<h1>October 13, 2026 - {kb}</h1>
+            <details id="supAppliesToList"><span class="appliesToItem">
+            Windows Server {update.os.version} ESU</span></details>""".encode()
+        return httpx.Response(403 if failure == "http" else 200, request=request, content=content)
+
+    def collect_with_mock_sources(month: str, *, client: MicrosoftHttpClient):
+        return collect_month(
+            month,
+            client=client,
+            structured_fetcher=lambda _c, _m: structured,
+            message_center_fetcher=lambda _c, _m: StructuredResult((), URL, STAMP),
+            now=lambda: STAMP,
+        )
+
+    monkeypatch.setattr(cli, "collect_month", collect_with_mock_sources)
+    monkeypatch.setattr(
+        cli,
+        "MicrosoftHttpClient",
+        lambda: MicrosoftHttpClient(transport=httpx.MockTransport(handler)),
+    )
+
+    assert cli.main(["collect", "--month", "2026-10", "--root", str(tmp_path)]) == 1
+    output = capsys.readouterr().out
+    assert f"ERROR: Cannot classify ESU candidate {kb} as a Monthly Rollup" in output
+    assert f"kb={kb} os={update.os.display_name!r}" in output
+    assert "msrc_subtype='Security Update'" in output
+    assert "https://support.microsoft.com/[redacted]" in output
+    if failure == "unknown-package":
+        assert "support_verification=parsed package_kind=unknown" in output
+    else:
+        assert "support_verification=failed" in output
+        assert f"http_status={403 if failure == 'http' else 200}" in output
+        assert f"/es-es/help/{kb.removeprefix('KB')}" in output
+        assert f"/en-us/help/{kb.removeprefix('KB')}" in output
+        reason = "HTTP 403" if failure == "http" else "lacks an h1"
+        assert reason in output
+    assert all(sensitive not in output for sensitive in ("secret", "private", "body", "<html>"))
+    assert not (tmp_path / "data" / "reports" / "2026-10.json").exists()
+
+
+@pytest.mark.parametrize("kb", ["KB5126835", "KB5126836"])
+def test_esu_product_verification_failure_reports_parsed_package(kb: str) -> None:
+    structured, articles = _evidence()
+    articles[kb] = replace(articles[kb], applies_to=None)
+    with pytest.raises(CollectionConflictError, match="Cannot verify ESU Monthly Rollup") as raised:
+        normalize_report(
+            month="2026-10",
+            structured=structured,
+            support_articles=articles,
+            support_failures={},
+            generated_at=STAMP,
+        )
+    assert f"kb={kb}" in str(raised.value)
+    assert "msrc_subtype='Security Update'" in str(raised.value)
+    assert "support_verification=parsed package_kind=monthly-rollup" in str(raised.value)
+    assert "final_url='https://support.microsoft.com/en-us/servicing/os/[redacted]'" in str(
+        raised.value
+    )
+
+
+@pytest.mark.parametrize("kb", ["KB5126835", "KB5126836"])
+def test_explicit_msrc_rollup_with_support_failure_preserves_partial(kb: str) -> None:
+    structured, articles = _evidence()
+    structured = replace(
+        structured,
+        updates=tuple(
+            replace(u, source_subtype="Monthly Rollup") if u.kb == kb else u
+            for u in structured.updates
+        ),
+    )
+    del articles[kb]
+    result = normalize_report(
+        month="2026-10",
+        structured=structured,
+        support_articles=articles,
+        support_failures={kb: "HTTP 403"},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    row = next(u for u in result.document["updates"] if u["kb"] == kb)
+    assert row["knownIssuesStatus"] == "unknown"
+    assert any(
+        f"kb={kb}" in warning
+        and "msrc_subtype='Monthly Rollup'" in warning
+        and "support_verification=failed support_error='HTTP 403'" in warning
+        for warning in result.warnings
+    )
 
 
 def test_verified_unknown_package_cannot_win_monthly_conflict() -> None:
