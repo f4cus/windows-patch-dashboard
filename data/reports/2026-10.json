@@ -2,8 +2,8 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-10",
   "patchTuesdayDate": "2026-10-13",
-  "generatedAt": "2026-10-15T23:59:09.714288Z",
-  "status": "partial",
+  "generatedAt": "2026-10-16T03:51:10.662551Z",
+  "status": "generated",
   "updates": [
     {
       "kb": "KB5126835",
@@ -24,12 +24,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
-          "retrievedAt": "2026-10-15T23:59:08.700192Z"
+          "retrievedAt": "2026-10-16T03:51:09.450255Z"
         }
       ]
     },
@@ -52,12 +52,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
-          "retrievedAt": "2026-10-15T23:59:08.788064Z"
+          "retrievedAt": "2026-10-16T03:51:09.602855Z"
         }
       ]
     },
@@ -80,12 +80,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/10/kb5126868-windows-10-1607-security-update",
-          "retrievedAt": "2026-10-15T23:59:08.914009Z"
+          "retrievedAt": "2026-10-16T03:51:09.775015Z"
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/10/kb5126651-windows-10-1809-security-update",
-          "retrievedAt": "2026-10-15T23:59:08.404934Z"
+          "retrievedAt": "2026-10-16T03:51:08.844659Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/10/kb5126655-windows-server-2022-security-update",
-          "retrievedAt": "2026-10-15T23:59:08.614159Z"
+          "retrievedAt": "2026-10-16T03:51:09.227025Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/10/kb5126646-windows-server-2025-security-update",
-          "retrievedAt": "2026-10-15T23:59:08.142647Z"
+          "retrievedAt": "2026-10-16T03:51:08.577091Z"
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/10/kb5126653-windows-11-23h2-security-update",
-          "retrievedAt": "2026-10-15T23:59:08.522383Z"
+          "retrievedAt": "2026-10-16T03:51:09.067116Z"
         }
       ]
     },
@@ -211,16 +211,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-10-13",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices. [Date and Time] This update introduces the new (UTC-05:00) Manitoba time zone to support Manitoba’s November 1, 2026, time zone change. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Authentication] This update strengthens NTLMv1 security by changing the internal default behavior when the BlockNtlmv1SSO registry value is not set. Windows now uses Enforce mode (1) instead of Audit mode (0), blocking the generation of NTLMv1-derived credentials for Single Sign-On (SSO). This change applies only to devices where Credential Guard is disabled and the BlockNtlmv1SSO registry value is not set, and might affect Wi-Fi, Ethernet, and VPN connections that use MS-CHAPv2-based authentication. For more information, see KB5066470 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Audio (known issue)] Fixed This update fixes an issue that affects AC-3 audio playback in some applications. [Always On VPN] This update fixes an issue that affects Always On VPN connections after installing KB5124008. When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Printing] This update resolves an issue where printing could fail in some applications and on devices using RAW or Generic Text Only printer drivers after installing the August 2026 security update. [Gaming] This update fixes an issue that could cause mouse input to stutter in some games. [Windows Hello] This update fixes an issue where fingerprint sign-in might not work after a cold boot on some devices.",
+      "knownIssuesSummary": "You might be unable to turn on Smart App Control Symptoms After installing this update, some devices might be unable to turn on Smart App Control in the Windows Security app if it has been turned off. On affected devices, the option to turn on Smart App Control might be grayed out. Devices where Smart App Control is already turned on are not affected and remain protected. Resolution Important: This section contains information about modifying the registry. Before you modify the registry, back it up and make sure that you know how to restore it if a problem occurs. For more information, see How to back up and restore the registry in Windows . Option #1: Modify the registry You can modify the registry to restore the ability to turn on Smart App Control by following these steps: Open a Command Prompt window by typing cmd in the Search box. Select Run as administrator . At the command prompt, enter the following commands. Then restart the device. reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FeatureManagement\\Overrides\" /v 2883193997 /t REG_DWORD /d 1 /f reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FeatureManagement\\Overrides\" /v 2850574478 /t REG_DWORD /d 1 /f Option #2: Install a Group Policy IT administrators can instead choose to mitigate this issue for enterprise-managed devices managed by IT departments by installing and configuring the special Group Policies listed below. Group Policy downloads with Group Policy name: Download #1 for Windows 11, versions 24H2, 25H2, and 26H2 — KB5074105 261015_19222 Feature Preview Download #2 for Windows 11, versions 24H2, 25H2, and 26H2 — KB5074105 261015_19221 Feature Preview Important : You should install and configure both Group Policies to resolve this issue. The first Group Policy is needed to turn on Smart App Control. The second Group Policy ensures that logging is available to assist with troubleshooting in case any problems arise. The special Group Policies can be found in Computer Configuration > Administrative Templates > {Group Policy name} > Windows 11, version 24H2 , 25H2. After installing the Group Policies, configure the value for both settings to Enabled and restart your device(s) to apply the Group Policy settings. Next steps: Microsoft is working on a resolution and will provide an update in an upcoming release. Remote Desktop connections might fail for non-admin users with error 0xC000000D Symptoms After installing the September 2026 non-security preview update KB5124010 , or later updates, non-admin users might be unable to establish Remote Desktop connections to remote devices that have Administrator protection enabled. Attempts to connect might fail with error 0xC000000D and display the message, “The token that was passed to the function is invalid.” This issue primarily affects enterprise-managed remote devices used as Remote Desktop hosts with Administrator protection enabled, regardless of how the feature was enabled . Note: If your organization uses Windows security baselines , published through the Microsoft Security Compliance Toolkit , Administrator protection is enabled by default in Windows 11, version 24H2, 25H2, and 26H2 security baselines, unless your organization has configured the policy differently. Resolution IT administrators can mitigate this issue on devices affected by the Remote Desktop connection failure by using their existing policy management method to temporarily turn off Administrator protection. Reset the User Account Control Type Of Admin Approval Mode policy in Microsoft Intune or Group Policy. For more information, see Administrator protection on Windows 11 . Next steps: Microsoft is working to address this issue in a future Windows update and will provide more information when it is available. USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129195) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
+          "retrievedAt": "2026-10-16T03:51:10.607081Z"
         }
       ]
     },
@@ -234,16 +239,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-10-13",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update includes additional high confidence device targeting data, increasing coverage of devices eligible to automatically receive new Secure Boot certificates . Certificate deployment via Windows updates continues across supported PCs and non-managed business devices in the coming months. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Always On VPN] This update fixes an issue that affect Always On VPN connections after installing KB5124008 . When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces Direct] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Gaming] This update resolves an issue that could cause mouse input to stutter in some games.",
+      "knownIssuesSummary": "Remote Desktop connections might fail for non-admin users with error 0xC000000D Symptoms After installing the September 2026 non-security preview update KB5124010 , or later updates, non-admin users might be unable to establish Remote Desktop connections to remote devices that have Administrator protection enabled. Attempts to connect might fail with error 0xC000000D and display the message, “The token that was passed to the function is invalid.” This issue primarily affects enterprise-managed remote devices used as Remote Desktop hosts with Administrator protection enabled, regardless of how the feature was enabled . Note: If your organization uses Windows security baselines , published through the Microsoft Security Compliance Toolkit , Administrator protection is enabled by default in Windows 11, version 24H2, 25H2, and 26H2 security baselines, unless your organization has configured the policy differently. Resolution IT administrators can mitigate this issue on devices affected by the Remote Desktop connection failure by using their existing policy management method to temporarily turn off Administrator protection. Reset the User Account Control Type Of Admin Approval Mode policy in Microsoft Intune or Group Policy. For more information, see Administrator protection on Windows 11 . Next steps: Microsoft is working to address this issue in a future Windows update and will provide more information when it is available. USB audio devices might fail to start or produce no sound ​​​​​​​​​ Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: ​The device displays an error in Device Manager: \"This device cannot start (Code 10).” ​ No audio output. ​ Volume controls are unresponsive or remain at zero. ​ Sound settings are unresponsive or unavailable. ​ Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129194) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127646-windows-11-26h1-security-update",
+          "retrievedAt": "2026-10-16T03:51:10.361061Z"
         }
       ]
     },
@@ -257,16 +267,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-10-13",
-      "changesSummary": "No disponible: no se pudo verificar el contenido del artículo de Microsoft Support.",
-      "resolvedIssuesSummary": "No disponible: no se pudieron verificar correcciones documentadas por Microsoft Support.",
-      "knownIssuesSummary": "No disponible: no se pudo verificar el estado de problemas conocidos en Microsoft Support.",
-      "knownIssuesStatus": "unknown",
+      "changesSummary": "[Secure Boot] This update continues the deployment of updated Secure Boot certificates using the latest high-confidence targeting data to identify eligible devices that are ready to automatically receive the new certificates. Deployment through Windows Update remains ongoing across supported devices. [Date and Time] This update introduces the new (UTC-05:00) Manitoba time zone to support Manitoba’s November 1, 2026, time zone change. [ReFS security] This update adds auditing and optional policy controls for ReFS volumes on externally attached storage devices. Auditing is enabled by default, while enforcement controls remain disabled by default to give administrators time to evaluate and prepare for future security hardening changes. To learn more, see KB5130741 . [Authentication] This update strengthens NTLMv1 security by changing the internal default behavior when the BlockNtlmv1SSO registry value is not set. Windows now uses Enforce mode (1) instead of Audit mode (0), blocking the generation of NTLMv1-derived credentials for Single Sign-On (SSO). This change applies only to devices where Credential Guard is disabled and the BlockNtlmv1SSO registry value is not set, and might affect Wi-Fi, Ethernet, and VPN connections that use MS-CHAPv2-based authentication. For more information, see KB5066470 .",
+      "resolvedIssuesSummary": "[Windows Explorer (Known issue)] Fixed This update fixes an issue that affects Windows Explorer in multi-user environments, such as Azure Virtual Desktop and FSLogix. After sign-in, Explorer.exe might fail to start or repeatedly crash, causing a black screen. [Audio (known issue)] Fixed This update fixes an issue that affects AC-3 audio playback in some applications. [Always On VPN] This update fixes an issue that affects Always On VPN connections after installing KB5124008. When automatic protocol selection or protocol fallback was configured, affected VPN connections could remain stuck in a Connecting state or fail to connect after an initial connection attempt failed. In some cases, subsequent connection attempts could display the error, \"The specified port is already in use.\" [Storage Spaces] This update fixes an issue that affects tiered Storage Spaces Direct virtual disks. Some virtual disks might fail to come online after installing certain security updates, making dependent clustered workloads unavailable. [Printing] This update resolves an issue where printing could fail in some applications and on devices using RAW or Generic Text Only printer drivers after installing the August 2026 security update. [Gaming] This update fixes an issue that could cause mouse input to stutter in some games. [Windows Hello] This update fixes an issue where fingerprint sign-in might not work after a cold boot on some devices.",
+      "knownIssuesSummary": "You might be unable to turn on Smart App Control Symptoms After installing this update, some devices might be unable to turn on Smart App Control in the Windows Security app if it has been turned off. On affected devices, the option to turn on Smart App Control might be grayed out. Devices where Smart App Control is already turned on are not affected and remain protected. Resolution Important: This section contains information about modifying the registry. Before you modify the registry, back it up and make sure that you know how to restore it if a problem occurs. For more information, see How to back up and restore the registry in Windows . Option #1: Modify the registry You can modify the registry to restore the ability to turn on Smart App Control by following these steps: Open a Command Prompt window by typing cmd in the Search box. Select Run as administrator . At the command prompt, enter the following commands. Then restart the device. reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FeatureManagement\\Overrides\" /v 2883193997 /t REG_DWORD /d 1 /f reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FeatureManagement\\Overrides\" /v 2850574478 /t REG_DWORD /d 1 /f Option #2: Install a Group Policy IT administrators can instead choose to mitigate this issue for enterprise-managed devices managed by IT departments by installing and configuring the special Group Policies listed below. Group Policy downloads with Group Policy name: Download #1 for Windows 11, versions 24H2, 25H2, and 26H2 — KB5074105 261015_19222 Feature Preview Download #2 for Windows 11, versions 24H2, 25H2, and 26H2 — KB5074105 261015_19221 Feature Preview Important : You should install and configure both Group Policies to resolve this issue. The first Group Policy is needed to turn on Smart App Control. The second Group Policy ensures that logging is available to assist with troubleshooting in case any problems arise. The special Group Policies can be found in Computer Configuration > Administrative Templates > {Group Policy name} > Windows 11, version 24H2 , 25H2. After installing the Group Policies, configure the value for both settings to Enabled and restart your device(s) to apply the Group Policy settings. Next steps: Microsoft is working on a resolution and will provide an update in an upcoming release. Remote Desktop connections might fail for non-admin users with error 0xC000000D Symptoms After installing the September 2026 non-security preview update KB5124010 , or later updates, non-admin users might be unable to establish Remote Desktop connections to remote devices that have Administrator protection enabled. Attempts to connect might fail with error 0xC000000D and display the message, “The token that was passed to the function is invalid.” This issue primarily affects enterprise-managed remote devices used as Remote Desktop hosts with Administrator protection enabled, regardless of how the feature was enabled . Note: If your organization uses Windows security baselines , published through the Microsoft Security Compliance Toolkit , Administrator protection is enabled by default in Windows 11, version 24H2, 25H2, and 26H2 security baselines, unless your organization has configured the policy differently. Resolution IT administrators can mitigate this issue on devices affected by the Remote Desktop connection failure by using their existing policy management method to temporarily turn off Administrator protection. Reset the User Account Control Type Of Admin Approval Mode policy in Microsoft Intune or Group Policy. For more information, see Administrator protection on Windows 11 . Next steps: Microsoft is working to address this issue in a future Windows update and will provide more information when it is available. USB audio devices might fail to start or produce no sound Symptoms After installing the September 8, 2026, Windows security update (KB5124012), some USB Audio Class 1.0 devices might fail to start or produce audio. Affected devices might experience one or more of the following symptoms: The device displays an error in Device Manager: \"This device cannot start (Code 10).” No audio output. Volume controls are unresponsive or remain at zero. Sound settings are unresponsive or unavailable. Some devices might function in standard stereo configurations but fail when using multichannel audio features, including 8-channel or 3D audio modes. Some customers have reported that they're able to restore audio in these cases by switching to 2-channel mode. This issue is limited to USB Audio Class 1.0 devices. Resolution This issue is partially resolved in the out-of-band (OOB) update released on September 14, 2026, (KB5129195) . This OOB update resolves the symptoms experienced on devices using 8-channel or 3D audio modes. Microsoft is working to address the other symptoms and will provide more information when it is available. IT administrators who need an immediate workaround for the symptoms not addressed yet by the OOB update should contact Microsoft Support for Business for assistance.",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-15T23:59:04.653316Z"
+          "retrievedAt": "2026-10-16T03:51:02.973580Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
+          "retrievedAt": "2026-10-16T03:51:10.607081Z"
         }
       ]
     }
