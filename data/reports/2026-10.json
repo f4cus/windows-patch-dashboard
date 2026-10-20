@@ -2,7 +2,7 @@
   "schemaVersion": "1.0.0",
   "reportMonth": "2026-10",
   "patchTuesdayDate": "2026-10-13",
-  "generatedAt": "2026-10-17T20:00:44.428888Z",
+  "generatedAt": "2026-10-20T21:10:44.978587Z",
   "status": "generated",
   "updates": [
     {
@@ -24,12 +24,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
-          "retrievedAt": "2026-10-17T20:00:43.568152Z"
+          "retrievedAt": "2026-10-20T21:10:43.933717Z"
         }
       ]
     },
@@ -52,12 +52,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
-          "retrievedAt": "2026-10-17T20:00:43.722551Z"
+          "retrievedAt": "2026-10-20T21:10:44.055877Z"
         }
       ]
     },
@@ -71,21 +71,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-10-13",
-      "changesSummary": "[Hora y fecha] Esta actualización habilita la compatibilidad permanente con el horario de verano (DST) para Columbia Británica y Alberta a partir de noviembre de 2026. Esta actualización introduce la nueva zona horaria Hora estándar de Manitoba \"(UTC-5:00) Manitoba\". [Seguridad de ReFS] Esta actualización agrega controles de auditoría y directivas opcionales para los volúmenes ReFS en dispositivos de almacenamiento conectados externamente. Las auditorías están habilitadas de forma predeterminada, mientras que los controles de cumplimiento permanecen deshabilitados de forma predeterminada para que los administradores tengan tiempo de evaluar y prepararse para futuros cambios de fortalecimiento de la seguridad. Para obtener más información, consulta KB5130741 . [Administrador de claves distribuidas (DKM)] Esta actualización corrige automáticamente las configuraciones de ACL del contenedor DKM no seguras en AD FS de forma predeterminada. Los administradores pueden optar por no participar en la corrección automática estableciendo RemediateDkmAcl en 0 . Este cambio ayuda a solucionar una vulnerabilidad de elevación de privilegios que puede producirse cuando la ACL del contenedor de DKM es excesivamente permisiva. Para obtener más información sobre cómo administrar este cambio, consulte CVE-2026-56155: Refuerzo de ACL de contenedor de Administrador de claves distribuidas de AD FS . [Arranque seguro] Esta actualización continúa la implementación de certificados de arranque seguro actualizados con los datos de orientación de alta confianza más recientes para identificar los dispositivos aptos que están listos para recibir automáticamente los nuevos certificados. La implementación a través de Windows Update sigue en curso en todos los dispositivos compatibles.",
-      "resolvedIssuesSummary": "[Espacios de almacenamiento] Esta actualización soluciona un problema que podría provocar que algunos discos virtuales de espacios de almacenamiento directo permanezcan sin conexión después de instalar una actualización de Windows. Este problema se produce cuando los metadatos de almacenamiento en capas válidos se identifican incorrectamente como no válidos durante la recuperación, lo que impide que se conecten los discos virtuales afectados y las cargas de trabajo dependientes.",
-      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA ni enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de la aplicación. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Solución alternativa Este problema se puede mitigar temporalmente modificando la clave del Registro como se describe en Los servidores Exchange pueden volverse inestables después de la instalación de las actualizaciones de Windows de octubre de 2026 . La actualización de octubre de 2026 introdujo un límite predeterminado en la cantidad de memoria usada por Endpoint Mapper al administrar llamadas de búsqueda de extremos. Para cargas de trabajo como Exchange Server, el límite predeterminado de 512 llamadas simultáneas de búsqueda de punto de conexión podría no ser suficiente con una carga pesada. Los administradores pueden usar esta configuración del Registro para aumentar el número máximo de llamadas simultáneas de búsqueda de extremos, lo que aumenta la cantidad de memoria que puede usar el Asignador de extremos. Soporte técnico de Microsoft: Hay disponible una mitigación adicional para los dispositivos afectados a través del Soporte técnico de Microsoft. Para aplicar esta mitigación en su organización, póngase en contacto con el Soporte técnico de Microsoft para empresas . Pasos siguientes: Microsoft está investigando este problema y proporcionará más información cuando esté disponible. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Este problema se resuelve parcialmente en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026. Esta actualización inicial resuelve los síntomas experimentados en los dispositivos que usan los modos de audio de 8 canales o 3D. Microsoft está trabajando para solucionar los demás síntomas y proporcionará más información cuando esté disponible. Los administradores de TI que necesiten una solución inmediata para los síntomas que aún no se han abordado en la actualización OOB deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda.",
+      "changesSummary": "[Fecha y hora] Esta actualización habilita la compatibilidad permanente con el horario de verano (DST) para Columbia Británica y Alberta a partir de noviembre de 2026. Para obtener información sobre cómo administrar este cambio en Outlook, consulte Cambios de zona horaria de Outlook para Alberta y Columbia Británica . Esta actualización introduce la nueva zona horaria hora de Manitoba Standard Time, \"(UTC-05:00) Manitoba\". Para obtener la información más reciente acerca del horario de verano y los cambios de zona horaria, consulte el blog Daylight Saving Time & Time Zone ( Horario de verano) y zona horaria. [Seguridad de ReFS] Esta actualización agrega controles de auditoría y directivas opcionales para los volúmenes ReFS en dispositivos de almacenamiento conectados externamente. Las auditorías están habilitadas de forma predeterminada, mientras que los controles de cumplimiento permanecen deshabilitados de forma predeterminada para que los administradores tengan tiempo de evaluar y prepararse para futuros cambios de fortalecimiento de la seguridad. Para obtener más información, consulta KB5130741 . [Administrador de claves distribuidas (DKM)] Esta actualización corrige automáticamente las configuraciones de ACL del contenedor DKM no seguras en AD FS de forma predeterminada. Los administradores pueden optar por no participar en la corrección automática estableciendo RemediateDkmAcl en 0 . Este cambio ayuda a solucionar una vulnerabilidad de elevación de privilegios que puede producirse cuando la ACL del contenedor de DKM es excesivamente permisiva. Para obtener más información sobre cómo administrar este cambio, consulte CVE-2026-56155: Refuerzo de ACL de contenedor de Administrador de claves distribuidas de AD FS . [Arranque seguro] Esta actualización continúa la implementación de certificados de arranque seguro actualizados con los datos de orientación de alta confianza más recientes para identificar los dispositivos aptos que están listos para recibir automáticamente los nuevos certificados. La implementación a través de Windows Update continúa en curso en todos los dispositivos compatibles.",
+      "resolvedIssuesSummary": "[Espacios de almacenamiento] Esta actualización soluciona un problema que podía provocar que algunos discos virtuales de Espacios de almacenamiento directo permanecieran sin conexión después de instalar una actualización de Windows. Este problema se produce cuando los metadatos de almacenamiento en capas válidos se identifican incorrectamente como no válidos durante la recuperación, lo que impide que se conecten los discos virtuales afectados y las cargas de trabajo dependientes.",
+      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Solución alternativa Este problema se puede mitigar temporalmente modificando la clave del Registro como se describe en Los servidores Exchange pueden volverse inestables después de la instalación de las actualizaciones de Windows de octubre de 2026 . La actualización de octubre de 2026 introdujo un límite predeterminado en la cantidad de memoria usada por Endpoint Mapper al administrar llamadas de búsqueda de extremos. Para cargas de trabajo como Exchange Server, el límite predeterminado de 512 llamadas simultáneas de búsqueda de punto de conexión podría no ser suficiente con una carga pesada. Los administradores pueden usar esta configuración del Registro para aumentar el número máximo de llamadas simultáneas de búsqueda de extremos, lo que aumenta la cantidad de memoria que puede usar el Asignador de extremos. Soporte técnico de Microsoft: hay disponible una mitigación adicional para los dispositivos afectados a través del Soporte técnico de Microsoft. Para aplicar esta mitigación en su organización, póngase en contacto con el Soporte técnico de Microsoft para empresas . Pasos siguientes: Microsoft está investigando este problema y proporcionará más información cuando esté disponible. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Este problema se resuelve parcialmente en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026. Esta actualización inicial resuelve los síntomas experimentados en los dispositivos que usan los modos de audio de 8 canales o 3D. Microsoft está trabajando para solucionar los demás síntomas y proporcionará más información cuando esté disponible. Los administradores de TI que necesiten una solución inmediata para los síntomas que aún no se han abordado en la actualización OOB deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda.",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/10/kb5126868-windows-10-1607-security-update",
-          "retrievedAt": "2026-10-17T20:00:43.903314Z"
+          "retrievedAt": "2026-10-20T21:10:44.206084Z"
         }
       ]
     },
@@ -99,21 +99,21 @@
       },
       "updateType": "security",
       "releaseDate": "2026-10-13",
-      "changesSummary": "[Hora y fecha] Esta actualización habilita la compatibilidad permanente con el horario de verano (DST) para Columbia Británica y Alberta a partir de noviembre de 2026. Esta actualización introduce la nueva zona horaria Hora estándar de Manitoba \"(UTC-5:00) Manitoba\". [Autenticación] La auditoría NTLM mejorada ya está disponible en Windows Server 2022 y 2019. Las nuevas capacidades de auditoría proporcionan una mayor visibilidad de la autenticación NTLM, lo que ayuda a los administradores a identificar quién está usando NTLM, por qué se seleccionó NTLM y dónde se está produciendo la autenticación NTLM. Esta visibilidad adicional puede ayudar a las organizaciones a identificar las dependencias de NTLM heredadas y a preparar sus entornos para avanzar hacia protocolos de autenticación más seguros, como Kerberos. Para obtener más información, consulte: Información general sobre las mejoras de auditoría NTLM en Windows 11, versión 24H2, Windows Server 2019 y versiones posteriores . [Seguridad de ReFS] Esta actualización agrega controles de auditoría y directivas opcionales para los volúmenes ReFS en dispositivos de almacenamiento conectados externamente. Las auditorías están habilitadas de forma predeterminada, mientras que los controles de cumplimiento permanecen deshabilitados de forma predeterminada para que los administradores tengan tiempo de evaluar y prepararse para futuros cambios de fortalecimiento de la seguridad. Para obtener más información, consulta KB5130741 . [Administrador de claves distribuidas (DKM)] Esta actualización corrige automáticamente las configuraciones de ACL del contenedor DKM no seguras en AD FS de forma predeterminada. Los administradores pueden optar por no participar en la corrección automática estableciendo RemediateDkmAcl en 0 . Este cambio ayuda a solucionar una vulnerabilidad de elevación de privilegios que puede producirse cuando la ACL del contenedor de DKM es excesivamente permisiva. Para obtener más información sobre cómo administrar este cambio, consulte CVE-2026-56155: Refuerzo de ACL de contenedor de Administrador de claves distribuidas de AD FS . [Arranque seguro] Esta actualización continúa la implementación de certificados de arranque seguro actualizados con los datos de orientación de alta confianza más recientes para identificar los dispositivos aptos que están listos para recibir automáticamente los nuevos certificados. La implementación a través de Windows Update sigue en curso en todos los dispositivos compatibles.",
-      "resolvedIssuesSummary": "[BitLocker] Esta actualización corrige un problema por el que las unidades cifradas con BitLocker To Go en sistemas más antiguos no reconocían las unidades cifradas por BitLocker To Go en sistemas más antiguos. Ahora, puede acceder a datos cifrados en estas unidades cuando usa sistemas anteriores. [Espacios de almacenamiento] Esta actualización soluciona un problema que podría provocar que algunos discos virtuales de espacios de almacenamiento directo permanezcan sin conexión después de instalar una actualización de Windows. Este problema se produce cuando los metadatos de almacenamiento en capas válidos se identifican incorrectamente como no válidos durante la recuperación, lo que impide que se conecten los discos virtuales afectados y las cargas de trabajo dependientes.",
-      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA ni enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de la aplicación. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Solución alternativa Este problema se puede mitigar temporalmente modificando la clave del Registro como se describe en Los servidores Exchange pueden volverse inestables después de la instalación de las actualizaciones de Windows de octubre de 2026 . La actualización de octubre de 2026 introdujo un límite predeterminado en la cantidad de memoria usada por Endpoint Mapper al administrar llamadas de búsqueda de extremos. Para cargas de trabajo como Exchange Server, el límite predeterminado de 512 llamadas simultáneas de búsqueda de punto de conexión podría no ser suficiente con una carga pesada. Los administradores pueden usar esta configuración del Registro para aumentar el número máximo de llamadas simultáneas de búsqueda de extremos, lo que aumenta la cantidad de memoria que puede usar el Asignador de extremos. Soporte técnico de Microsoft: Hay disponible una mitigación adicional para los dispositivos afectados a través del Soporte técnico de Microsoft. Para aplicar esta mitigación en su organización, póngase en contacto con el Soporte técnico de Microsoft para empresas . Pasos siguientes: Microsoft está investigando este problema y proporcionará más información cuando esté disponible. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Este problema se resuelve parcialmente en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026. Esta actualización inicial resuelve los síntomas experimentados en los dispositivos que usan los modos de audio de 8 canales o 3D. Microsoft está trabajando para solucionar los demás síntomas y proporcionará más información cuando esté disponible. Los administradores de TI que necesiten una solución inmediata para los síntomas que aún no se han abordado en la actualización OOB deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda.",
+      "changesSummary": "[Fecha y hora] Esta actualización habilita la compatibilidad permanente con el horario de verano (DST) para Columbia Británica y Alberta a partir de noviembre de 2026. Para obtener información sobre cómo administrar este cambio en Outlook, consulte Cambios de zona horaria de Outlook para Alberta y Columbia Británica . Esta actualización introduce la nueva zona horaria hora de Manitoba Standard Time, \"(UTC-05:00) Manitoba\". Para obtener la información más reciente acerca del horario de verano y los cambios de zona horaria, consulte el blog Daylight Saving Time & Time Zone ( Horario de verano) y zona horaria. [Autenticación] La auditoría NTLM mejorada ya está disponible en Windows Server 2022 y 2019. Las nuevas capacidades de auditoría proporcionan una mayor visibilidad de la autenticación NTLM, lo que ayuda a los administradores a identificar quién está usando NTLM, por qué se seleccionó NTLM y dónde se está produciendo la autenticación NTLM. Esta visibilidad adicional puede ayudar a las organizaciones a identificar las dependencias de NTLM heredadas y a preparar sus entornos para avanzar hacia protocolos de autenticación más seguros, como Kerberos. Para obtener más información, consulte: Información general sobre las mejoras de auditoría NTLM en Windows 11, versión 24H2, Windows Server 2019 y versiones posteriores . [Seguridad de ReFS] Esta actualización agrega controles de auditoría y directivas opcionales para los volúmenes ReFS en dispositivos de almacenamiento conectados externamente. Las auditorías están habilitadas de forma predeterminada, mientras que los controles de cumplimiento permanecen deshabilitados de forma predeterminada para que los administradores tengan tiempo de evaluar y prepararse para futuros cambios de fortalecimiento de la seguridad. Para obtener más información, consulta KB5130741 . [Administrador de claves distribuidas (DKM)] Esta actualización corrige automáticamente las configuraciones de ACL del contenedor DKM no seguras en AD FS de forma predeterminada. Los administradores pueden optar por no participar en la corrección automática estableciendo RemediateDkmAcl en 0 . Este cambio ayuda a solucionar una vulnerabilidad de elevación de privilegios que puede producirse cuando la ACL del contenedor de DKM es excesivamente permisiva. Para obtener más información sobre cómo administrar este cambio, consulte CVE-2026-56155: Refuerzo de ACL de contenedor de Administrador de claves distribuidas de AD FS . [Arranque seguro] Esta actualización continúa la implementación de certificados de arranque seguro actualizados con los datos de orientación de alta confianza más recientes para identificar los dispositivos aptos que están listos para recibir automáticamente los nuevos certificados. La implementación a través de Windows Update continúa en curso en todos los dispositivos compatibles.",
+      "resolvedIssuesSummary": "[BitLocker] Esta actualización corrige un problema por el que las unidades cifradas con BitLocker To Go en sistemas más antiguos no reconocían las unidades cifradas por BitLocker To Go en sistemas más antiguos. Ahora, puede acceder a datos cifrados en estas unidades cuando usa sistemas anteriores. [Espacios de almacenamiento] Esta actualización soluciona un problema que podía provocar que algunos discos virtuales de Espacios de almacenamiento directo permanecieran sin conexión después de instalar una actualización de Windows. Este problema se produce cuando los metadatos de almacenamiento en capas válidos se identifican incorrectamente como no válidos durante la recuperación, lo que impide que se conecten los discos virtuales afectados y las cargas de trabajo dependientes.",
+      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Solución alternativa Este problema se puede mitigar temporalmente modificando la clave del Registro como se describe en Los servidores Exchange pueden volverse inestables después de la instalación de las actualizaciones de Windows de octubre de 2026 . La actualización de octubre de 2026 introdujo un límite predeterminado en la cantidad de memoria usada por Endpoint Mapper al administrar llamadas de búsqueda de extremos. Para cargas de trabajo como Exchange Server, el límite predeterminado de 512 llamadas simultáneas de búsqueda de punto de conexión podría no ser suficiente con una carga pesada. Los administradores pueden usar esta configuración del Registro para aumentar el número máximo de llamadas simultáneas de búsqueda de extremos, lo que aumenta la cantidad de memoria que puede usar el Asignador de extremos. Soporte técnico de Microsoft: hay disponible una mitigación adicional para los dispositivos afectados a través del Soporte técnico de Microsoft. Para aplicar esta mitigación en su organización, póngase en contacto con el Soporte técnico de Microsoft para empresas . Pasos siguientes: Microsoft está investigando este problema y proporcionará más información cuando esté disponible. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Este problema se resuelve parcialmente en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026. Esta actualización inicial resuelve los síntomas experimentados en los dispositivos que usan los modos de audio de 8 canales o 3D. Microsoft está trabajando para solucionar los demás síntomas y proporcionará más información cuando esté disponible. Los administradores de TI que necesiten una solución inmediata para los síntomas que aún no se han abordado en la actualización OOB deben ponerse en contacto con el Soporte técnico de Microsoft para empresas para obtener ayuda.",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/10/kb5126651-windows-10-1809-security-update",
-          "retrievedAt": "2026-10-17T20:00:43.052358Z"
+          "retrievedAt": "2026-10-20T21:10:43.520351Z"
         }
       ]
     },
@@ -136,12 +136,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/10/kb5126655-windows-server-2022-security-update",
-          "retrievedAt": "2026-10-17T20:00:43.361472Z"
+          "retrievedAt": "2026-10-20T21:10:43.804604Z"
         }
       ]
     },
@@ -164,12 +164,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/10/kb5126646-windows-server-2025-security-update",
-          "retrievedAt": "2026-10-17T20:00:42.723616Z"
+          "retrievedAt": "2026-10-20T21:10:43.162366Z"
         }
       ]
     },
@@ -192,12 +192,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/10/kb5126653-windows-11-23h2-security-update",
-          "retrievedAt": "2026-10-17T20:00:43.224270Z"
+          "retrievedAt": "2026-10-20T21:10:43.679348Z"
         }
       ]
     },
@@ -220,12 +220,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
-          "retrievedAt": "2026-10-17T20:00:44.391750Z"
+          "retrievedAt": "2026-10-20T21:10:44.946810Z"
         }
       ]
     },
@@ -248,12 +248,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/10/kb5127646-windows-11-26h1-security-update",
-          "retrievedAt": "2026-10-17T20:00:44.308747Z"
+          "retrievedAt": "2026-10-20T21:10:44.696032Z"
         }
       ]
     },
@@ -276,12 +276,12 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Oct",
-          "retrievedAt": "2026-10-17T20:00:37.909658Z"
+          "retrievedAt": "2026-10-20T21:10:38.491614Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/10/kb5127648-windows-11-24h2-25h2-26h2-security-update",
-          "retrievedAt": "2026-10-17T20:00:44.391750Z"
+          "retrievedAt": "2026-10-20T21:10:44.946810Z"
         }
       ]
     }
