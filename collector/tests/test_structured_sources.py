@@ -115,6 +115,71 @@ def test_cvrf_october_shared_kb_preserves_branch_supersedence(
 
 
 @pytest.mark.parametrize(
+    "product",
+    ["Windows Server 2012", "Windows Server 2012 R2"],
+)
+@pytest.mark.parametrize(
+    "subtypes",
+    [("Security Update", "Monthly Rollup"), ("Monthly Rollup", "Security Update")],
+)
+def test_cvrf_esu_prefers_rollup_when_duplicate_metadata_matches(
+    product: str, subtypes: tuple[str, str]
+) -> None:
+    def remediation(subtype: str) -> str:
+        return f"""<Remediation Type="Vendor Fix">
+          <Description>5126836</Description>
+          <SubType>{subtype}</SubType><Supercedence>5123066</Supercedence>
+          <ProductID>esu</ProductID></Remediation>"""
+
+    xml = f"""<Document>
+      <DocumentTracking><Identification><ID>2026-Oct</ID></Identification>
+        <InitialReleaseDate>2026-10-13T07:00:00Z</InitialReleaseDate>
+      </DocumentTracking>
+      <ProductTree><FullProductName ProductID="esu">{product}</FullProductName></ProductTree>
+      <Vulnerability><Remediations>
+        {remediation(subtypes[0])}{remediation(subtypes[1])}
+      </Remediations></Vulnerability>
+    </Document>"""
+    parsed = parse_cvrf(
+        xml.encode(),
+        month="2026-10",
+        source_url=OCTOBER_CVRF_URL,
+        retrieved_at=OCTOBER_RETRIEVED,
+    )
+    assert len(parsed.updates) == 1
+    assert parsed.updates[0].kb == "KB5126836"
+    assert parsed.updates[0].os.display_name == f"{product} (ESU)"
+    assert parsed.updates[0].source_subtype == "Monthly Rollup"
+    assert parsed.updates[0].supersedes == "KB5123066"
+    assert not parsed.updates[0].release_date_explicit
+    assert parsed.warnings == ()
+
+
+def test_cvrf_esu_keeps_rejecting_conflicting_supersedence() -> None:
+    xml = b"""<Document>
+      <DocumentTracking><Identification><ID>2026-Oct</ID></Identification>
+        <InitialReleaseDate>2026-10-13T07:00:00Z</InitialReleaseDate>
+      </DocumentTracking>
+      <ProductTree>
+        <FullProductName ProductID="esu">Windows Server 2012 R2</FullProductName>
+      </ProductTree>
+      <Vulnerability><Remediations>
+        <Remediation Type="Vendor Fix"><Description>5126836</Description>
+          <SubType>Monthly Rollup</SubType><Supercedence>5123066</Supercedence>
+          <ProductID>esu</ProductID></Remediation>
+        <Remediation Type="Vendor Fix"><Description>5126836</Description>
+          <SubType>Security Update</SubType><Supercedence>5120000</Supercedence>
+          <ProductID>esu</ProductID></Remediation>
+      </Remediations></Vulnerability>
+    </Document>"""
+    with pytest.raises(SourceParseError, match="Conflicting CVRF remediation metadata"):
+        parse_cvrf(
+            xml, month="2026-10", source_url=OCTOBER_CVRF_URL,
+            retrieved_at=OCTOBER_RETRIEVED,
+        )
+
+
+@pytest.mark.parametrize(
     ("original", "replacement"),
     [
         (b"<ns2:Supercedence>5124008</ns2:Supercedence>", b""),

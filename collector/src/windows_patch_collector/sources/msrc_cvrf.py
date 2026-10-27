@@ -159,6 +159,17 @@ def parse_cvrf(
             existing = candidates.get(key)
             value = (subtype, supersedes, date_text is not None)
             if existing is not None and existing != value:
+                # CVRF repeats ESU monthly rollups across vulnerabilities; Microsoft may label
+                # the same KB as both Security Update and Monthly Rollup. Prefer the specific
+                # rollup label only if supersedence and date evidence are identical.
+                if (
+                    identity in {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}
+                    and existing[1:] == value[1:]
+                    and {existing[0].casefold(), value[0].casefold()}
+                    == {"security update", "monthly rollup"}
+                ):
+                    candidates[key] = value if value[0].casefold() == "monthly rollup" else existing
+                    continue
                 raise SourceParseError(
                     f"Conflicting CVRF remediation metadata for {kb} "
                     f"os={identity.display_name!r} date={release_date.isoformat()} "
