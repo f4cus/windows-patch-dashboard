@@ -174,7 +174,9 @@ def test_cvrf_esu_keeps_rejecting_conflicting_supersedence() -> None:
     </Document>"""
     with pytest.raises(SourceParseError, match="Conflicting CVRF remediation metadata"):
         parse_cvrf(
-            xml, month="2026-10", source_url=OCTOBER_CVRF_URL,
+            xml,
+            month="2026-10",
+            source_url=OCTOBER_CVRF_URL,
             retrieved_at=OCTOBER_RETRIEVED,
         )
 
