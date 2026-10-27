@@ -159,7 +159,11 @@ def parse_cvrf(
             existing = candidates.get(key)
             value = (subtype, supersedes, date_text is not None)
             if existing is not None and existing != value:
-                raise SourceParseError(f"Conflicting CVRF remediation metadata for {kb}")
+                raise SourceParseError(
+                    f"Conflicting CVRF remediation metadata for {kb} "
+                    f"os={identity.display_name!r} date={release_date.isoformat()} "
+                    f"type={parsed_update_type!r}: previous={existing!r}, incoming={value!r}"
+                )
             candidates[key] = value
 
     # Branches sharing a KB can have different supersedence or date evidence.
