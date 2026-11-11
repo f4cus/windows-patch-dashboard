@@ -59,8 +59,14 @@ def test_loads_official_historical_facts_with_original_timestamps_and_hash(
     assert old.release_date == date(2026, 10, 13)
     assert old.report_path == "data/reports/2026-10.json"
     assert old.report_sha256 == hashlib.sha256(content).hexdigest()
-    assert old.support_retrieved_at.isoformat() == "2026-10-14T23:00:08.033530+00:00"
-    assert old.msrc_retrieved_at.isoformat() == "2026-10-14T23:00:00.768972+00:00"
+    row = next(row for row in json.loads(content)["updates"] if row["kb"] == old.kb)
+    sources = {source["type"]: source for source in row["sources"]}
+    assert old.support_retrieved_at == datetime.fromisoformat(
+        sources["microsoft-support"]["retrievedAt"]
+    )
+    assert old.msrc_retrieved_at == datetime.fromisoformat(sources["msrc"]["retrievedAt"])
+    assert old.support_retrieved_at != STAMP
+    assert old.msrc_retrieved_at != STAMP
     assert load_historical_updates(prior_repository, "2026-10") == ()
     assert load_historical_updates(prior_repository, "2026-09") == ()
 
@@ -134,7 +140,11 @@ def test_http_failure_can_exclude_only_verified_historical_candidates(prior_repo
     warning = next(w for w in result.warnings if "historical_report=" in w)
     assert "historical_report=data/reports/2026-10.json sha256=" in warning
     assert "Support release=2026-10-13" in warning
-    assert "retrievedAt=2026-10-14T23:00:08.033530Z" in warning
+    prior = next(item for item in evidence if item.kb == candidate.kb)
+    support_stamp = prior.support_retrieved_at.isoformat().replace("+00:00", "Z")
+    msrc_stamp = prior.msrc_retrieved_at.isoformat().replace("+00:00", "Z")
+    assert f"Support source={prior.support_url} retrievedAt={support_stamp}" in warning
+    assert f"MSRC source={prior.msrc_url} retrievedAt={msrc_stamp}" in warning
     assert "live_support_error='HTTP 403'" in warning
 
 
