@@ -1,55 +1,105 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "reportMonth": "2026-11",
   "patchTuesdayDate": "2026-11-10",
-  "generatedAt": "2026-11-10T19:45:43.571970Z",
-  "status": "partial",
+  "generatedAt": "2026-11-10T21:45:06.557338Z",
+  "status": "generated",
   "updates": [
     {
-      "kb": "NO PUBLICADO",
+      "kb": "KB5135580",
       "os": {
         "family": "Windows Server",
         "version": "2012",
         "channel": "ESU",
         "displayName": "Windows Server 2012 (ESU)"
       },
-      "updateType": "security",
-      "releaseDate": null,
-      "changesSummary": "No publicado: MSRC no identifica un Monthly Rollup ESU verificable para este producto y mes.",
-      "resolvedIssuesSummary": "No disponible: no existe un artículo de actualización publicado que permita verificar correcciones.",
-      "knownIssuesSummary": "No disponible: no existe una publicación que permita verificar problemas conocidos.",
-      "knownIssuesStatus": "not-published",
+      "updateType": "oob",
+      "releaseDate": "2026-11-06",
+      "changesSummary": "[Certificados] Esta actualización incluye una carga actualizada de certificado raíz de confianza. Está destinado a dispositivos que no reciben actualizaciones actuales de la lista de certificados de confianza (CTL), incluidas las actualizaciones de la lista de certificados que no son de confianza. Esto incluye dispositivos en entornos desconectados, dispositivos que no pueden acceder al servicio de actualización de certificados de Microsoft y dispositivos donde las actualizaciones automáticas de CTL están deshabilitadas. Para obtener más información, consulte Certificados y confianza en Windows .",
+      "resolvedIssuesSummary": "[Almacenamiento] Corregido: Esta actualización soluciona un problema que afecta a los discos administrados de E/S de múltiples rutas (MPIO). Los discos afectados podrían desconectarse inesperadamente o mostrar C0000010 de error en la pestaña Detalles de Administrador de dispositivos. Después de instalar esta actualización, los discos iSCSI administrados por MPIO permanecen en línea y ya no muestran este error. [Audio (problema conocido)] Corregido: Esta actualización soluciona un problema por el que algunos dispositivos de clase de audio USB 1.0 podrían no iniciar o producir audio.",
+      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
-          "type": "msrc",
-          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-10T19:44:39.669454Z"
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
+          "retrievedAt": "2026-11-10T21:44:59.167299Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
+          "retrievedAt": "2026-11-10T21:45:04.399651Z"
+        },
+        {
+          "type": "lifecycle",
+          "url": "https://learn.microsoft.com/es-es/windows-server/get-started/extended-security-updates-overview",
+          "retrievedAt": "2026-11-10T20:45:35.203781Z"
+        },
+        {
+          "type": "lifecycle",
+          "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
+          "retrievedAt": "2026-11-10T20:45:37.516553Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
+        "checkedAt": "2026-11-10T21:45:04.399651Z"
+      },
+      "lifecycle": {
+        "status": "esu-ended",
+        "endedOn": "2026-10-13"
+      }
     },
     {
-      "kb": "NO PUBLICADO",
+      "kb": "KB5135582",
       "os": {
         "family": "Windows Server",
         "version": "2012 R2",
         "channel": "ESU",
         "displayName": "Windows Server 2012 R2 (ESU)"
       },
-      "updateType": "security",
-      "releaseDate": null,
-      "changesSummary": "No publicado: MSRC no identifica un Monthly Rollup ESU verificable para este producto y mes.",
-      "resolvedIssuesSummary": "No disponible: no existe un artículo de actualización publicado que permita verificar correcciones.",
-      "knownIssuesSummary": "No disponible: no existe una publicación que permita verificar problemas conocidos.",
-      "knownIssuesStatus": "not-published",
+      "updateType": "oob",
+      "releaseDate": "2026-11-06",
+      "changesSummary": "[Certificados] Esta actualización incluye una carga actualizada de certificado raíz de confianza. Está destinado a dispositivos que no reciben actualizaciones actuales de la lista de certificados de confianza (CTL), incluidas las actualizaciones de la lista de certificados que no son de confianza. Esto incluye dispositivos en entornos desconectados, dispositivos que no pueden acceder al servicio de actualización de certificados de Microsoft y dispositivos donde las actualizaciones automáticas de CTL están deshabilitadas. Para obtener más información, consulte Certificados y confianza en Windows .",
+      "resolvedIssuesSummary": "[Almacenamiento] Corregido: Esta actualización soluciona un problema que afecta a los discos administrados de E/S de múltiples rutas (MPIO). Los discos afectados podrían desconectarse inesperadamente o mostrar C0000010 de error en la pestaña Detalles de Administrador de dispositivos. Después de instalar esta actualización, los discos iSCSI administrados por MPIO permanecen en línea y ya no muestran este error. [Audio (problema conocido)] Corregido: Esta actualización soluciona un problema por el que algunos dispositivos de clase de audio USB 1.0 podrían no iniciar o producir audio.",
+      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
+      "knownIssuesStatus": "none",
       "supersededBy": null,
       "sources": [
         {
-          "type": "msrc",
-          "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-10T19:44:39.669454Z"
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
+          "retrievedAt": "2026-11-10T21:45:01.843510Z"
+        },
+        {
+          "type": "microsoft-support",
+          "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
+          "retrievedAt": "2026-11-10T21:45:06.334893Z"
+        },
+        {
+          "type": "lifecycle",
+          "url": "https://learn.microsoft.com/es-es/windows-server/get-started/extended-security-updates-overview",
+          "retrievedAt": "2026-11-10T20:45:35.203781Z"
+        },
+        {
+          "type": "lifecycle",
+          "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
+          "retrievedAt": "2026-11-10T20:45:40.181229Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
+        "checkedAt": "2026-11-10T21:45:06.334893Z"
+      },
+      "lifecycle": {
+        "status": "esu-ended",
+        "endedOn": "2026-10-13"
+      }
     },
     {
       "kb": "KB5131291",
@@ -77,7 +127,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
           "retrievedAt": "2026-11-10T19:45:27.186125Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
+        "checkedAt": "2026-11-10T19:45:27.186125Z"
+      }
     },
     {
       "kb": "KB5131085",
@@ -105,7 +161,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
           "retrievedAt": "2026-11-10T19:45:14.210102Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
+        "checkedAt": "2026-11-10T19:45:14.210102Z"
+      }
     },
     {
       "kb": "KB5131090",
@@ -133,7 +195,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
           "retrievedAt": "2026-11-10T19:45:23.720175Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
+        "checkedAt": "2026-11-10T19:45:23.720175Z"
+      }
     },
     {
       "kb": "KB5131080",
@@ -161,7 +229,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
           "retrievedAt": "2026-11-10T19:45:06.673490Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
+        "checkedAt": "2026-11-10T19:45:06.673490Z"
+      }
     },
     {
       "kb": "KB5131087",
@@ -189,7 +263,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
           "retrievedAt": "2026-11-10T19:45:18.568279Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
+        "checkedAt": "2026-11-10T19:45:18.568279Z"
+      }
     },
     {
       "kb": "KB5132061",
@@ -217,7 +297,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
           "retrievedAt": "2026-11-10T19:45:37.990765Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
+        "checkedAt": "2026-11-10T19:45:37.990765Z"
+      }
     },
     {
       "kb": "KB5132059",
@@ -245,7 +331,13 @@
           "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
           "retrievedAt": "2026-11-10T19:45:34.026518Z"
         }
-      ]
+      ],
+      "publicationStatus": "verified",
+      "verification": {
+        "status": "verified",
+        "url": "https://support.microsoft.com/en-us/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
+        "checkedAt": "2026-11-10T19:45:34.026518Z"
+      }
     }
   ]
 }

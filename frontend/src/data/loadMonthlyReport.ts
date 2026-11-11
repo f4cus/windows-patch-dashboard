@@ -38,6 +38,7 @@ const SOURCE_HOSTS: Readonly<Record<SourceType, readonly string[]>> = {
   "microsoft-support": ["support.microsoft.com"],
   msrc: ["msrc.microsoft.com", "api.msrc.microsoft.com"],
   "release-health": ["learn.microsoft.com"],
+  lifecycle: ["learn.microsoft.com", "support.microsoft.com"],
 };
 
 export class MonthlyReportValidationError extends Error {
@@ -218,6 +219,8 @@ function readUpdate(
   value: unknown,
   index: number,
   reportStatus: ReportStatus,
+  schemaVersion: "1.0.0" | "1.1.0",
+  reportMonth: string,
 ): UpdateRecord {
   const path = `updates[${index}]`;
   const update = readObject(value, path);
@@ -252,7 +255,8 @@ function readUpdate(
   if (kb === "NO PUBLICADO") {
     if (
       releaseDate !== null ||
-      knownIssuesStatus !== "not-published" ||
+      knownIssuesStatus !==
+        (schemaVersion === "1.1.0" ? "unknown" : "not-published") ||
       supersededBy !== null
     ) {
       return fail(path, "explicit not-published semantics for NO PUBLICADO");
@@ -272,7 +276,109 @@ function readUpdate(
     return fail(`${path}.sources`, "a non-empty provenance array");
   }
 
-  return {
+  const extra: Pick<
+    UpdateRecord,
+    "publicationStatus" | "lifecycle" | "verification" | "retainedSources"
+  > = {};
+  if (schemaVersion === "1.0.0") {
+    if (
+      [
+        "publicationStatus",
+        "lifecycle",
+        "verification",
+        "retainedSources",
+      ].some((key) => key in update)
+    ) {
+      return fail(path, "version 1.1.0 for incremental evidence or lifecycle");
+    }
+  } else {
+    const publicationStatus = readEnum(
+      update.publicationStatus,
+      ["verified", "partial", "pending", "not-published"] as const,
+      `${path}.publicationStatus`,
+    );
+    Object.assign(extra, { publicationStatus });
+    if (
+      (publicationStatus === "partial" || publicationStatus === "pending") &&
+      reportStatus !== "partial"
+    ) {
+      return fail(path, "a partial report for incomplete evidence");
+    }
+    if ((publicationStatus === "not-published") !== (kb === "NO PUBLICADO"))
+      return fail(path, "matching publication and KB availability");
+    if (
+      publicationStatus === "pending" &&
+      (updateType !== "unknown" || supersededBy !== null)
+    )
+      return fail(
+        path,
+        "no asserted update type or supersedence for pending candidates",
+      );
+    if (update.lifecycle !== undefined) {
+      const life = readObject(update.lifecycle, `${path}.lifecycle`);
+      if (
+        life.status !== "esu-ended" ||
+        life.endedOn !== "2026-10-13" ||
+        reportMonth <= "2026-10" ||
+        os.family !== "Windows Server" ||
+        !["2012", "2012 R2"].includes(os.version) ||
+        os.channel !== "ESU" ||
+        !sources.some((s) => readObject(s, path).type === "lifecycle")
+      )
+        return fail(
+          path,
+          "supported ESU lifecycle, date and official provenance",
+        );
+      Object.assign(extra, {
+        lifecycle: { status: "esu-ended", endedOn: life.endedOn },
+      });
+    }
+    if (update.verification !== undefined) {
+      const check = readObject(update.verification, `${path}.verification`);
+      const checkStatus = readEnum(
+        check.status,
+        ["verified", "unavailable"] as const,
+        `${path}.verification.status`,
+      );
+      const checkedAt = readDateTime(
+        check.checkedAt,
+        `${path}.verification.checkedAt`,
+      );
+      const source = readSource(
+        { type: "microsoft-support", url: check.url, retrievedAt: checkedAt },
+        `${path}.verification`,
+        reportStatus,
+      );
+      Object.assign(extra, {
+        verification: {
+          status: checkStatus,
+          url: source.url,
+          checkedAt,
+          ...(check.detail === undefined
+            ? {}
+            : {
+                detail: readNonEmptyString(
+                  check.detail,
+                  `${path}.verification.detail`,
+                ),
+              }),
+        },
+      });
+    }
+    if (update.retainedSources !== undefined) {
+      if (
+        !Array.isArray(update.retainedSources) ||
+        update.retainedSources.length === 0
+      )
+        return fail(path, "non-empty retained provenance");
+      Object.assign(extra, {
+        retainedSources: update.retainedSources.map((s, i) =>
+          readSource(s, `${path}.retainedSources[${i}]`, reportStatus),
+        ),
+      });
+    }
+  }
+  const result: UpdateRecord = {
     kb,
     os,
     updateType,
@@ -294,14 +400,34 @@ function readUpdate(
     sources: sources.map((source, sourceIndex) =>
       readSource(source, `${path}.sources[${sourceIndex}]`, reportStatus),
     ),
+    ...extra,
   };
+  if (
+    result.publicationStatus === "verified" &&
+    (kb === "NO PUBLICADO" ||
+      releaseDate === null ||
+      updateType === "unknown" ||
+      knownIssuesStatus === "unknown" ||
+      [
+        result.changesSummary,
+        result.resolvedIssuesSummary,
+        result.knownIssuesSummary,
+      ].some(
+        (text) =>
+          text.trim().length === 0 ||
+          /^(No disponible|Pendiente de verificación)/u.test(text.trim()),
+      ) ||
+      !result.sources.some((s) => s.type === "microsoft-support"))
+  )
+    return fail(path, "complete verified content with Support provenance");
+  return result;
 }
 
 export function loadMonthlyReport(rawReport: unknown): MonthlyReport {
   const report = readObject(rawReport, "report");
   const schemaVersion = readString(report.schemaVersion, "schemaVersion");
-  if (schemaVersion !== "1.0.0") {
-    return fail("schemaVersion", "1.0.0");
+  if (schemaVersion !== "1.0.0" && schemaVersion !== "1.1.0") {
+    return fail("schemaVersion", "1.0.0 or 1.1.0");
   }
 
   const reportMonth = readString(report.reportMonth, "reportMonth");
@@ -341,7 +467,7 @@ export function loadMonthlyReport(rawReport: unknown): MonthlyReport {
     generatedAt,
     status,
     updates: report.updates.map((update, index) =>
-      readUpdate(update, index, status),
+      readUpdate(update, index, status, schemaVersion, reportMonth),
     ),
   });
 }

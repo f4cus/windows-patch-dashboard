@@ -8,6 +8,9 @@ import {
   REPORT_STATUS_LABELS,
   SOURCE_LABELS,
   UPDATE_TYPE_LABELS,
+  PUBLICATION_LABELS,
+  recordLabel,
+  recordDate,
 } from "./reportPresentation";
 
 interface ClientReportProps {
@@ -29,14 +32,20 @@ function groupByOperatingSystem(updates: readonly UpdateRecord[]) {
 
 function ClientUpdate({ update }: { readonly update: UpdateRecord }) {
   return (
-    <section className="client-update" aria-label={update.kb}>
+    <section className="client-update" aria-label={recordLabel(update)}>
       <header className="client-update__header">
-        <h3>{update.kb}</h3>
+        <h3>{recordLabel(update)}</h3>
+        {update.publicationStatus ? (
+          <span>{PUBLICATION_LABELS[update.publicationStatus]}</span>
+        ) : null}
         <span className="client-update__type" data-type={update.updateType}>
-          {UPDATE_TYPE_LABELS[update.updateType]}
+          {update.kb === "NO PUBLICADO" && update.publicationStatus
+            ? "No aplica"
+            : UPDATE_TYPE_LABELS[update.updateType]}
         </span>
         <span className="client-update__date">
-          Publicada: {formatDate(update.releaseDate)}
+          {update.releaseDate === null ? "Fecha" : "Publicada"}:{" "}
+          {recordDate(update)}
         </span>
       </header>
 
@@ -54,7 +63,9 @@ function ClientUpdate({ update }: { readonly update: UpdateRecord }) {
           className="client-update__status"
           data-status={update.knownIssuesStatus}
         >
-          {KNOWN_ISSUES_LABELS[update.knownIssuesStatus]}
+          {update.kb === "NO PUBLICADO" && update.publicationStatus
+            ? "No aplica: sin actualización"
+            : KNOWN_ISSUES_LABELS[update.knownIssuesStatus]}
         </p>
         {update.knownIssuesStatus === "none" ? null : (
           <p>{update.knownIssuesSummary}</p>
@@ -69,11 +80,15 @@ function ClientUpdate({ update }: { readonly update: UpdateRecord }) {
           <p>No disponibles.</p>
         ) : (
           <ul>
-            {update.sources.map((source) => (
-              <li key={`${source.type}-${source.url}`}>
-                <a href={source.url}>{SOURCE_LABELS[source.type]}</a>
-              </li>
-            ))}
+            {[...update.sources, ...(update.retainedSources ?? [])].map(
+              (source) => (
+                <li
+                  key={`${source.type}-${source.url}-${source.retrievedAt ?? ""}`}
+                >
+                  <a href={source.url}>{SOURCE_LABELS[source.type]}</a>
+                </li>
+              ),
+            )}
           </ul>
         )}
       </section>
@@ -91,10 +106,12 @@ export function ClientReport({
     ([, records]) => records,
   );
   const unknownKnownIssues = updates.filter(
-    (update) => update.knownIssuesStatus === "unknown",
+    (update) =>
+      update.kb !== "NO PUBLICADO" && update.knownIssuesStatus === "unknown",
   );
   const securityCount = updates.filter(
-    (update) => update.updateType === "security",
+    (update) =>
+      update.kb !== "NO PUBLICADO" && update.updateType === "security",
   ).length;
   const oobCount = updates.filter(
     (update) => update.updateType === "oob",
@@ -168,13 +185,23 @@ export function ClientReport({
               {orderedUpdates.map((update, index) => (
                 <tr key={`${update.os.displayName}-${update.kb}-${index}`}>
                   <td>{update.os.displayName}</td>
-                  <td>{update.kb}</td>
-                  <td>{UPDATE_TYPE_LABELS[update.updateType]}</td>
-                  <td>{formatCompactDate(update.releaseDate)}</td>
+                  <td>{recordLabel(update)}</td>
                   <td>
-                    {update.knownIssuesStatus === "none"
-                      ? "Sin problemas conocidos"
-                      : KNOWN_ISSUES_LABELS[update.knownIssuesStatus]}
+                    {update.kb === "NO PUBLICADO" && update.publicationStatus
+                      ? "No aplica"
+                      : UPDATE_TYPE_LABELS[update.updateType]}
+                  </td>
+                  <td>
+                    {update.lifecycle || update.publicationStatus === "pending"
+                      ? recordDate(update)
+                      : formatCompactDate(update.releaseDate)}
+                  </td>
+                  <td>
+                    {update.kb === "NO PUBLICADO" && update.publicationStatus
+                      ? "No aplica: sin actualización"
+                      : update.knownIssuesStatus === "none"
+                        ? "Sin problemas conocidos"
+                        : KNOWN_ISSUES_LABELS[update.knownIssuesStatus]}
                   </td>
                 </tr>
               ))}
@@ -213,7 +240,34 @@ export function ClientReport({
           aria-labelledby="client-verification-title"
         >
           <h2 id="client-verification-title">Notas de verificación</h2>
-          {unknownKnownIssues.length > 0 ? (
+          {report.schemaVersion === "1.1.0" ? (
+            <>
+              <p>
+                El informe tiene campos o fuentes pendientes de verificación.
+                Los campos no disponibles permanecen explícitos; la información
+                confirmada anteriormente conserva sus fuentes y fechas
+                originales.
+              </p>
+              <ul>
+                {updates
+                  .filter(
+                    (update) =>
+                      update.publicationStatus === "partial" ||
+                      update.publicationStatus === "pending",
+                  )
+                  .map((update) => (
+                    <li key={`${update.os.displayName}-${update.kb}`}>
+                      {update.kb} — {update.os.displayName}:{" "}
+                      {
+                        PUBLICATION_LABELS[
+                          update.publicationStatus as "partial" | "pending"
+                        ]
+                      }
+                    </li>
+                  ))}
+              </ul>
+            </>
+          ) : unknownKnownIssues.length > 0 ? (
             <>
               <p>
                 El informe está marcado como parcial. En los siguientes

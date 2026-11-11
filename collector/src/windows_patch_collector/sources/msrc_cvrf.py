@@ -28,6 +28,7 @@ _KB_PATTERN = re.compile(r"^(?:KB)?(?P<number>[0-9]{6,8})$", re.IGNORECASE)
 _SUPPORTED_SECURITY_SUBTYPES = frozenset(
     {"security update", "monthly rollup", "security only", "security-only update"}
 )
+_RemediationMetadata = tuple[str, str | None, bool]
 
 
 def _local_name(element: ET.Element) -> str:
@@ -110,7 +111,9 @@ def parse_cvrf(
         if product_id and identity is not None:
             products[product_id] = identity
 
-    candidates: dict[tuple[str, OsIdentity, date, UpdateType], tuple[str, str | None, bool]] = {}
+    candidates: dict[tuple[str, OsIdentity, date, UpdateType], set[_RemediationMetadata]] = (
+        defaultdict(set)
+    )
     warnings: list[str] = []
     for remediation in root.iter():
         if _local_name(remediation) != "Remediation":
@@ -156,73 +159,73 @@ def parse_cvrf(
         parsed_update_type: UpdateType = "oob" if is_oob else "security"
         for identity in identities:
             key = (kb, identity, release_date, parsed_update_type)
-            existing = candidates.get(key)
+            existing = candidates[key]
             value = (subtype, supersedes, date_text is not None)
-            if existing is not None and existing != value:
-                # CVRF repeats ESU monthly rollups across vulnerabilities; Microsoft may label
-                # the same KB as both Security Update and Monthly Rollup. Prefer the specific
-                # rollup label only if supersedence and date evidence are identical.
-                if (
-                    identity in {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}
-                    and existing[1:] == value[1:]
-                    and {existing[0].casefold(), value[0].casefold()}
-                    == {"security update", "monthly rollup"}
-                ):
-                    candidates[key] = value if value[0].casefold() == "monthly rollup" else existing
-                    continue
+            if identity in {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}:
+                for prior in tuple(existing):
+                    if prior[1:] == value[1:] and {prior[0].casefold(), value[0].casefold()} == {
+                        "security update",
+                        "monthly rollup",
+                    }:
+                        existing.remove(prior)
+                        value = ("Monthly Rollup", supersedes, date_text is not None)
+            if (
+                existing
+                and value not in existing
+                and (is_oob or date_text is not None or any(old[2] for old in existing))
+            ):
                 raise SourceParseError(
                     f"Conflicting CVRF remediation metadata for {kb} "
                     f"os={identity.display_name!r} date={release_date.isoformat()} "
                     f"type={parsed_update_type!r}: previous={existing!r}, incoming={value!r}"
                 )
-            candidates[key] = value
+            # Undated monthly candidates can be historical. Retain every metadata
+            # variant until Support can verify that exclusion in normalization.
+            existing.add(value)
 
-    # Branches sharing a KB can have different supersedence or date evidence.
-    # Combine only matching metadata; keep the other branches as separate updates.
+    # Combine only branches with the same complete metadata set. Otherwise overlapping
+    # combined identities could hide a within-branch conflict during normalization.
     server_candidates = {
         key: value for key, value in candidates.items() if key[1].family == "Windows Server"
     }
     windows_candidates: dict[
-        tuple[str, date, UpdateType, tuple[str, str | None, bool]], list[OsIdentity]
+        tuple[str, date, UpdateType, frozenset[_RemediationMetadata]], list[OsIdentity]
     ] = defaultdict(list)
-    for (kb, identity, release_date, update_type), value in candidates.items():
+    for (kb, identity, release_date, update_type), values in candidates.items():
         if identity.family == "Windows 11":
-            windows_candidates[(kb, release_date, update_type, value)].append(identity)
+            windows_candidates[(kb, release_date, update_type, frozenset(values))].append(identity)
 
     updates: list[StructuredUpdate] = []
-    for (kb, identity, release_date, update_type), (
-        subtype,
-        supersedes,
-        release_date_explicit,
-    ) in server_candidates.items():
-        updates.append(
-            StructuredUpdate(
-                kb,
-                identity,
-                release_date,
-                update_type,
-                source_url,
-                retrieved_at,
-                subtype,
-                supersedes=supersedes,
-                release_date_explicit=release_date_explicit,
+    for (kb, identity, release_date, update_type), metadata in server_candidates.items():
+        for subtype, supersedes, release_date_explicit in sorted(metadata, key=repr):
+            updates.append(
+                StructuredUpdate(
+                    kb,
+                    identity,
+                    release_date,
+                    update_type,
+                    source_url,
+                    retrieved_at,
+                    subtype,
+                    supersedes=supersedes,
+                    release_date_explicit=release_date_explicit,
+                )
             )
-        )
-    for (kb, release_date, update_type, metadata), branches in windows_candidates.items():
-        subtype, supersedes, release_date_explicit = metadata
-        updates.append(
-            StructuredUpdate(
-                kb,
-                combine_windows_11_identities(branches),
-                release_date,
-                update_type,
-                source_url,
-                retrieved_at,
-                subtype,
-                supersedes=supersedes,
-                release_date_explicit=release_date_explicit,
+    for (kb, release_date, update_type, variants), branches in windows_candidates.items():
+        for subtype, supersedes, release_date_explicit in sorted(variants, key=repr):
+            updates.append(
+                StructuredUpdate(
+                    kb,
+                    combine_windows_11_identities(branches),
+                    release_date,
+                    update_type,
+                    source_url,
+                    retrieved_at,
+                    subtype,
+                    supersedes=supersedes,
+                    release_date_explicit=release_date_explicit,
+                )
             )
-        )
     return StructuredResult(tuple(updates), source_url, retrieved_at, tuple(sorted(set(warnings))))
 
 

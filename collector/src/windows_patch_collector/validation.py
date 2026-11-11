@@ -187,6 +187,64 @@ def _semantic_issues(document: Mapping[str, Any]) -> list[ValidationIssue]:
     identities: list[OsIdentity | None] = []
     for index, update in enumerate(updates):
         issues.extend(_windows_11_identity_issues(update, index))
+        if document.get("schemaVersion") == "1.1.0":
+            publication = update["publicationStatus"]
+            if publication in {"partial", "pending"} and document["status"] != "partial":
+                issues.append(
+                    ValidationIssue(
+                        f"$.updates[{index}].publicationStatus",
+                        "incomplete evidence requires a partial report",
+                    )
+                )
+            if publication == "verified":
+                from windows_patch_collector.incremental import content_complete
+
+                if (
+                    update["kb"] == "NO PUBLICADO"
+                    or update["releaseDate"] is None
+                    or update["updateType"] == "unknown"
+                    or not content_complete(dict(update))
+                    or not any(s["type"] == "microsoft-support" for s in update.get("sources", []))
+                ):
+                    issues.append(
+                        ValidationIssue(
+                            f"$.updates[{index}]",
+                            "verified publication requires complete content and Support provenance",
+                        )
+                    )
+            if publication == "pending" and (
+                update["supersededBy"] is not None or update["updateType"] != "unknown"
+            ):
+                issues.append(
+                    ValidationIssue(
+                        f"$.updates[{index}]",
+                        "pending candidates cannot assert update type or supersedence",
+                    )
+                )
+            if (publication == "not-published") != (update["kb"] == "NO PUBLICADO"):
+                issues.append(
+                    ValidationIssue(
+                        f"$.updates[{index}]", "publication status must match KB availability"
+                    )
+                )
+            lifecycle = update.get("lifecycle")
+            if lifecycle is not None:
+                os = update["os"]
+                if (
+                    os["family"] != "Windows Server"
+                    or os["version"] not in {"2012", "2012 R2"}
+                    or os["channel"] != "ESU"
+                    or lifecycle["endedOn"] != "2026-10-13"
+                    or document["reportMonth"] <= "2026-10"
+                    or not any(s["type"] == "lifecycle" for s in update.get("sources", []))
+                ):
+                    issues.append(
+                        ValidationIssue(
+                            f"$.updates[{index}].lifecycle",
+                            "ESU lifecycle requires the supported product, period "
+                            "and official provenance",
+                        )
+                    )
 
         identity = _os_identity(update)
         identities.append(identity)

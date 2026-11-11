@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from urllib.parse import urlsplit, urlunsplit
@@ -73,6 +74,7 @@ class MicrosoftHttpClient:
         if attempts < 1:
             raise ValueError("attempts must be at least one")
         self._attempts = attempts
+        self._transport = transport
         self._backoff_seconds = backoff_seconds
         self._sleeper = sleeper
         self._now = now or (lambda: datetime.now(UTC))
@@ -91,6 +93,21 @@ class MicrosoftHttpClient:
 
     def close(self) -> None:
         self._client.close()
+
+    @contextmanager
+    def article_session(self) -> Iterator[MicrosoftHttpClient]:
+        """Use independent public HTTP sessions per article; retain injected test transports."""
+
+        if self._transport is not None:
+            yield self
+        else:
+            with MicrosoftHttpClient(
+                attempts=self._attempts,
+                backoff_seconds=self._backoff_seconds,
+                sleeper=self._sleeper,
+                now=self._now,
+            ) as session:
+                yield session
 
     def get(self, url: str) -> FetchedResponse:
         """Fetch a URL or raise a stable error after transient retries."""
@@ -113,7 +130,8 @@ class MicrosoftHttpClient:
                 raise HttpFetchError(
                     f"GET {diagnostic_url(url)} returned HTTP {response.status_code} "
                     f"({response.reason_phrase}); http_status={response.status_code} "
-                    f"final_url={diagnostic_url(str(response.url))!r}"
+                    f"final_url={diagnostic_url(str(response.url))!r}",
+                    final_url=str(response.url),
                 )
             return FetchedResponse(
                 content=response.content,

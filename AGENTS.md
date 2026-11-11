@@ -21,7 +21,7 @@ Then inspect only the code, tests, data, and workflow files directly related to 
 - Preserve existing behavior unless the task explicitly requires changing it.
 - Do not change an active decision in `DECISIONS.md` silently. Identify the conflict before implementation.
 - Never invent Microsoft KBs, dates, fixes, known issues, product mappings, supersedence, source URLs, or provenance.
-- Prefer a safe failure/`unknown` state over fabricated certainty.
+- Prefer explicit pending/partial evidence over fabricated certainty; fail globally only when discovery, verified conflicts or contract integrity cannot be isolated safely (D012).
 
 ## Before Making Changes
 
@@ -66,7 +66,7 @@ Do not re-review unrelated architecture that is already documented and working.
 - `data/fixtures/2026-08.json` is the single manual golden fixture and is not production provenance.
 - Preserve official-source provenance for generated/partial/verified records.
 - OOB is an update type, not a known-issue status.
-- `NO PUBLICADO` and supersedence semantics must continue to pass schema and cross-record validation.
+- Preserve historical 1.0 `NO PUBLICADO` semantics. In 1.1, keep publication, known-issue and lifecycle states independent; ESU-ended absence has no KB/date and does not itself imply `partial`. Supersedence still requires explicit official evidence.
 - Contract changes are high-impact because Python and TypeScript both validate the boundary.
 
 ## Testing and Validation
@@ -165,3 +165,22 @@ Update root harness documents only when the change materially changes:
 - setup, operation, deployment, or troubleshooting procedures (`RUNBOOK.md`).
 
 Do not update harness documentation for trivial UI copy, formatting, or isolated implementation details.
+
+## Incremental Publication (D012)
+
+- A 403/404, timeout, missing article section or individual parsing failure must not erase
+  verified facts or block independent KBs. Keep unresolved candidates pending without
+  invented release dates, principal package types or supersedence.
+- Missing changes/fixes/known-issue content is incomplete even if the article title parses.
+  Label it `No disponible`; do not mark the row/report complete.
+- Validate a same-month baseline before preserving its confirmed fields; retain original
+  sources/timestamps. Earlier-month history is only evidence of historical candidates.
+- CVRF failure, invalid schema, contradictory verified facts or unresolvable verified monthly
+  conflicts remain fatal. Never weaken validation to force a deployment.
+- Contradictory official metadata for the same KB/product remains fatal even when Support
+  fails. Only verified historical exclusion or official hotpatch exclusion may bypass those
+  records; missing content/classification alone can remain pending or partial.
+- Keep lifecycle facts in the reviewed product/date registry with official provenance.
+  Never infer ESU end from HTTP failures or suppress a verified exceptional update.
+- Validate both contract versions, Python and TypeScript, after boundary changes. Exercise
+  repeated failed refreshes and enrichment to prove that timestamp-only runs stay unchanged.

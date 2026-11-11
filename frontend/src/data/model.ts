@@ -19,6 +19,7 @@ export const SOURCE_TYPES = [
   "microsoft-support",
   "msrc",
   "release-health",
+  "lifecycle",
 ] as const;
 
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -51,10 +52,23 @@ export interface UpdateRecord {
   readonly knownIssuesStatus: KnownIssuesStatus;
   readonly supersededBy: string | null;
   readonly sources: readonly ReportSource[];
+  readonly publicationStatus?:
+    "verified" | "partial" | "pending" | "not-published";
+  readonly lifecycle?: {
+    readonly status: "esu-ended";
+    readonly endedOn: string;
+  };
+  readonly verification?: {
+    readonly status: "verified" | "unavailable";
+    readonly url: string;
+    readonly checkedAt: string;
+    readonly detail?: string;
+  };
+  readonly retainedSources?: readonly ReportSource[];
 }
 
 export interface MonthlyReport {
-  readonly schemaVersion: "1.0.0";
+  readonly schemaVersion: "1.0.0" | "1.1.0";
   readonly reportMonth: string;
   readonly patchTuesdayDate: string;
   readonly generatedAt: string | null;

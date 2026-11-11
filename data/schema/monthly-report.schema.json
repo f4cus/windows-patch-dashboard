@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:windows-patch-dashboard:schema:monthly-report:1.0.0",
+  "$id": "urn:windows-patch-dashboard:schema:monthly-report:1.1.0",
   "title": "Windows Patch Dashboard Monthly Report",
   "type": "object",
   "required": [
@@ -14,7 +14,10 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0"
+      "enum": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     "reportMonth": {
       "type": "string",
@@ -129,6 +132,40 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": "1.1.0"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "updates": {
+            "items": {
+              "required": [
+                "publicationStatus"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "updates": {
+            "items": {
+              "properties": {
+                "publicationStatus": false,
+                "lifecycle": false,
+                "verification": false,
+                "retainedSources": false
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -144,7 +181,8 @@
           "enum": [
             "microsoft-support",
             "msrc",
-            "release-health"
+            "release-health",
+            "lifecycle"
           ]
         },
         "url": {
@@ -214,6 +252,25 @@
             "properties": {
               "url": {
                 "pattern": "^https://learn\\.microsoft\\.com/"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lifecycle"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "url": {
+                "pattern": "^https://(?:learn|support)\\.microsoft\\.com/"
               }
             }
           }
@@ -461,6 +518,85 @@
             "$ref": "#/$defs/source"
           },
           "uniqueItems": true
+        },
+        "publicationStatus": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "partial",
+            "pending",
+            "not-published"
+          ]
+        },
+        "lifecycle": {
+          "type": "object",
+          "required": [
+            "status",
+            "endedOn"
+          ],
+          "properties": {
+            "status": {
+              "const": "esu-ended"
+            },
+            "endedOn": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "additionalProperties": false
+        },
+        "verification": {
+          "type": "object",
+          "required": [
+            "status",
+            "url",
+            "checkedAt"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "verified",
+                "unavailable"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://support\\.microsoft\\.com/"
+            },
+            "checkedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "retainedSources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/source"
+              },
+              {
+                "required": [
+                  "retrievedAt"
+                ],
+                "properties": {
+                  "retrievedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            ]
+          },
+          "uniqueItems": true
         }
       },
       "allOf": [
@@ -480,13 +616,33 @@
               "releaseDate": {
                 "const": null
               },
-              "knownIssuesStatus": {
-                "const": "not-published"
-              },
               "supersededBy": {
                 "const": null
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "publicationStatus"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "knownIssuesStatus": {
+                      "const": "unknown"
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "knownIssuesStatus": {
+                      "const": "not-published"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "else": {
             "properties": {

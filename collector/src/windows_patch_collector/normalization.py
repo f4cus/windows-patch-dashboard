@@ -10,8 +10,12 @@ from typing import Any
 
 from windows_patch_collector.calendar import patch_tuesday
 from windows_patch_collector.errors import CollectionConflictError
+from windows_patch_collector.history import historical_match
 from windows_patch_collector.http_client import diagnostic_url
+from windows_patch_collector.incremental import content_complete, preserve_confirmed_fields
+from windows_patch_collector.lifecycle import attach_lifecycle, esu_ended
 from windows_patch_collector.models import (
+    HistoricalUpdate,
     OsIdentity,
     StructuredResult,
     StructuredUpdate,
@@ -98,11 +102,15 @@ def _select_updates(
     excluded_kbs: frozenset[str],
     support_articles: Mapping[str, SupportArticle],
     support_failures: Mapping[str, str],
-) -> tuple[list[StructuredUpdate], list[str]]:
+    historical_updates: tuple[HistoricalUpdate, ...],
+) -> tuple[list[StructuredUpdate], list[str], set[tuple[OsIdentity, str]]]:
     expected_release = patch_tuesday(month)
     unique: dict[tuple[OsIdentity, str], StructuredUpdate] = {}
+    checked: dict[tuple[OsIdentity, str], StructuredUpdate] = {}
     monthly_by_os: dict[OsIdentity, list[StructuredUpdate]] = defaultdict(list)
     warnings = list(structured.warnings)
+    historical_by_key = {(item.os, item.kb): item for item in historical_updates}
+    pending: set[tuple[OsIdentity, str]] = set()
 
     for update in structured.updates:
         if update.kb in excluded_kbs:
@@ -111,6 +119,23 @@ def _select_updates(
             )
             continue
         article = support_articles.get(update.kb)
+        historical = historical_match(update, month, historical_by_key)
+        if article is None and historical is not None:
+            live_state = (
+                f"live_support_error={support_failures[update.kb]!r}"
+                if update.kb in support_failures
+                else "live_support=not-requested"
+            )
+            warnings.append(
+                f"{update.kb}: ignored historical CVRF candidate for {update.os.display_name}; "
+                f"Support release={historical.release_date.isoformat()}; "
+                f"historical_report={historical.report_path} sha256={historical.report_sha256}; "
+                f"Support source={historical.support_url} "
+                f"retrievedAt={iso_datetime(historical.support_retrieved_at)}; "
+                f"MSRC source={historical.msrc_url} "
+                f"retrievedAt={iso_datetime(historical.msrc_retrieved_at)}; " + live_state
+            )
+            continue
         if article is not None:
             if update.release_date_explicit and article.release_date != update.release_date:
                 raise CollectionConflictError(
@@ -142,6 +167,19 @@ def _select_updates(
                     )
                     continue
                 update = replace(update, release_date=article.release_date)
+
+        # Only Support-verified historical candidates may bypass metadata conflicts.
+        # Check before package classification, ESU rules or monthly tie-breaking.
+        key = (update.os, update.kb)
+        existing = checked.get(key)
+        if existing is not None and existing != update:
+            raise CollectionConflictError(
+                "Structured source returned conflicting records for "
+                f"{update.os.display_name} {update.kb}"
+            )
+        checked[key] = update
+
+        if article is not None:
             if article.package_kind in {"ssu", "security-only", "auxiliary"}:
                 warnings.append(
                     f"{update.kb}: ignored {article.package_kind} package identified by Support"
@@ -161,29 +199,32 @@ def _select_updates(
         if update.os in {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}:
             if article is not None and article.package_kind == "monthly-rollup":
                 if not _supports_identity(article, update.os):
-                    raise CollectionConflictError(
-                        f"Cannot verify ESU Monthly Rollup {update.kb} product applicability; "
-                        + _support_diagnostics(update, article, support_failures)
-                    )
+                    pending.add(key)
             elif update.source_subtype.casefold() != "monthly rollup":
-                raise CollectionConflictError(
-                    f"Cannot classify ESU candidate {update.kb} as a Monthly Rollup; "
-                    "Microsoft Support verification required; "
-                    + _support_diagnostics(update, article, support_failures)
-                )
+                pending.add(key)
+                warnings.append(f"{update.kb}: ESU package classification pending verification")
             elif article is not None and article.package_kind == "cumulative":
                 raise CollectionConflictError(
                     f"Official package kind conflict for {update.kb}; "
                     + _support_diagnostics(update, article, support_failures)
                 )
-        key = (update.os, update.kb)
-        existing = unique.get(key)
-        if existing is not None and existing != update:
-            raise CollectionConflictError(
-                "Structured source returned conflicting records for "
-                f"{update.os.display_name} {update.kb}"
-            )
         unique[key] = update
+        if article is None and not (
+            update.release_date_explicit
+            and (
+                update.update_type == "oob" or update.source_subtype.casefold() == "monthly rollup"
+            )
+        ):
+            pending.add(key)
+        if article is not None and (
+            article.package_kind == "unknown" or not _supports_identity(article, update.os)
+        ):
+            pending.add(key)
+        if key in pending:
+            warnings.append(
+                f"{update.kb}: pending verification; "
+                + _support_diagnostics(update, article, support_failures)
+            )
         if update.update_type == "security":
             monthly_by_os[update.os].append(update)
 
@@ -203,17 +244,20 @@ def _select_updates(
                 selected_kb = next(iter(verified_kbs))
                 unverified_kbs = sorted(distinct_kbs - verified_kbs)
                 for kb in unverified_kbs:
-                    unique.pop((identity, kb), None)
+                    pending.add((identity, kb))
                 warnings.append(
                     f"{identity.display_name}: selected Support-verified {selected_kb}; "
                     "CVRF also listed unverified monthly candidates: " + ", ".join(unverified_kbs)
                 )
                 continue
-            raise CollectionConflictError(
-                f"Multiple normal monthly KBs found for {identity.display_name}: "
-                + ", ".join(sorted(distinct_kbs))
-            )
-    return list(unique.values()), warnings
+            if len(verified_kbs) > 1:
+                raise CollectionConflictError(
+                    f"Multiple normal monthly KBs found for {identity.display_name}: "
+                    + ", ".join(sorted(distinct_kbs))
+                )
+            pending.update((identity, kb) for kb in distinct_kbs)
+            warnings.append(f"{identity.display_name}: monthly candidates pending verification")
+    return list(unique.values()), warnings, pending
 
 
 def normalize_report(
@@ -224,13 +268,16 @@ def normalize_report(
     support_failures: Mapping[str, str],
     generated_at: datetime,
     excluded_kbs: frozenset[str] = frozenset(),
+    historical_updates: tuple[HistoricalUpdate, ...] = (),
+    previous_report: dict[str, Any] | None = None,
+    support_checked_at: Mapping[str, datetime] | None = None,
 ) -> NormalizedReport:
     """Build a schema-shaped report from source-specific parsed evidence."""
 
-    selected, warnings = _select_updates(
-        structured, month, excluded_kbs, support_articles, support_failures
+    selected, warnings, pending = _select_updates(
+        structured, month, excluded_kbs, support_articles, support_failures, historical_updates
     )
-    incomplete = bool(structured.warnings or support_failures)
+    incomplete = bool(structured.warnings or pending)
     incomplete |= any(
         support_articles[update.kb].applies_to is None
         or support_articles[update.kb].package_kind == "unknown"
@@ -243,10 +290,11 @@ def normalize_report(
         if identity in present_monthly:
             continue
         if identity in {WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2}:
-            incomplete = True
-            warnings.append(
-                f"{identity.display_name}: no verified ESU Monthly Rollup; emitted NO PUBLICADO"
-            )
+            if not esu_ended(identity, month):
+                incomplete = True
+                warnings.append(
+                    f"{identity.display_name}: no verified ESU Monthly Rollup; emitted NO PUBLICADO"
+                )
         else:
             incomplete = True
             warnings.append(
@@ -256,7 +304,11 @@ def normalize_report(
     # Link an OOB only from an explicit structured supersedes relationship.
     superseding: dict[tuple[OsIdentity, str], str] = {}
     for update in selected:
-        if update.update_type != "oob" or update.supersedes is None:
+        if (
+            update.update_type != "oob"
+            or update.supersedes is None
+            or (update.os, update.kb) in pending
+        ):
             continue
         key = (update.os, update.supersedes)
         existing = superseding.get(key)
@@ -270,12 +322,17 @@ def normalize_report(
     output: list[dict[str, Any]] = []
     for update in selected:
         article = support_articles.get(update.kb)
+        is_pending = (update.os, update.kb) in pending
         if article is not None and article.release_date != update.release_date:
             raise CollectionConflictError(
                 f"Official date conflict for {update.kb}: MSRC={update.release_date.isoformat()}, "
                 f"Support={article.release_date.isoformat()}"
             )
         sources = [_source(update.source_type, update.source_url, update.retrieved_at)]
+        sources += [
+            _source(source.source_type, source.url, source.retrieved_at)
+            for source in update.additional_sources
+        ]
         if article is None:
             changes = _UNAVAILABLE_CHANGES
             resolved = _UNAVAILABLE_RESOLVED
@@ -293,24 +350,58 @@ def normalize_report(
             known_status = article.known_issues_status
             if known_status == "unknown":
                 incomplete = True
+        sources = list({(s["type"], s["url"], s["retrievedAt"]): s for s in sources}.values())
 
         output.append(
             {
                 "kb": update.kb,
                 "os": update.os.as_report_value(),
-                "updateType": update.update_type,
-                "releaseDate": update.release_date.isoformat(),
+                "updateType": "unknown" if is_pending else update.update_type,
+                "releaseDate": (
+                    update.release_date.isoformat()
+                    if article is not None or not is_pending or update.release_date_explicit
+                    else None
+                ),
                 "changesSummary": changes,
                 "resolvedIssuesSummary": resolved,
                 "knownIssuesSummary": known,
                 "knownIssuesStatus": known_status,
-                "supersededBy": superseding.get((update.os, update.kb)),
+                "supersededBy": None if is_pending else superseding.get((update.os, update.kb)),
                 "sources": sources,
+                "publicationStatus": "pending" if is_pending else "partial",
+                "verification": {
+                    "status": "verified" if article is not None else "unavailable",
+                    "url": article.source_url
+                    if article is not None
+                    else (
+                        update.support_url
+                        or "https://support.microsoft.com/es-es/help/"
+                        + update.kb.removeprefix("KB")
+                    ),
+                    "checkedAt": iso_datetime(
+                        article.retrieved_at
+                        if article
+                        else (support_checked_at or {}).get(update.kb, generated_at)
+                    ),
+                    **(
+                        {"detail": support_failures[update.kb]}
+                        if update.kb in support_failures
+                        else {}
+                    ),
+                },
             }
         )
+        row = output[-1]
+        if not is_pending and content_complete(row):
+            row["publicationStatus"] = "verified"
+        if row["publicationStatus"] != "verified":
+            incomplete = True
+        attach_lifecycle(row, update.os, month)
 
     for identity in (WINDOWS_SERVER_2012, WINDOWS_SERVER_2012_R2):
         if identity in present_monthly:
+            continue
+        if esu_ended(identity, month) and any(update.os == identity for update in selected):
             continue
         output.append(
             {
@@ -321,18 +412,21 @@ def normalize_report(
                 "changesSummary": _NOT_PUBLISHED_CHANGES,
                 "resolvedIssuesSummary": _NOT_PUBLISHED_RESOLVED,
                 "knownIssuesSummary": _NOT_PUBLISHED_KNOWN,
-                "knownIssuesStatus": "not-published",
+                "knownIssuesStatus": "unknown",
                 "supersededBy": None,
                 "sources": [_source("msrc", structured.source_url, structured.retrieved_at)],
+                "publicationStatus": "not-published",
             }
         )
+        attach_lifecycle(output[-1], identity, month)
 
     document: dict[str, Any] = {
-        "schemaVersion": "1.0.0",
+        "schemaVersion": "1.1.0",
         "reportMonth": month,
         "patchTuesdayDate": patch_tuesday(month).isoformat(),
         "generatedAt": iso_datetime(generated_at),
         "status": "partial" if incomplete else "generated",
         "updates": sort_updates(output),
     }
+    preserve_confirmed_fields(document, previous_report, excluded_kbs=excluded_kbs)
     return NormalizedReport(document, tuple(dict.fromkeys(warnings)))

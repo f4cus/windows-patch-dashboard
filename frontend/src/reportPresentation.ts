@@ -3,6 +3,7 @@ import type {
   ReportSource,
   ReportStatus,
   UpdateType,
+  UpdateRecord,
 } from "./data/model";
 
 export const REPORT_COLUMN_LABELS = [
@@ -17,7 +18,29 @@ export const SOURCE_LABELS: Readonly<Record<ReportSource["type"], string>> = {
   "microsoft-support": "Microsoft Support",
   msrc: "MSRC",
   "release-health": "Windows Release Health",
+  lifecycle: "Ciclo de vida de Microsoft",
 };
+
+export const PUBLICATION_LABELS = {
+  verified: "Publicada y verificada",
+  partial: "Publicada · información parcial",
+  pending: "Pendiente de verificación",
+  "not-published": "Sin actualización",
+} as const;
+
+export function recordLabel(update: UpdateRecord): string {
+  return update.kb === "NO PUBLICADO" &&
+    update.lifecycle?.status === "esu-ended"
+    ? "SIN ACTUALIZACIÓN — ESU FINALIZADO"
+    : update.kb;
+}
+
+export function recordDate(update: UpdateRecord): string {
+  if (update.releaseDate === null && update.publicationStatus === "pending")
+    return "Pendiente de verificación";
+  if (update.kb === "NO PUBLICADO" && update.lifecycle) return "No aplica";
+  return formatDate(update.releaseDate);
+}
 
 export const KNOWN_ISSUES_LABELS: Readonly<Record<KnownIssuesStatus, string>> =
   {

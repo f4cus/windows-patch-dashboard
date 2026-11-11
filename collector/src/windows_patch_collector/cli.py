@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from collections.abc import Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -15,11 +16,15 @@ from windows_patch_collector.automation import (
 from windows_patch_collector.calendar import ART, parse_report_month, resolve_report_month_at
 from windows_patch_collector.collector import collect_month
 from windows_patch_collector.errors import CollectorError
+from windows_patch_collector.history import load_historical_updates
 from windows_patch_collector.http_client import MicrosoftHttpClient
 from windows_patch_collector.output import write_report_atomic
+from windows_patch_collector.sources.support_history import fetch_post_esu_oob
 from windows_patch_collector.validation import (
     ReportValidationError,
     find_repository_root,
+    load_schema,
+    validate_document,
     validate_repository,
 )
 
@@ -102,8 +107,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         month = str(arguments.month)
         destination = report_path(repository_root, month)
         print(f"Collecting Microsoft updates for {month}")
+        historical_updates = load_historical_updates(repository_root, month)
+        previous_report = None
+        if destination.is_file():
+            previous_report = json.loads(destination.read_text(encoding="utf-8"))
+            validate_document(previous_report, load_schema(repository_root))
         with MicrosoftHttpClient() as client:
-            result = collect_month(month, client=client)
+            result = collect_month(
+                month,
+                client=client,
+                historical_updates=historical_updates,
+                previous_report=previous_report,
+                support_history_fetcher=fetch_post_esu_oob,
+            )
         print("MSRC CVRF: OK")
         print(
             f"Support KBs: {result.support_verified} verified; "

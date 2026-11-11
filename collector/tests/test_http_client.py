@@ -154,6 +154,8 @@ def test_redirected_http_failure_reports_final_url_without_sensitive_data() -> N
     assert "GET https://support.microsoft.com/help/5000000 returned HTTP 403 (Forbidden)" in message
     assert "http_status=403" in message
     assert "final_url='https://support.microsoft.com/[redacted]'" in message
+    assert raised.value.final_url is not None
+    assert "https://support.microsoft.com/en-us/session/path-secret" in raised.value.final_url
     assert all(
         sensitive not in message
         for sensitive in ("user", "password", "secret", "private", "cookie", "body", "<html>")

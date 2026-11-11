@@ -484,7 +484,11 @@ def _applies_to(soup: BeautifulSoup) -> tuple[OsIdentity, ...] | None:
         if re.fullmatch(r"Windows Server 2012(?: R2)? ESU", label) is not None:
             label = label.removesuffix(" ESU")
         identity = map_microsoft_product_name(label)
-        branch = re.fullmatch(r"Windows 11 version ([0-9]{2}H[12])", label, re.IGNORECASE)
+        branch = re.fullmatch(
+            r"Windows 11 (?:Enterprise and Education, )?version ([0-9]{2}H[12])",
+            label,
+            re.IGNORECASE,
+        )
         if branch is not None:
             version = branch.group(1).upper()
             identity = OsIdentity("Windows 11", version, None, f"Windows 11 {version}")
@@ -507,7 +511,9 @@ def _package_kind(title: str) -> PackageKind:
         return "auxiliary"
     if re.search(r"security.only|solo de seguridad", title, re.IGNORECASE):
         return "security-only"
-    if re.search(r"monthly rollup|paquete acumulativo mensual", title, re.IGNORECASE):
+    if re.search(
+        r"monthly rollup|paquete acumulativo mensual|acumulaci[oó]n mensual", title, re.IGNORECASE
+    ):
         return "monthly-rollup"
     if re.search(
         r"OS Builds?\s+[0-9]|compilaci[oó]n(?:es)? del (?:SO|sistema operativo)\s+[0-9]|"
@@ -625,9 +631,24 @@ def fetch_support_article(
 
 
 def _fetch_support_locale(client: MicrosoftHttpClient, kb: str, locale: str) -> SupportArticle:
-    return _fetch_support_url(
-        client, kb, SUPPORT_HELP_URL.format(locale=locale, kb_number=kb.removeprefix("KB"))
-    )
+    url = SUPPORT_HELP_URL.format(locale=locale, kb_number=kb.removeprefix("KB"))
+    try:
+        return _fetch_support_url(client, kb, url)
+    except HttpFetchError as error:
+        if error.final_url is None or error.final_url == url:
+            raise
+        try:
+            _assert_support_url(error.final_url)
+        except SourceParseError:
+            raise error from None
+        # Retry a canonical URL observed in the official redirect, never a guessed path.
+        # This is one direct request; 403 is not added to the generic HTTP retry policy.
+        try:
+            return _fetch_support_url(client, kb, error.final_url)
+        except (HttpFetchError, SourceParseError) as canonical_error:
+            raise SourceParseError(f"{error}; canonical retry failed: {canonical_error}") from (
+                canonical_error
+            )
 
 
 def _fetch_support_url(client: MicrosoftHttpClient, kb: str, url: str) -> SupportArticle:

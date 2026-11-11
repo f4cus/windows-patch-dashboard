@@ -5,7 +5,7 @@ This file records the small set of **active** decisions that would be risky to l
 ## D001 - Official Microsoft sources only
 
 ### Decision
-Production report data is populated only from official Microsoft sources. MSRC CVRF is the V1 monthly discovery source. The official Windows message center supplies dated OOB announcements that may be absent from CVRF. Official Microsoft Support KB articles verify each KB's release date, OOB label, changes, fixes, and known issues. The CSAF adapter remains tested and complementary, not the primary monthly discovery path.
+Production report data is populated only from official Microsoft sources. MSRC CVRF is the V1 monthly discovery source. The official Windows message center supplies dated OOB announcements that may be absent from CVRF. Official Microsoft Support KB articles verify each KB's release date, OOB label, changes, fixes, and known issues. Reviewed product-history navigation can also discover explicitly dated post-ESU OOB links; it is not an unbounded article crawl. The CSAF adapter remains tested and complementary, not the primary monthly discovery path.
 
 ### Context
 The product needs one reliable monthly KB/product view plus article-level operational content.
@@ -18,9 +18,10 @@ A bulk monthly CSAF crawl was evaluated for V1 and not selected because it would
 
 ### Consequences
 - A CVRF collection failure is fatal for that run.
-- A message center collection failure is fatal because OOB completeness cannot be checked safely.
-- Individual Support failures may produce an honest `partial` report.
+- A message center failure is isolated as incomplete OOB discovery: preserve previously confirmed same-month OOB records and publish verified monthly information as `partial` (D012).
+- Individual Support failures produce explicit pending/partial evidence without blocking independent KBs (D012). Contradictory verified facts and unsafe global failures still stop collection.
 - Third-party sources must not populate production report facts.
+- Validated earlier production reports with status `generated` or `verified` (or independently verified rows in 1.1 partial reports) and matching MSRC CVRF + Support provenance can supply known official Support URLs. Their exact KB/OS release date may exclude only an undated historical monthly candidate before fetching Support. If any candidate for that KB is unmatched, live verification remains required and its evidence is not overridden. Earlier-month facts never supply current rows, package classification, OOB or supersedence; warnings retain the report path, SHA-256 and original source URLs/retrieval times. Live failures still contribute to `partial` status.
 
 ### Status
 Active.
@@ -47,7 +48,7 @@ Active.
 ## D003 - Contract-first, fail-safe data integrity
 
 ### Decision
-`data/schema/monthly-report.schema.json` is the report contract, supplemented by cross-record validation in Python. Generated reports require provenance and timestamps. Missing/ambiguous evidence stays explicit (`unknown`, `not-published`, or collection failure); it is never silently converted to clean data. Reports are validated before atomic replacement.
+`data/schema/monthly-report.schema.json` is the report contract, supplemented by cross-record validation in Python. Generated reports require provenance and timestamps. Missing/ambiguous evidence stays explicit through publication, verification and lifecycle fields (D012); it is never silently converted to clean data. Reports are validated before atomic replacement.
 
 ### Context
 A patch dashboard is harmful if it presents guessed KBs, dates, known-issue states, or supersedence as facts.
@@ -56,7 +57,7 @@ A patch dashboard is harmful if it presents guessed KBs, dates, known-issue stat
 The existing collector and validation layer consistently prefer an incomplete or failed run over fabricated certainty.
 
 ### Consequences
-- `NO PUBLICADO` has strict semantics for expected Windows Server 2012/2012 R2 ESU monthly data.
+- Historical 1.0 `NO PUBLICADO` semantics remain valid. In 1.1, publication and known-issue status are independent; after October 2026 the ordinary ESU absence carries explicit `lifecycle.status: esu-ended`, with official provenance (D012).
 - Invalid schema/semantics prevent the new production JSON from replacing the previous valid file.
 - Source/provenance fields are part of the production contract.
 
@@ -66,7 +67,7 @@ Active.
 ## D004 - Explicit product normalization and conservative candidate resolution
 
 ### Decision
-Map only supported Microsoft product aliases to normalized Windows Server/Windows 11 identities. Combine Windows 11 branches only when they share the same verified KB and matching structured metadata. Exclude SSU, security-only, and auxiliary packages only when the verified Support article title identifies that package type. If CVRF returns multiple remaining normal monthly KB candidates for the same normalized OS, select one only when **exactly one** candidate has a Support-verified principal package type (cumulative or Monthly Rollup), Patch Tuesday date, and matching product applicability; otherwise fail with a conflict.
+Map only supported Microsoft product aliases to normalized Windows Server/Windows 11 identities. Combine Windows 11 branches only when they share the same verified KB and matching structured metadata. Exclude SSU, security-only, and auxiliary packages only when the verified Support article title identifies that package type. If CVRF returns multiple remaining normal monthly KB candidates for the same normalized OS, select one only when **exactly one** candidate has a Support-verified principal package type (cumulative or Monthly Rollup), Patch Tuesday date, and matching product applicability; two verified principal candidates fail with a conflict, while candidates lacking sufficient evidence remain explicitly pending (D012).
 
 ### Context
 Microsoft structured data can contain multiple package/remediation candidates that cannot safely be distinguished by KB number alone.
@@ -76,9 +77,10 @@ Historical rationale for every product-mapping rule is not fully documented; the
 
 ### Consequences
 - No "highest KB wins" or similar heuristic is allowed.
-- A single unverified candidate can still produce the existing partial behavior; the tie-breaker applies only to duplicate monthly candidates.
-- CVRF can label ESU Monthly Rollups as generic `Security Update`. Retain those candidates for Support verification; a generic ESU candidate requires a Support-confirmed Monthly Rollup and product applicability. Unresolved classification fails collection rather than claiming `NO PUBLICADO`. An explicit CVRF `Monthly Rollup` can retain partial behavior when Support is unavailable.
-- Support classification uses the article title, not references to prerequisites in its body. Unknown package types cannot break a monthly tie and remain partial for a single candidate. No KB-specific exclusions are used.
+- A single unverified candidate remains pending in a partial report; the tie-breaker applies only to duplicate monthly candidates.
+- CVRF can label ESU Monthly Rollups as generic `Security Update`. Retain those candidates for Support verification; a generic ESU candidate requires a Support-confirmed Monthly Rollup and product applicability. Unresolved classification stays pending rather than claiming `NO PUBLICADO` or blocking independent KBs (D012). An explicit CVRF `Monthly Rollup` can retain partial behavior when Support is unavailable.
+- Support classification uses the article title, not references to prerequisites in its body. Unknown package types cannot break a monthly tie and remain pending for a single candidate. No KB-specific exclusions are used.
+- Undated monthly CVRF metadata variants are retained until Support can verify an earlier release month and matching product, either live or through the narrowly scoped prior production evidence allowed by D001. Official hotpatch exclusions happen first; remaining contradictory records for the same KB/product fail before package classification or monthly tie-breaking, including when Support is unavailable. A Support failure cannot turn an official metadata contradiction into `pending`. Explicit-date and OOB remediation conflicts remain fatal in the parser.
 - Windows Server, version 23H2 remains representable historically but is not in the current expected monthly server set.
 
 ### Status
@@ -118,6 +120,7 @@ The current parser supports both Spanish and English headings/date patterns and 
 ### Consequences
 - Report prose may contain a mix of Spanish and English across months/KBs.
 - Markup that cannot be interpreted reliably maps to unavailable/`unknown` semantics rather than invented content.
+- If a locale-specific `/help/` request follows an official redirect and ends in an HTTP error, the adapter can make one direct attempt to that observed Microsoft Support URL before proceeding with locale fallback. It never constructs a canonical path; KB, locale and hotpatch verification still apply. HTTP 403 remains non-transient in the HTTP client's generic retry policy.
 
 ### Status
 Active.
@@ -125,7 +128,7 @@ Active.
 ## D007 - Adaptive semantic refresh, not timestamp churn
 
 ### Decision
-GitHub Actions performs scheduled/manual collection and compares reports while ignoring only `generatedAt` and source `retrievedAt`. It commits only substantive report changes and stages only the expected `data/reports/YYYY-MM.json` path.
+GitHub Actions performs scheduled/manual collection and compares reports while ignoring only `generatedAt`, source `retrievedAt` and `verification.checkedAt`. It commits only substantive report changes and stages only the expected `data/reports/YYYY-MM.json` path.
 
 ### Context
 Live collection naturally changes retrieval timestamps even when Microsoft facts have not changed.
@@ -137,10 +140,10 @@ Keeping timestamp-only commits would create noise in Git history without changin
 - WPD-INC-003 uses Argentina's fixed UTC-3 offset: D (second Tuesday) hourly at 14:15–22:15; D+1 every two hours at 09:00–21:00; D+2 every four hours at 09:00–21:00; D+3 at 09:00 and 15:00; otherwise daily at 15:00, including the days before the next month's D.
 - Non-overlapping UTC cron candidates are filtered by a dependency-free planning job before installing the collector. Automatic month selection opens at D 14:15 ART; a manual month override remains available.
 - The planner associates the triggering cron with its latest occurrence at or before the workflow's API `created_at`, then tolerates up to six hours from that slot to the gate. It never requires the runner's current minute to match. Older runs are skipped, and dropped slots are not replayed; the next approved slot tries again. This is bounded best-effort scheduling, not guaranteed delivery or an exactly-once queue.
-- Automated publication additionally waits until D 10:00 America/Los_Angeles (PST/PDT) and requires a monthly security row with MSRC and verified Support provenance. Thus the November 14:15 ART attempt may collect, but cannot publish before 15:00 ART. Existing schema, partial/unknown semantics and candidate verification remain in force.
+- Automated publication still waits until D 10:00 America/Los_Angeles (PST/PDT). Contract 1.1 permits official CVRF, release-health or Support-history KB evidence explicitly labelled pending/partial, without requiring a complete Support article; 1.0 retains its existing Support-verified monthly guard. Empty/lifecycle-only attempts do not qualify. Schedules are unchanged (D012).
 - Meaningful changes use `github-actions[bot]` and the built-in `GITHUB_TOKEN`.
 - A refresh failure prevents that run from deploying newly collected data.
-- The known difference between production Support URL discovery and manual canonical fallback URLs remains independent resilience debt; it does not block scheduling. A missing required verification still fails safely under D001/D003/D004.
+- Canonical URL resolution uses observed redirects, official indexes and validated prior production URLs. Missing article verification can remain pending/partial under D012; conflicting official metadata still fails safely under D001/D003/D004.
 
 ### Status
 Active.
@@ -214,3 +217,57 @@ Months with additive OOB records can make the five-column PNG very tall. A clien
 
 ### Status
 Active.
+
+## D012 - Incremental publication with independent evidence and lifecycle states
+
+### Decision
+Publish safe official information progressively. Contract 1.1 adds `publicationStatus`
+(`verified`, `partial`, `pending`, `not-published`), a dated Support verification result,
+optional retained provenance and a separate lifecycle annotation. Continue reading 1.0
+without rewriting historical reports. The five report columns remain unchanged.
+
+A failed individual Support request or parser does not establish non-publication. Keep the
+confirmed CVRF KB/product relationship pending; omit inferred dates, update types and
+supersedence. An explicitly dated principal package in CVRF or verified official product-history navigation can remain published/partial when its target article is inaccessible. Unknown package types remain pending. A confirmed package with missing article fields remains partial with explicit
+`No disponible` text. Subsequent runs can fill those fields. Same-month previously verified
+fields and OOB history survive temporary failures with their original sources/timestamps.
+Past-report evidence never invents current facts. Independent per-article HTTP sessions
+avoid sharing article cookies/connections; canonical discovery and all retries stay bounded.
+
+CVRF failure, invalid contracts, contradictory official metadata for the same KB/product,
+contradictory verified dates/products and multiple verified principal monthly candidates
+still fail globally before atomic replacement. Metadata conflicts can be bypassed only by
+verified historical exclusion or official hotpatch exclusion, never by a failed Support request.
+Insufficient classification of otherwise consistent candidates stays pending without selecting
+by KB number or approximate date.
+Message center outages mark discovery incomplete, preserve confirmed OOB history and do
+not block independent monthly information. Hotpatch exclusions require official Support
+path evidence; known OOB and supersedence retain their existing validation rules.
+
+Both Windows Server 2012 ESU programmes ended on 2026-10-13, as confirmed by Microsoft Learn
+and their final ordinary rollup articles. From November, an absent later update is labelled
+`SIN ACTUALIZACIÓN — ESU FINALIZADO`, with the migration recommendation and actual source
+retrieval times. Lifecycle alone does not make a report partial. Verified exceptional
+updates remain eligible and replace the absence placeholder; end of ESU never suppresses
+a documented KB. No publication date or KB is fabricated for an absence record. The bounded post-ESU history adapter reads only explicit current-month OOB navigation labels on the reviewed official product pages, checks the page's product applicability, and verifies the target article when available. It never selects links from prerequisites/body references or derives dates from URL directories.
+
+### Reconciliation
+- D001: retain official-only provenance; replace fatal individual/article and message center
+  failures with safe evidence isolation. Structured monthly discovery remains required.
+- D003: retain validation and atomic writes; distinguish publication, unknown known issues
+  and lifecycle. Partial fields remain explicit and cannot be labelled verified.
+- D004: retain conservative product/package verification and real-conflict failures; change
+  insufficient classification from global failure to pending evidence.
+- D007: retain all schedule slots and the release-time boundary. Publish substantive partial
+  enrichment; ignore only generation, source-retrieval and verification-check timestamps.
+  No timestamp-only commits. The workflow continues staging only the target report.
+
+### Status
+Active. Covered by Python/TypeScript contract, collector, incremental-refresh and UI tests.
+
+### Verified November exceptions
+The official product histories and target articles also document two exceptional OOBs dated
+2026-11-06. The November working report therefore retains the seven previously published
+monthly KBs and includes those two verified exceptions with `esu-ended` lifecycle metadata,
+rather than asserting an absence. October remains the last ordinary ESU Patch Tuesday.
+`SIN ACTUALIZACIÓN — ESU FINALIZADO` is exercised for the genuine no-later-update case.

@@ -25,12 +25,29 @@ def ensure_refresh_publishable(report: Path, now: datetime) -> None:
         raise ValueError("Monthly publication is not enabled before 10:00 Pacific on Patch Tuesday")
     if not any(
         update["kb"] != "NO PUBLICADO"
-        and update["updateType"] == "security"
-        and update["releaseDate"] == release_day.isoformat()
-        and {source["type"] for source in update["sources"]} >= {"msrc", "microsoft-support"}
+        and (
+            (
+                document.get("schemaVersion") == "1.1.0"
+                and any(
+                    source["type"] in {"msrc", "microsoft-support", "release-health"}
+                    for source in update["sources"]
+                )
+            )
+            or (
+                update["updateType"] == "security"
+                and update["releaseDate"] == release_day.isoformat()
+                and {source["type"] for source in update["sources"]}
+                >= {"msrc", "microsoft-support"}
+            )
+        )
         for update in document["updates"]
     ):
-        raise ValueError("No Support-verified monthly security update is available for publication")
+        reason = (
+            "No official KB evidence is available for incremental publication"
+            if document.get("schemaVersion") == "1.1.0"
+            else "No Support-verified monthly security update is available for publication"
+        )
+        raise ValueError(reason)
 
 
 def report_path(repository_root: Path, month: str) -> Path:
@@ -51,12 +68,21 @@ def semantic_report(document: dict[str, Any]) -> dict[str, Any]:
         for update in updates:
             if not isinstance(update, dict):
                 continue
+            if isinstance(update.get("verification"), dict):
+                update["verification"].pop("checkedAt", None)
+            for retained in update.get("retainedSources", []):
+                retained.pop("retrievedAt", None)
+            if "retainedSources" in update:
+                # Source sets that differ only by capture instants carry the same facts.
+                unique = {json.dumps(s, sort_keys=True): s for s in update["retainedSources"]}
+                update["retainedSources"] = list(unique.values())
             sources = update.get("sources")
             if not isinstance(sources, list):
                 continue
             for source in sources:
                 if isinstance(source, dict):
                     source.pop("retrievedAt", None)
+            update["sources"] = list({json.dumps(s, sort_keys=True): s for s in sources}.values())
     return normalized
 
 

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
 
-from windows_patch_collector.errors import SourceParseError
+from windows_patch_collector.errors import CollectionConflictError, SourceParseError
 from windows_patch_collector.models import SupportArticle
 from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.sources.microsoft_release_health import parse_message_center
+from windows_patch_collector.sources.microsoft_support import parse_support_article
 from windows_patch_collector.sources.msrc_csaf import parse_csaf
 from windows_patch_collector.sources.msrc_cvrf import parse_cvrf
 from windows_patch_collector.validation import validate_document
@@ -172,12 +174,22 @@ def test_cvrf_esu_keeps_rejecting_conflicting_supersedence() -> None:
           <ProductID>esu</ProductID></Remediation>
       </Remediations></Vulnerability>
     </Document>"""
-    with pytest.raises(SourceParseError, match="Conflicting CVRF remediation metadata"):
-        parse_cvrf(
-            xml,
+    # Undated metadata is retained until a historical exclusion can be verified.
+    # With no such evidence, the same official contradiction must still fail safely.
+    parsed = parse_cvrf(
+        xml,
+        month="2026-10",
+        source_url=OCTOBER_CVRF_URL,
+        retrieved_at=OCTOBER_RETRIEVED,
+    )
+    assert len(parsed.updates) == 2
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
             month="2026-10",
-            source_url=OCTOBER_CVRF_URL,
-            retrieved_at=OCTOBER_RETRIEVED,
+            structured=parsed,
+            support_articles={},
+            support_failures={"KB5126836": "HTTP 403"},
+            generated_at=OCTOBER_RETRIEVED,
         )
 
 
@@ -197,12 +209,104 @@ def test_cvrf_still_rejects_conflicting_metadata_within_one_branch(
 ) -> None:
     # The fixture repeats the 24H2 products across vulnerability remediations.
     content = OCTOBER_FIXTURE.read_bytes().replace(original, replacement, 1)
+    parsed = parse_cvrf(
+        content,
+        month="2026-10",
+        source_url=OCTOBER_CVRF_URL,
+        retrieved_at=OCTOBER_RETRIEVED,
+    )
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
+            month="2026-10",
+            structured=parsed,
+            support_articles={},
+            support_failures={},
+            generated_at=OCTOBER_RETRIEVED,
+        )
+
+
+def test_cvrf_november_preserves_historical_supersedence_variants(
+    schema: dict[str, object],
+) -> None:
+    fixtures = Path(__file__).parent / "fixtures"
+    stamp = datetime(2026, 11, 10, 19, tzinfo=UTC)
+    parsed = parse_cvrf(
+        (fixtures / "cvrf-2026-Nov-KB5127648.xml").read_bytes(),
+        month="2026-11",
+        source_url="https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
+        retrieved_at=stamp,
+    )
+    shared = [update for update in parsed.updates if update.os.version == "24H2/25H2"]
+    assert len(shared) == 2
+    assert {update.supersedes for update in shared} == {"KB5129195", "KB5124008"}
+    assert len(parsed.updates) == 3
+    assert all(not update.release_date_explicit for update in parsed.updates)
+
+    captured = json.loads((fixtures / "microsoft-support-KB5127648.json").read_text("utf-8"))
+    article = parse_support_article(
+        captured["html"].encode(),
+        expected_kb="KB5127648",
+        source_url=captured["source_url"],
+        retrieved_at=stamp,
+    )
+    assert article.release_date == date(2026, 10, 13)
+    assert article.applies_to is not None
+    assert {identity.version for identity in article.applies_to} == {"24H2", "25H2", "26H2"}
+    result = normalize_report(
+        month="2026-11",
+        structured=parsed,
+        support_articles={article.kb: article},
+        support_failures={},
+        generated_at=stamp,
+    )
+    validate_document(result.document, schema)
+    assert all(row["kb"] != article.kb for row in result.document["updates"])
+    assert any("ignored historical CVRF candidate" in warning for warning in result.warnings)
+
+    # A successful current-month verification must still reject these same variants.
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
+            month="2026-11",
+            structured=parsed,
+            support_articles={article.kb: replace(article, release_date=date(2026, 11, 10))},
+            support_failures={},
+            generated_at=stamp,
+        )
+
+
+def test_cvrf_supersedence_conflicts_are_not_hidden_by_overlapping_branches() -> None:
+    # Only 24H2 gets an additional variant; 25H2 retains the original singleton set.
+    content = OCTOBER_FIXTURE.read_bytes().replace(
+        b"<ns2:Supercedence>5124008</ns2:Supercedence>", b"", 1
+    )
+    parsed = parse_cvrf(
+        content, month="2026-10", source_url=OCTOBER_CVRF_URL, retrieved_at=OCTOBER_RETRIEVED
+    )
+    assert {update.os.version for update in parsed.updates} == {"24H2", "25H2", "26H2"}
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
+            month="2026-10",
+            structured=parsed,
+            support_articles={},
+            support_failures={},
+            generated_at=OCTOBER_RETRIEVED,
+        )
+
+
+@pytest.mark.parametrize("explicit_oob", [False, True])
+def test_cvrf_explicit_supersedence_conflicts_still_fail_in_parser(explicit_oob: bool) -> None:
+    content = OCTOBER_FIXTURE.read_bytes().replace(
+        b"<ns2:Supercedence>5124008</ns2:Supercedence>", b"", 1
+    )
+    subtype = "Out-of-band Security Update" if explicit_oob else "Security Update"
+    release = "2026-10-15" if explicit_oob else "2026-10-13"
+    content = content.replace(
+        b"<ns2:SubType>Security Update</ns2:SubType>",
+        f"<ns2:SubType>{subtype}</ns2:SubType><ns2:Date>{release}</ns2:Date>".encode(),
+    )
     with pytest.raises(SourceParseError, match="Conflicting CVRF remediation metadata"):
         parse_cvrf(
-            content,
-            month="2026-10",
-            source_url=OCTOBER_CVRF_URL,
-            retrieved_at=OCTOBER_RETRIEVED,
+            content, month="2026-10", source_url=OCTOBER_CVRF_URL, retrieved_at=OCTOBER_RETRIEVED
         )
 
 

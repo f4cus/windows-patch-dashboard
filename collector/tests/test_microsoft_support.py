@@ -698,12 +698,19 @@ def test_canonical_fallback_still_requires_the_requested_kb() -> None:
         )
 
 
-def test_support_applies_to_preserves_all_windows_11_branches() -> None:
-    content = b"""<h1>August 11, 2026 - KB5120242</h1>
+@pytest.mark.parametrize(
+    "label_24h2",
+    [
+        "Windows 11 version 24H2, all editions",
+        "Windows 11 Enterprise and Education, version 24H2",
+    ],
+)
+def test_support_applies_to_preserves_all_windows_11_branches(label_24h2: str) -> None:
+    content = f"""<h1>August 11, 2026 - KB5120242</h1>
     <details id="supAppliesToList">
-    <span class="appliesToItem">Windows 11 version 24H2, all editions</span>
+    <span class="appliesToItem">{label_24h2}</span>
     <span class="appliesToItem">Windows 11 version 25H2, all editions</span>
-    <span class="appliesToItem">Windows 11 version 26H2, all editions</span></details>"""
+    <span class="appliesToItem">Windows 11 version 26H2, all editions</span></details>""".encode()
     article = _parse(content)
     assert article.applies_to is not None
     assert [identity.version for identity in article.applies_to] == ["24H2", "25H2", "26H2"]
@@ -721,3 +728,107 @@ def test_release_index_does_not_accept_external_kb_link() -> None:
             b'<a href="https://example.com/kb">KB5120242</a>',
             source_url="https://learn.microsoft.com/en-us/windows/release-health/index",
         )
+
+
+@pytest.mark.parametrize("hotpatch", [False, True])
+def test_failed_redirect_can_retry_only_the_observed_official_canonical_url(hotpatch):
+    canonical = (
+        "https://support.microsoft.com/es-es/servicing/os/hotpatch/kb5120242"
+        if hotpatch
+        else "https://support.microsoft.com/es-es/servicing/os/server/test-kb5120242"
+    )
+    requested = []
+    canonical_calls = 0
+
+    def handler(request):
+        nonlocal canonical_calls
+        requested.append(str(request.url))
+        if "/help/" in request.url.path:
+            return httpx.Response(301, headers={"Location": canonical}, request=request)
+        canonical_calls += 1
+        return httpx.Response(
+            403 if canonical_calls == 1 else 200,
+            request=request,
+            content=_article(None).replace(b"<h2>Improvements</h2>", b"<h2>Mejoras</h2>"),
+        )
+
+    with MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client:
+        if hotpatch:
+            with pytest.raises(UnsupportedHotpatchError):
+                fetch_support_article(client, "KB5120242")
+        else:
+            article = fetch_support_article(client, "KB5120242")
+            assert article.source_url == canonical
+            assert article.locale == "es-ES"
+    assert requested == ["https://support.microsoft.com/es-es/help/5120242", canonical, canonical]
+
+
+def test_canonical_retry_is_bounded_and_preserves_http_failure():
+    requested = []
+
+    def handler(request):
+        requested.append(str(request.url))
+        if "/help/" in request.url.path:
+            locale = request.url.path.split("/")[1]
+            return httpx.Response(
+                301,
+                headers={
+                    "Location": f"https://support.microsoft.com/{locale}/servicing/os/test-kb5120242"
+                },
+                request=request,
+            )
+        return httpx.Response(403, request=request)
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="canonical retry failed") as raised,
+    ):
+        fetch_support_article(client, "KB5120242")
+    assert len(requested) == 6
+    assert "HTTP 403" in str(raised.value)
+
+
+def test_failed_redirect_to_non_microsoft_is_never_retried_directly():
+    requested = []
+
+    def handler(request):
+        requested.append(str(request.url))
+        if request.url.host == "support.microsoft.com":
+            return httpx.Response(
+                302, headers={"Location": "https://example.com/private"}, request=request
+            )
+        return httpx.Response(403, request=request)
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="HTTP 403"),
+    ):
+        fetch_support_article(client, "KB5120242")
+    assert requested.count("https://example.com/private") == 2
+
+
+def test_retried_canonical_article_still_requires_matching_kb():
+    canonical_calls = 0
+
+    def handler(request):
+        nonlocal canonical_calls
+        if "/help/" in request.url.path:
+            return httpx.Response(
+                301,
+                request=request,
+                headers={
+                    "Location": "https://support.microsoft.com/en-us/servicing/os/test-kb5120242"
+                },
+            )
+        canonical_calls += 1
+        return httpx.Response(
+            403 if canonical_calls % 2 else 200,
+            request=request,
+            content=_article(None).replace(b"KB5120242", b"KB5999999"),
+        )
+
+    with (
+        MicrosoftHttpClient(transport=httpx.MockTransport(handler)) as client,
+        pytest.raises(SourceParseError, match="title does not identify KB5120242"),
+    ):
+        fetch_support_article(client, "KB5120242")

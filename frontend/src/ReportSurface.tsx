@@ -14,6 +14,9 @@ import {
   REPORT_STATUS_LABELS,
   SOURCE_LABELS,
   UPDATE_TYPE_LABELS,
+  PUBLICATION_LABELS,
+  recordLabel,
+  recordDate,
 } from "./reportPresentation";
 import type { ColorTheme } from "./useTheme";
 
@@ -34,6 +37,7 @@ const SOURCE_LINK_LABELS: Readonly<Record<ReportSource["type"], string>> = {
   "microsoft-support": "Support ↗",
   msrc: "MSRC ↗",
   "release-health": "Release Health ↗",
+  lifecycle: "Ciclo de vida ↗",
 };
 
 const PREVIEW_CHARACTER_LIMIT = 180;
@@ -85,7 +89,7 @@ function SourceList({
       <h3>{`Fuentes oficiales (${sources.length})`}</h3>
       <ul>
         {sources.map((source) => (
-          <li key={`${source.type}-${source.url}`}>
+          <li key={`${source.type}-${source.url}-${source.retrievedAt ?? ""}`}>
             <a
               href={source.url}
               target="_blank"
@@ -138,6 +142,7 @@ function RecordCopy({
 
 function getMicrosoftSupportUrl(
   sources: readonly ReportSource[],
+  kb: string,
 ): string | null {
   for (const source of sources) {
     if (source.type !== "microsoft-support") {
@@ -146,6 +151,8 @@ function getMicrosoftSupportUrl(
 
     try {
       const url = new URL(source.url);
+      const sourceKb = url.pathname.match(/(?:\bkb|\/help\/)(\d+)/iu)?.[1];
+      if (sourceKb !== undefined && `KB${sourceKb}` !== kb) continue;
       if (
         url.protocol === "https:" &&
         url.hostname === "support.microsoft.com"
@@ -174,7 +181,10 @@ function ReportRow({
   const knownIssuesId = `${detailId}-known-issues`;
   const sourcesId = `${detailId}-sources`;
   const supportUrl = interactive
-    ? getMicrosoftSupportUrl(update.sources)
+    ? getMicrosoftSupportUrl(
+        [...update.sources, ...(update.retainedSources ?? [])],
+        update.kb,
+      )
     : null;
   const kbClassName =
     update.kb === "NO PUBLICADO" ? "kb-unpublished" : "kb-number";
@@ -192,7 +202,7 @@ function ReportRow({
         <div className="kb-heading">
           <strong className={kbClassName}>
             {supportUrl === null || update.kb === "NO PUBLICADO" ? (
-              update.kb
+              recordLabel(update)
             ) : (
               <a
                 className="kb-link"
@@ -206,17 +216,24 @@ function ReportRow({
             )}
           </strong>
           <span className="update-type-badge" data-type={update.updateType}>
-            {UPDATE_TYPE_LABELS[update.updateType]}
+            {update.kb === "NO PUBLICADO" && update.publicationStatus
+              ? "No aplica"
+              : UPDATE_TYPE_LABELS[update.updateType]}
           </span>
         </div>
-        <span className="record-date">{formatDate(update.releaseDate)}</span>
+        <span className="record-date">{recordDate(update)}</span>
+        {update.publicationStatus ? (
+          <span className="channel-label">
+            {PUBLICATION_LABELS[update.publicationStatus]}
+          </span>
+        ) : null}
         {interactive ? (
           <button
             className="record-disclosure report-interactive"
             type="button"
             aria-controls={controlledIds.join(" ")}
             aria-expanded={expanded}
-            aria-label={`${expanded ? "Ocultar detalle" : "Ver detalle completo"} de ${update.kb}`}
+            aria-label={`${expanded ? "Ocultar detalle" : "Ver detalle completo"} de ${recordLabel(update)}`}
             onClick={() => setExpanded((current) => !current)}
           >
             {expanded ? "Ocultar detalle" : "Ver detalle completo"}
@@ -226,12 +243,17 @@ function ReportRow({
           <SourceList
             id={sourcesId}
             expanded={expanded}
-            sources={update.sources}
+            sources={[...update.sources, ...(update.retainedSources ?? [])]}
           />
         ) : null}
       </td>
       <td className="os-cell" data-label={REPORT_COLUMN_LABELS[1]}>
         <strong>{update.os.displayName}</strong>
+        {update.lifecycle ? (
+          <span className="channel-label">
+            ESU finalizado · {formatDate(update.lifecycle.endedOn)}
+          </span>
+        ) : null}
         {update.os.channel === null ? null : (
           <span className="channel-label">Canal {update.os.channel}</span>
         )}
@@ -254,7 +276,11 @@ function ReportRow({
       </td>
       <td className="known-issues-cell" data-label={REPORT_COLUMN_LABELS[4]}>
         <div className="known-issues-signals">
-          <StatusLabel status={update.knownIssuesStatus} />
+          {update.kb === "NO PUBLICADO" && update.publicationStatus ? (
+            <span>No aplica: sin actualización</span>
+          ) : (
+            <StatusLabel status={update.knownIssuesStatus} />
+          )}
           {update.supersededBy === null ? null : (
             <span className="superseded-label">
               OOB · reemplazada por {update.supersededBy}

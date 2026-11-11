@@ -19,7 +19,11 @@ from windows_patch_collector.models import (
 )
 from windows_patch_collector.normalization import normalize_report
 from windows_patch_collector.output import write_report_atomic
-from windows_patch_collector.products import WINDOWS_SERVER_2022, WINDOWS_SERVER_2025
+from windows_patch_collector.products import (
+    WINDOWS_SERVER_2012_R2,
+    WINDOWS_SERVER_2022,
+    WINDOWS_SERVER_2025,
+)
 from windows_patch_collector.sources.microsoft_release_health import RELEASE_INFO_URLS
 from windows_patch_collector.sources.microsoft_support import parse_support_article
 from windows_patch_collector.validation import ReportValidationError, load_schema, validate_document
@@ -90,7 +94,7 @@ def test_normalization_emits_no_publicado_and_provenance(schema: dict[str, objec
     assert isinstance(rows, list)
     unpublished = [row for row in rows if row["kb"] == "NO PUBLICADO"]
     assert [row["os"]["version"] for row in unpublished] == ["2012", "2012 R2"]
-    assert all(row["knownIssuesStatus"] == "not-published" for row in unpublished)
+    assert all(row["knownIssuesStatus"] == "unknown" for row in unpublished)
     published = next(row for row in rows if row["kb"] == "KB5120242")
     assert [source["type"] for source in published["sources"]] == [
         "msrc",
@@ -129,7 +133,11 @@ def test_multiple_monthly_candidates_selects_only_support_verified_candidate() -
 
     emitted_kbs = {row["kb"] for row in result.document["updates"]}
     assert verified.kb in emitted_kbs
-    assert unverified.kb not in emitted_kbs
+    assert unverified.kb in emitted_kbs
+    assert (
+        next(r for r in result.document["updates"] if r["kb"] == unverified.kb)["publicationStatus"]
+        == "pending"
+    )
     assert any(
         "selected Support-verified KB5120240" in warning
         and "unverified monthly candidates: KB5122880" in warning
@@ -154,18 +162,19 @@ def test_multiple_monthly_candidates_with_both_support_verified_conflicts() -> N
         )
 
 
-def test_multiple_monthly_candidates_with_neither_support_verified_conflicts() -> None:
+def test_multiple_unverified_monthly_candidates_remain_pending() -> None:
     first = _update("KB5120240", identity=WINDOWS_11_23H2)
     second = _update("KB5122880", identity=WINDOWS_11_23H2)
 
-    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
-        normalize_report(
-            month="2026-08",
-            structured=StructuredResult((first, second), MSRC_URL, STAMP),
-            support_articles={},
-            support_failures={first.kb: "HTTP 404", second.kb: "HTTP 404"},
-            generated_at=STAMP,
-        )
+    result = normalize_report(
+        month="2026-08",
+        structured=StructuredResult((first, second), MSRC_URL, STAMP),
+        support_articles={},
+        support_failures={first.kb: "HTTP 404", second.kb: "HTTP 404"},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    assert any(row.get("publicationStatus") == "pending" for row in result.document["updates"])
 
 
 def test_server_2025_october_ignores_verified_historical_implicit_candidates(
@@ -264,14 +273,28 @@ def test_missing_or_wrong_product_cannot_resolve_multiple_candidates(
     applies_to: tuple[OsIdentity, ...] | None,
 ) -> None:
     article = replace(_article("KB5120242", date(2026, 8, 11)), applies_to=applies_to)
-    with pytest.raises(CollectionConflictError):
-        normalize_report(
+    if applies_to is None:
+        result = normalize_report(
             month="2026-08",
             structured=StructuredResult((_update(), _update("KB5999999")), MSRC_URL, STAMP),
             support_articles={article.kb: article},
             support_failures={"KB5999999": "HTTP 403"},
             generated_at=STAMP,
         )
+        assert all(
+            r.get("publicationStatus") == "pending"
+            for r in result.document["updates"]
+            if r["kb"] != "NO PUBLICADO"
+        )
+    else:
+        with pytest.raises(CollectionConflictError):
+            normalize_report(
+                month="2026-08",
+                structured=StructuredResult((_update(), _update("KB5999999")), MSRC_URL, STAMP),
+                support_articles={article.kb: article},
+                support_failures={"KB5999999": "HTTP 403"},
+                generated_at=STAMP,
+            )
 
 
 def test_wrong_product_conflict_is_fatal_even_for_historical_candidate() -> None:
@@ -359,7 +382,7 @@ def test_prior_month_implicit_oob_is_not_included_in_current_report() -> None:
     assert all(row["kb"] != old.kb for row in result.document["updates"])
 
 
-def test_duplicate_conflict_is_rejected() -> None:
+def test_conflicting_official_metadata_is_fatal_even_without_support() -> None:
     structured = StructuredResult((_update(), _update(subtype="Monthly Rollup")), MSRC_URL, STAMP)
     with pytest.raises(CollectionConflictError, match="conflicting records"):
         normalize_report(
@@ -369,6 +392,95 @@ def test_duplicate_conflict_is_rejected() -> None:
             support_failures={},
             generated_at=STAMP,
         )
+
+
+@pytest.mark.parametrize("release_date_explicit", [False, True])
+@pytest.mark.parametrize("update_type", ["security", "oob"])
+@pytest.mark.parametrize("support_state", ["current", "missing", "unknown-products", "ssu"])
+def test_supersedence_conflicts_require_verified_historical_exclusion(
+    release_date_explicit: bool, update_type: str, support_state: str
+) -> None:
+    candidate = _update(
+        supersedes="KB5000001",
+        release_date_explicit=release_date_explicit,
+        update_type=update_type,
+    )
+    conflicting = replace(candidate, supersedes="KB5000002")
+    article = _article(candidate.kb, candidate.release_date)
+    if support_state == "unknown-products":
+        article = replace(article, applies_to=None)
+    elif support_state == "ssu":
+        article = replace(article, package_kind="ssu")
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((candidate, conflicting), MSRC_URL, STAMP),
+            support_articles={} if support_state == "missing" else {article.kb: article},
+            support_failures={candidate.kb: "HTTP 503"} if support_state == "missing" else {},
+            generated_at=STAMP,
+        )
+
+
+@pytest.mark.parametrize("applies_to", [None, (), (WINDOWS_SERVER_2025,)])
+def test_historical_supersedence_conflict_requires_matching_support_products(
+    applies_to: tuple[OsIdentity, ...] | None,
+) -> None:
+    old = _update(release_date_explicit=False, supersedes="KB5000001")
+    conflicting = replace(old, supersedes="KB5000002")
+    article = replace(_article(old.kb, date(2026, 7, 14)), applies_to=applies_to)
+    with pytest.raises(CollectionConflictError):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((old, conflicting), MSRC_URL, STAMP),
+            support_articles={article.kb: article},
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+
+def test_verified_principal_does_not_hide_another_official_metadata_conflict() -> None:
+    current = _update()
+    unverified = _update("KB5999999", release_date_explicit=False, supersedes="KB5000001")
+    conflicting = replace(unverified, supersedes="KB5000002")
+    with pytest.raises(CollectionConflictError, match="conflicting records"):
+        normalize_report(
+            month="2026-08",
+            structured=StructuredResult((current, unverified, conflicting), MSRC_URL, STAMP),
+            support_articles={current.kb: _article(current.kb, current.release_date)},
+            support_failures={unverified.kb: "HTTP 503"},
+            generated_at=STAMP,
+        )
+
+
+@pytest.mark.parametrize("historical", [False, True])
+def test_esu_subtype_variants_require_verified_historical_exclusion(historical: bool) -> None:
+    candidate = _update(identity=WINDOWS_SERVER_2012_R2, release_date_explicit=False)
+    conflicting = replace(candidate, source_subtype="Monthly Rollup")
+    article = replace(
+        _article(
+            candidate.kb,
+            date(2026, 7, 14) if historical else candidate.release_date,
+            identity=WINDOWS_SERVER_2012_R2,
+        ),
+        package_kind="monthly-rollup",
+    )
+
+    def normalize():
+        return normalize_report(
+            month="2026-08",
+            structured=StructuredResult((candidate, conflicting), MSRC_URL, STAMP),
+            support_articles={article.kb: article},
+            support_failures={},
+            generated_at=STAMP,
+        )
+
+    if historical:
+        result = normalize()
+        assert all(row["kb"] != candidate.kb for row in result.document["updates"])
+        assert any("ignored historical CVRF candidate" in warning for warning in result.warnings)
+    else:
+        with pytest.raises(CollectionConflictError, match="conflicting records"):
+            normalize()
 
 
 def test_oob_candidate_does_not_cause_monthly_duplicate_conflict(

@@ -203,7 +203,10 @@ def test_collect_esu_keeps_only_valid_english_article_from_spanish_route(
         return httpx.Response(403, request=request)
 
     with MicrosoftHttpClient(transport=httpx.MockTransport(handler), now=lambda: STAMP) as client:
-        if error is not None:
+        if error is not None and error in {
+            "does not match Patch Tuesday",
+            "Official product conflict",
+        }:
             with pytest.raises(CollectionConflictError, match=error):
                 collect_month(
                     "2026-10",
@@ -224,6 +227,12 @@ def test_collect_esu_keeps_only_valid_english_article_from_spanish_route(
     assert requested[:2] == [spanish_url, english_url]
     assert len(requested) == 4  # Both official release indexes were consulted.
     if error is not None:
+        if error not in {"does not match Patch Tuesday", "Official product conflict"}:
+            assert result.normalized.document["status"] == "partial"
+            assert any(
+                r.get("publicationStatus") == "pending"
+                for r in result.normalized.document["updates"]
+            )
         return
     assert result.support_verified == result.support_attempted == 1
     report = result.normalized.document
@@ -239,22 +248,23 @@ def test_collect_esu_keeps_only_valid_english_article_from_spanish_route(
 
 
 @pytest.mark.parametrize("missing", ["KB5126835", "KB5126836"])
-def test_unverified_generic_esu_candidate_fails_instead_of_no_publicado(missing) -> None:
+def test_unverified_generic_esu_candidate_is_pending_instead_of_no_publicado(missing) -> None:
     structured, articles = _evidence()
     del articles[missing]
-    with pytest.raises(CollectionConflictError, match="Cannot classify ESU candidate") as raised:
-        normalize_report(
-            month="2026-10",
-            structured=structured,
-            support_articles=articles,
-            support_failures={missing: "unavailable"},
-            generated_at=STAMP,
-        )
+    result = normalize_report(
+        month="2026-10",
+        structured=structured,
+        support_articles=articles,
+        support_failures={missing: "unavailable"},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    assert any(row.get("publicationStatus") == "pending" for row in result.document["updates"])
     update = next(u for u in structured.updates if u.kb == missing)
-    assert f"kb={missing}" in str(raised.value)
-    assert f"os={update.os.display_name!r}" in str(raised.value)
-    assert "msrc_subtype='Security Update'" in str(raised.value)
-    assert "support_verification=failed support_error='unavailable'" in str(raised.value)
+    assert f"kb={missing}" in " ".join(result.warnings)
+    assert f"os={update.os.display_name!r}" in " ".join(result.warnings)
+    assert "msrc_subtype='Security Update'" in " ".join(result.warnings)
+    assert "support_verification=failed support_error='unavailable'" in " ".join(result.warnings)
 
 
 @pytest.mark.parametrize("kb", ["KB5126835", "KB5126836"])
@@ -263,6 +273,7 @@ def test_esu_failure_diagnostics_reach_cli_output(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     tmp_path: Path,
+    schema,
     kb: str,
     failure: str,
 ) -> None:
@@ -283,15 +294,26 @@ def test_esu_failure_diagnostics_reach_cli_output(
             Windows Server {update.os.version} ESU</span></details>""".encode()
         return httpx.Response(403 if failure == "http" else 200, request=request, content=content)
 
-    def collect_with_mock_sources(month: str, *, client: MicrosoftHttpClient):
+    def collect_with_mock_sources(
+        month: str,
+        *,
+        client: MicrosoftHttpClient,
+        historical_updates=(),
+        previous_report=None,
+        support_history_fetcher=None,
+    ):
         return collect_month(
             month,
             client=client,
+            historical_updates=historical_updates,
             structured_fetcher=lambda _c, _m: structured,
             message_center_fetcher=lambda _c, _m: StructuredResult((), URL, STAMP),
             now=lambda: STAMP,
         )
 
+    schema_path = tmp_path / "data/schema/monthly-report.schema.json"
+    schema_path.parent.mkdir(parents=True)
+    schema_path.write_text(json.dumps(schema), encoding="utf-8")
     monkeypatch.setattr(cli, "collect_month", collect_with_mock_sources)
     monkeypatch.setattr(
         cli,
@@ -299,9 +321,9 @@ def test_esu_failure_diagnostics_reach_cli_output(
         lambda: MicrosoftHttpClient(transport=httpx.MockTransport(handler)),
     )
 
-    assert cli.main(["collect", "--month", "2026-10", "--root", str(tmp_path)]) == 1
+    assert cli.main(["collect", "--month", "2026-10", "--root", str(tmp_path)]) == 0
     output = capsys.readouterr().out
-    assert f"ERROR: Cannot classify ESU candidate {kb} as a Monthly Rollup" in output
+    assert "pending verification" in output
     assert f"kb={kb} os={update.os.display_name!r}" in output
     assert "msrc_subtype='Security Update'" in output
     assert "https://support.microsoft.com/[redacted]" in output
@@ -315,26 +337,29 @@ def test_esu_failure_diagnostics_reach_cli_output(
         reason = "HTTP 403" if failure == "http" else "lacks an h1"
         assert reason in output
     assert all(sensitive not in output for sensitive in ("secret", "private", "body", "<html>"))
-    assert not (tmp_path / "data" / "reports" / "2026-10.json").exists()
+    output_report = json.loads((tmp_path / "data/reports/2026-10.json").read_text("utf-8"))
+    assert output_report["status"] == "partial"
+    assert any(r.get("publicationStatus") == "pending" for r in output_report["updates"])
 
 
 @pytest.mark.parametrize("kb", ["KB5126835", "KB5126836"])
 def test_esu_product_verification_failure_reports_parsed_package(kb: str) -> None:
     structured, articles = _evidence()
     articles[kb] = replace(articles[kb], applies_to=None)
-    with pytest.raises(CollectionConflictError, match="Cannot verify ESU Monthly Rollup") as raised:
-        normalize_report(
-            month="2026-10",
-            structured=structured,
-            support_articles=articles,
-            support_failures={},
-            generated_at=STAMP,
-        )
-    assert f"kb={kb}" in str(raised.value)
-    assert "msrc_subtype='Security Update'" in str(raised.value)
-    assert "support_verification=parsed package_kind=monthly-rollup" in str(raised.value)
+    result = normalize_report(
+        month="2026-10",
+        structured=structured,
+        support_articles=articles,
+        support_failures={},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    assert any(row.get("publicationStatus") == "pending" for row in result.document["updates"])
+    assert f"kb={kb}" in " ".join(result.warnings)
+    assert "msrc_subtype='Security Update'" in " ".join(result.warnings)
+    assert "support_verification=parsed package_kind=monthly-rollup" in " ".join(result.warnings)
     assert "final_url='https://support.microsoft.com/en-us/servicing/os/[redacted]'" in str(
-        raised.value
+        " ".join(result.warnings)
     )
 
 
@@ -367,18 +392,19 @@ def test_explicit_msrc_rollup_with_support_failure_preserves_partial(kb: str) ->
     )
 
 
-def test_verified_unknown_package_cannot_win_monthly_conflict() -> None:
+def test_unknown_package_remains_pending_instead_of_winning_monthly_conflict() -> None:
     structured, articles = _evidence()
     updates = tuple(u for u in structured.updates if u.os.version == "2016")
     articles = {"KB5126649": replace(articles["KB5126649"], package_kind="unknown")}
-    with pytest.raises(CollectionConflictError, match="Multiple normal monthly KBs"):
-        normalize_report(
-            month="2026-10",
-            structured=replace(structured, updates=updates),
-            support_articles=articles,
-            support_failures={},
-            generated_at=STAMP,
-        )
+    result = normalize_report(
+        month="2026-10",
+        structured=replace(structured, updates=updates),
+        support_articles=articles,
+        support_failures={},
+        generated_at=STAMP,
+    )
+    assert result.document["status"] == "partial"
+    assert any(row.get("publicationStatus") == "pending" for row in result.document["updates"])
 
 
 @pytest.mark.parametrize(

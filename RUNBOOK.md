@@ -145,6 +145,11 @@ Production collection currently uses:
   used only to locate linked Support articles when the locale-specific `/help/` routes fail.
   Linked articles still require HTTPS on `support.microsoft.com`, matching KB metadata,
   and the existing locale/hotpatch checks; canonical paths are never constructed from guesses;
+- earlier production reports under `data/reports/`, revalidated before use. Only reports
+  with status `generated` or `verified` (or individually verified 1.1 rows in a partial report)
+  and matching MSRC CVRF + Support provenance supply
+  historical evidence and known Support URLs. Fixtures, unverified partial rows, OOB rows and
+  `NO PUBLICADO` rows cannot provide that evidence;
 - the CSAF parser exists and is tested, but the production monthly collector does not use a bulk CSAF collection path.
 
 ### Output
@@ -198,9 +203,22 @@ The daily slot continues refreshing the previous month before the next D. UTC cr
 
 The gate reads the workflow's original `created_at` through the GitHub API with `actions: read`, associates it with the latest occurrence of the triggering cron, and accepts delays up to six hours from that slot to the gate. It skips older jobs, rejects unknown crons and fails safely if the API cannot be read. There is no current-minute equality check and no replay of missed slots; GitHub can delay or drop scheduled runs ([GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)). Manual dispatch bypasses the schedule gate and keeps its optional month override. Push still builds/deploys without collection.
 
-Microsoft normally publishes monthly security updates at [10:00 Pacific on D](https://learn.microsoft.com/en-us/windows/deployment/update/release-cycle). In November 2026 that is 15:00 ART: the 14:15 attempt may precede publication. `reconcile-report --require-release` prevents automated publication before that PST/PDT boundary or without any Support-verified monthly security row. Such a run fails before commit/build/deploy and leaves the last deployed report in place; the next slot retries through the normal collector. This guard also applies to manual refresh publication and does not claim that all articles are complete at the nominal release time.
+Microsoft normally publishes monthly security updates at [10:00 Pacific on D](https://learn.microsoft.com/en-us/windows/deployment/update/release-cycle). In November 2026 that is 15:00 ART: the 14:15 attempt may precede publication. `reconcile-report --require-release` prevents automated publication before that PST/PDT boundary. For 1.1, official CVRF, release-health or Support-history KB/product evidence may publish as
+explicitly pending/partial without a completed Support article; legacy 1.0 retains its Support-verified
+monthly guard. Empty/lifecycle-only attempts remain blocked. Such a run fails before commit/build/deploy and leaves the last deployed report in place; the next slot retries through the normal collector. This guard also applies to manual refresh publication and does not claim that all articles are complete at the nominal release time.
 
-The production CLI's canonical Support URL fallback can remain insufficient when `/help/` returns 403, while a manual call supplied with prior canonical URLs can succeed. This independent resilience debt remains pending; WPD-INC-003 does not change source discovery or parsers. Required classification/verification failures still fail safely.
+The production CLI also tries canonical Support URLs retained in validated prior production
+reports when `/help/` fails. A failed release-information index does not discard those known
+official URLs. A failed `/help/` redirect also permits one direct attempt to its observed
+official canonical URL, with the same KB/locale/hotpatch checks. This does not make HTTP 403
+generically retryable and does not guess article paths.
+Prior evidence can exclude only an exact KB/OS match with an earlier release
+month, no explicit current CVRF date, and monthly update type before fetching Support.
+If any candidate for that KB is unmatched, live verification is still required. Earlier-month facts
+never supply current content, ESU package classification, OOB or supersedence.
+Warnings include the prior report path, SHA-256, original official URLs and original retrieval
+timestamps; live failures still make the report `partial`. Current verification failures remain pending or partial and do not block independent KBs.
+Contradictory verified facts, invalid contracts and CVRF failures still fail safely.
 
 ### Scheduled/manual refresh flow
 
@@ -210,7 +228,7 @@ The production CLI's canonical Support URL fallback can remain insufficient when
 4. Preserve the committed report if it exists.
 5. Collect official Microsoft data.
 6. Validate all repository data.
-7. Check the publication boundary and verified monthly evidence; then ignore only `generatedAt` / `retrievedAt` when deciding whether data changed meaningfully.
+7. Check the publication boundary and official KB evidence (Support-verified monthly evidence for 1.0); then ignore `generatedAt` / source `retrievedAt` / `verification.checkedAt` when comparing. Source captures differing only by timestamps are coalesced for this comparison.
 8. If substantive, stage only the expected monthly report, commit as `github-actions[bot]`, and push to the default branch with `GITHUB_TOKEN`.
 9. Record the exact resulting commit SHA.
 10. Validate/build the frontend from that exact state.
@@ -278,7 +296,8 @@ Use `.venv\Scripts\python` for collector commands.
 - Check the Support article title's package type. CVRF `Security Update` can describe
   an SSU or an ESU Monthly Rollup; a parseable article alone is not evidence of an LCU.
   Generic ESU candidates require a Support-confirmed Monthly Rollup and matching product.
-  Missing classification fails collection instead of claiming `NO PUBLICADO`.
+  Missing classification produces a pending candidate instead of claiming `NO PUBLICADO`
+  or blocking other verified KBs.
 - Check whether Support explicitly labels a candidate Out-of-band in its article title.
 - If an expected OOB is missing from CVRF, check the dated Windows message center announcement and its official KB link.
 - Do not choose by KB number/date proximity.
@@ -289,13 +308,21 @@ CVRF can expose more than one candidate for a normalized OS. A generic `Security
 
 CVRF can also retain KBs from earlier months without per-remediation dates. The collector
 discards such a candidate only when Support verifies both its earlier release month and
-the matching product. Contradictions with explicit CVRF dates or explicit Support products
+the matching product. Validated prior production evidence may supply that historical check
+under the restrictions above. A parsed live article
+with missing or contradictory applicability is never overridden by stored evidence.
+Undated monthly candidates can retain conflicting metadata (including
+`Supercedence` or package subtype) until that verification. Unless verified historical evidence
+or official hotpatch evidence excludes them, contradictory records for the same KB/product
+fail before package selection, even when Support is unavailable. Do not turn official
+contradictions into pending candidates. Explicit-date and OOB metadata conflicts still
+fail in the CVRF parser. Contradictions with explicit CVRF dates or explicit Support products
 remain fatal. Multiple remaining monthly candidates require exactly one Support-verified
 Patch Tuesday date and product; missing applicability cannot break a tie.
 
 **Resolution**
 
-For a confirmed monthly plus OOB pair, retain both records and their own release dates. A supersedence link requires independent official evidence. Exclude packages explicitly identified by Support as SSU, security-only, or auxiliary. If multiple actual monthly candidates remain, exactly one Support-verified principal package with the matching Patch Tuesday date and product is selected and unverified candidates are warned about; zero or multiple verified candidates cause a deliberate conflict. Investigate official Microsoft evidence before changing classification rules.
+For a confirmed monthly plus OOB pair, retain both records and their own release dates. A supersedence link requires independent official evidence. Exclude packages explicitly identified by Support as SSU, security-only, or auxiliary. If multiple actual monthly candidates remain, exactly one Support-verified principal package with the matching Patch Tuesday date and product is selected and unverified candidates remain pending with unknown update type and diagnostic evidence; zero verified candidates remain pending; multiple verified principal candidates cause a deliberate conflict. Investigate official Microsoft evidence before changing classification rules.
 
 ### Symptom: Generated report status is `partial`
 
@@ -404,3 +431,57 @@ For a bad automated data refresh, prefer a normal Git revert of the report commi
 A separately documented one-click Pages rollback procedure was not found.
 
 **Current dedicated Pages rollback procedure: Unknown / Pending validation.**
+
+## Incremental publication and recovery (D012)
+
+The production CLI uses a separate public HTTP session per Support article, with bounded
+retries and observed/previously verified canonical URLs. A 403/404, timeout or parsing error
+is not evidence of non-publication. Inspect each row's `publicationStatus` and `verification`
+(URL, actual check time, state and diagnostic detail); do not infer completeness from a
+parseable title. The frontend shows pending/partial labels and unavailable content inside
+the existing five columns.
+
+The CLI validates any same-month baseline before collection. Confirmed fields are retained
+when a later article is unavailable or omits content, with original `retainedSources` and
+retrieval timestamps. Confirmed same-month OOB history is additive even if a later discovery
+run fails; a message center outage marks the report partial. Do not manually copy fresh
+retrieval timestamps onto stored evidence. A later successful run replaces pending content
+with verified content. Enrichment is substantive; generation/source/check timestamps alone
+are ignored by semantic reconciliation.
+
+Ordinary Server 2012/2012 R2 ESU ended on 2026-10-13. The reviewed lifecycle registry records
+the Microsoft Learn and Support URLs and their actual review retrieval instants. From
+November, absent updates carry `lifecycle.status: esu-ended` and the migration explanation;
+there is no fabricated KB or publication date. This alone is not incomplete information.
+A later verified exceptional KB remains visible. Do not use the lifecycle rule to discard
+an unverified current candidate or classify a failed request as end-of-ESU.
+
+Operational procedure:
+
+1. Run `collect --month YYYY-MM` normally. Review pending/partial rows and retained evidence.
+2. Run repository validation and the frontend checks/build. Both contract versions are
+   supported; do not rewrite older production reports to add lifecycle metadata.
+3. Let scheduled/manual automation compare the validated report and commit only substantive
+   changes to its expected report path. Existing cron slots and release-time boundary remain.
+4. On a global CVRF failure, invalid schema or contradictory verified facts, stop publication:
+   atomic output preserves the prior report. Fix the evidence/parser rather than bypassing
+   validation. Recover a deployed report through a reviewed revert if necessary.
+5. When reviewing a lifecycle policy change, fetch the official pages, verify product/date,
+   retain the actual retrieval instants and update the registry and boundary tests together.
+
+The November migration starts from the already published diagnostic JSON and preserves all
+seven monthly KB records/content. The lifecycle review also found two official exceptional
+OOBs dated 2026-11-06. Both target articles were verified; they replace the two absence
+placeholders, retain `esu-ended` lifecycle metadata and do not establish new ordinary ESU
+Patch Tuesdays. The resulting report is `generated`: all nine records have complete verified
+content. Publish reviewed migrations through the normal push path; scheduled/manual refreshes
+then use the production collector and semantic reconciliation described above.
+
+After ESU end, the CLI additionally checks the reviewed official product-history pages for
+explicit current-month OOB navigation titles. This is at most one page per configured ended
+product, not recursive crawling. Product context, HTTPS Microsoft Support links, exact dates
+and explicit OOB/package titles are checked. A target article outage preserves known dated
+publication facts as partial when those facts are explicit; unknown classification stays
+pending. Verified target date/product/OOB contradictions still fail safely. A failed history
+page marks exceptional discovery incomplete without blocking independent KBs. Existing
+same-month verified OOB history survives subsequent discovery failures.

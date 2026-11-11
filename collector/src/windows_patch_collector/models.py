@@ -35,6 +35,15 @@ class OsIdentity:
 
 
 @dataclass(frozen=True, slots=True)
+class StructuredSource:
+    """Additional official discovery evidence retained when compatible facts are combined."""
+
+    source_type: Literal["msrc", "release-health", "microsoft-support"]
+    url: str
+    retrieved_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
 class StructuredUpdate:
     """A KB/product relationship verified by an MSRC structured source."""
 
@@ -48,7 +57,8 @@ class StructuredUpdate:
     support_url: str | None = None
     supersedes: str | None = None
     release_date_explicit: bool = True
-    source_type: Literal["msrc", "release-health"] = "msrc"
+    source_type: Literal["msrc", "release-health", "microsoft-support"] = "msrc"
+    additional_sources: tuple[StructuredSource, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +69,21 @@ class StructuredResult:
     source_url: str
     retrieved_at: datetime
     warnings: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class HistoricalUpdate:
+    """Previously verified facts usable only to exclude an undated historical candidate."""
+
+    kb: str
+    os: OsIdentity
+    release_date: date
+    report_path: str
+    report_sha256: str
+    support_url: str
+    support_retrieved_at: datetime
+    msrc_url: str
+    msrc_retrieved_at: datetime
 
 
 @dataclass(frozen=True, slots=True)
