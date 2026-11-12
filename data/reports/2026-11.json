@@ -2,8 +2,8 @@
   "schemaVersion": "1.1.0",
   "reportMonth": "2026-11",
   "patchTuesdayDate": "2026-11-10",
-  "generatedAt": "2026-11-11T10:05:01.608332Z",
-  "status": "generated",
+  "generatedAt": "2026-11-12T19:40:52.209296Z",
+  "status": "partial",
   "updates": [
     {
       "kb": "KB5135580",
@@ -24,12 +24,12 @@
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
-          "retrievedAt": "2026-11-11T10:04:53.525582Z"
+          "retrievedAt": "2026-11-12T19:40:47.202264Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
-          "retrievedAt": "2026-11-11T10:05:01.226106Z"
+          "retrievedAt": "2026-11-12T19:40:51.972493Z"
         },
         {
           "type": "lifecycle",
@@ -46,7 +46,7 @@
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
-        "checkedAt": "2026-11-11T10:05:01.226106Z"
+        "checkedAt": "2026-11-12T19:40:51.972493Z"
       },
       "lifecycle": {
         "status": "esu-ended",
@@ -72,12 +72,12 @@
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
-          "retrievedAt": "2026-11-11T10:04:53.885627Z"
+          "retrievedAt": "2026-11-12T19:40:47.425408Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
-          "retrievedAt": "2026-11-11T10:05:01.573603Z"
+          "retrievedAt": "2026-11-12T19:40:52.182313Z"
         },
         {
           "type": "lifecycle",
@@ -94,7 +94,7 @@
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
-        "checkedAt": "2026-11-11T10:05:01.573603Z"
+        "checkedAt": "2026-11-12T19:40:52.182313Z"
       },
       "lifecycle": {
         "status": "esu-ended",
@@ -120,19 +120,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
-          "retrievedAt": "2026-11-11T10:04:58.895089Z"
+          "retrievedAt": "2026-11-12T19:40:50.694819Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
-        "checkedAt": "2026-11-11T10:04:58.895089Z"
+        "checkedAt": "2026-11-12T19:40:50.694819Z"
       }
     },
     {
@@ -147,26 +147,26 @@
       "releaseDate": "2026-11-10",
       "changesSummary": "[Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Impresión] - Corregido: agregar una impresora publicada en Active Directory a través de Configuración > Dispositivos > & Bluetooth Impresoras & escáneres Es posible que se produzca el error 87 en Agregar > dispositivo, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell . [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows .",
       "resolvedIssuesSummary": "[Servicios de implementación de Windows] Corregido: después de instalar esta actualización de seguridad, el cmdlet Import-WdsInstallImage requiere privilegios de administrador. Si se intenta ejecutar el cmdlet como no administrador, se produce un error ACCESS_DENIED. [Acceso Web de Escritorio remoto] Corregido: Es posible que Acceso web de Escritorio remoto no se cargue y muestre \"No se puede mostrar Acceso web de Escritorio remoto\" en Microsoft Edge o Google Chrome cuando XSLT está deshabilitado por la directiva del explorador. Las páginas de Acceso web de Escritorio remoto ahora se representan en el servidor y ya no dependen de la compatibilidad con XSLT del explorador. Para obtener más información, consulte KB5130994: RD Web Access no se carga cuando XSLT está deshabilitado en Microsoft Edge o Google Chrome . [Escritorio remoto] Corregido: La directiva \"Especificar huellas digitales de certificados que representan editores .rdp de confianza\" no se pudo configurar correctamente a través de Microsoft Intune. Corregido: Las conexiones de vigilancia de Escritorio remoto pueden producir un \"error no especificado\" en Windows Server 2016 y Windows Server 2012 R2 después de instalar la actualización del 14 de octubre de 2026. [Exchange Server] Esta actualización corrige un problema que afecta a los servidores Exchange locales. Este problema podría impedir el inicio de sesión en Outlook en la Web (OWA), hacer que los mensajes de correo electrónico permanezcan en la bandeja de salida de Outlook sin entregarse o impedir que Exchange acceda a los buzones de correo durante la replicación del buzón.",
-      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Resolución Este problema se resuelve en las actualizaciones de Windows publicadas el 10 de noviembre de 2026 y después, como (KB5131085) . Le recomendamos que instale la actualización de Windows más reciente para el dispositivo, ya que contiene mejoras importantes y soluciones de problemas, incluyendo este. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Los síntomas experimentados en dispositivos que usan modos de audio de 8 canales o 3D se abordan en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026 (KB5129238). Los síntomas restantes se tratan en (KB5131085).",
+      "knownIssuesSummary": "Es posible que se produzca un error en los comandos de activación y licencia de Windows con 0x80041008 Síntomas Después de instalar la actualización de seguridad de Windows de noviembre de 2026, es posible que se produzcan errores en determinadas operaciones de activación y concesión de licencias de Windows realizadas con la Herramienta de administración de licencias de software . Los dispositivos afectados pueden encontrar el error 0x80041008, parámetro no válido (SWbemObjectEx), al ejecutar comandos para activar Windows, configurar el Servicio de administración de claves (KMS) o administrar claves de producto. El error se ha observado al ejecutar los siguientes comandos: slmgr.vbs /skms-domain <domain> slmgr.vbs /ipk <key> Este problema afecta principalmente a las organizaciones que usan herramientas de línea de comandos o procesos automatizados para administrar la activación y las licencias de Windows. Los dispositivos que ya están activados permanecen activados. No se espera que los clientes cuyos dispositivos ya tengan la clave de cliente KMS y la configuración de KMS adecuadas y que no necesiten ejecutar los comandos afectados Slmgr.vbs , se vean afectados. Los dispositivos que se están configurando para usar la activación KMS pueden encontrar errores al intentar iniciar su activación. Los dispositivos activados por KMS suelen permanecer activados hasta 180 días después de una activación correcta. Los clientes que tienen la clave de cliente KMS ya instalada en su imagen y no la usan slmgr para más configuraciones no se ven afectados. Solución alternativa Existe una solución alternativa para las organizaciones que necesitan una mitigación inmediata. Póngase en contacto con el Soporte técnico de Microsoft para empresas . Estamos trabajando en una resolución que estará disponible en los próximos días. Actualizaremos esta documentación cuando esté disponible Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Resolución Este problema se resuelve en las actualizaciones de Windows publicadas el 10 de noviembre de 2026 y después, como (KB5131085) . Le recomendamos que instale la actualización de Windows más reciente para el dispositivo, ya que contiene mejoras importantes y soluciones de problemas, incluyendo este. Dispositivos de clase de audio USB 1.0 con código de error 10 o sin salida Síntomas Después de instalar la actualización de seguridad de Windows del 8 de septiembre de 2026, es posible que algunos dispositivos USB de clase de audio 1.0 no inicien o produzcan audio. Los dispositivos afectados pueden experimentar uno o varios de los síntomas siguientes: El dispositivo muestra un error en el Administrador de dispositivos: \"Este dispositivo no se puede iniciar (Código 10)\". No hay salida de audio. Los controles de volumen no responden o permanecen en cero. La configuración de sonido no responde o no está disponible. Algunos dispositivos pueden funcionar en configuraciones estéreo estándar, pero fallan al usar características de audio multicanal, incluidos los modos de audio de 8 canales o 3D. Algunos clientes han informado de que pueden restaurar el audio en estos casos cambiando al modo de 2 canales. Este problema se limita a los dispositivos de clase de audio USB 1.0. Resolución Los síntomas experimentados en dispositivos que usan modos de audio de 8 canales o 3D se abordan en la actualización fuera de banda (OOB) publicada el 14 de septiembre de 2026 (KB5129238). Los síntomas restantes se tratan en (KB5131085).",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
-          "retrievedAt": "2026-11-11T10:04:57.899641Z"
+          "retrievedAt": "2026-11-12T19:40:50.056722Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
-        "checkedAt": "2026-11-11T10:04:57.899641Z"
+        "checkedAt": "2026-11-12T19:40:50.056722Z"
       }
     },
     {
@@ -181,26 +181,26 @@
       "releaseDate": "2026-11-10",
       "changesSummary": "[Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows . [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell .",
       "resolvedIssuesSummary": "[Exchange Server] Esta actualización corrige un problema que afecta a los servidores Exchange locales. Este problema podría impedir el inicio de sesión en Outlook en la Web (OWA), hacer que los mensajes de correo electrónico permanezcan en la bandeja de salida de Outlook sin entregarse o impedir que Exchange acceda a los buzones de correo durante la replicación del buzón. [Impresión] Corregido: Agregar una impresora publicada en Active Directory a través de la configuración > Dispositivos > & Bluetooth Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Corregido: La directiva \"Especificar huellas digitales de certificados que representan editores .rdp de confianza\" no se pudo configurar correctamente a través de Microsoft Intune. [Acceso Web de Escritorio remoto] Corregido: Es posible que Acceso web de Escritorio remoto no se cargue y muestre \"No se puede mostrar Acceso web de Escritorio remoto\" en Microsoft Edge o Google Chrome cuando XSLT está deshabilitado por la directiva del explorador. Las páginas de Acceso web de Escritorio remoto ahora se representan en el servidor y ya no dependen de la compatibilidad con XSLT del explorador. Para obtener más información, consulte KB5130994: Acceso web a Escritorio remoto no se carga cuando XSLT está deshabilitado en Microsoft Edge o Google Chrome. [Servicios de implementación de Windows] Corregido: Después de instalar esta actualización de seguridad, el cmdlet de Import-WdsInstallImage requiere privilegios de administrador. Si se intenta ejecutar el cmdlet como no administrador, se produce un error ACCESS_DENIED.",
-      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Resolución Este problema se resuelve en las actualizaciones de Windows publicadas el 10 de noviembre de 2026 y después, como (KB5131090) . Le recomendamos que instale la actualización de Windows más reciente para el dispositivo, ya que contiene mejoras importantes y soluciones de problemas, incluyendo este. Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070884 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
+      "knownIssuesSummary": "Es posible que se produzca un error en los comandos de activación y licencia de Windows con 0x80041008 Síntomas Después de instalar la actualización de seguridad de Windows de noviembre de 2026, es posible que se produzcan errores en determinadas operaciones de activación y concesión de licencias de Windows realizadas con la Herramienta de administración de licencias de software . Los dispositivos afectados pueden encontrar el error 0x80041008, parámetro no válido (SWbemObjectEx), al ejecutar comandos para activar Windows, configurar el Servicio de administración de claves (KMS) o administrar claves de producto. El error se ha observado al ejecutar los siguientes comandos: slmgr.vbs /skms-domain <domain> slmgr.vbs /ipk <key> Este problema afecta principalmente a las organizaciones que usan herramientas de línea de comandos o procesos automatizados para administrar la activación y las licencias de Windows. Los dispositivos que ya están activados permanecen activados. No se espera que los clientes cuyos dispositivos ya tengan la clave de cliente KMS y la configuración de KMS adecuadas y que no necesiten ejecutar los comandos afectados Slmgr.vbs , se vean afectados. Los dispositivos que se están configurando para usar la activación KMS pueden encontrar errores al intentar iniciar su activación. Los dispositivos activados por KMS suelen permanecer activados hasta 180 días después de una activación correcta. Los clientes que tienen la clave de cliente KMS ya instalada en su imagen y no la usan slmgr para más configuraciones no se ven afectados. Solución alternativa Existe una solución alternativa para las organizaciones que necesitan una mitigación inmediata. Póngase en contacto con el Soporte técnico de Microsoft para empresas . Estamos trabajando en una resolución que estará disponible en los próximos días. Actualizaremos esta documentación cuando esté disponible Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070884 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
-          "retrievedAt": "2026-11-11T10:04:58.586336Z"
+          "retrievedAt": "2026-11-12T19:40:50.516007Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
-        "checkedAt": "2026-11-11T10:04:58.586336Z"
+        "checkedAt": "2026-11-12T19:40:50.516007Z"
       }
     },
     {
@@ -214,27 +214,27 @@
       "updateType": "security",
       "releaseDate": "2026-11-10",
       "changesSummary": "[Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows . [Menú Inicio] La directiva HideRecommendedSection ahora se aplica a las sesiones múltiples de Windows 11 Empresas, incluidos los entornos de Azure Virtual Desktop y ServerRDSH. [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell .",
-      "resolvedIssuesSummary": "[Certificados] Corregido: Se producía un error en la inscripción de certificados de dispositivo porque algunos identificadores de certificado no se conservaban y los indicadores de tipo de clave se establecían incorrectamente, lo que provocaba que las claves se administraran incorrectamente. [Impresión] Corregido: Agregar una impresora publicada en Active Directory a través de la configuración > Dispositivos > & Bluetooth Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Corregido: La directiva \"Especificar huellas digitales de certificados que representan editores .rdp de confianza\" no se pudo configurar correctamente a través de Microsoft Intune. [Acceso Web de Escritorio remoto] Corregido: Es posible que Acceso web de Escritorio remoto no se cargue y muestre \"No se puede mostrar Acceso web de Escritorio remoto\" en Microsoft Edge o Google Chrome cuando XSLT está deshabilitado por la directiva del explorador. Las páginas de Acceso web de Escritorio remoto ahora se representan en el servidor y ya no dependen de la compatibilidad con XSLT del explorador. Para obtener más información, consulte KB5130994: RD Web Access no se carga cuando XSLT está deshabilitado en Microsoft Edge o Google Chrome . [Servicios de implementación de Windows] Corregido: Después de instalar esta actualización de seguridad, el cmdlet de Import-WdsInstallImage requiere privilegios de administrador. Si se intenta ejecutar el cmdlet como no administrador, se produce un error ACCESS_DENIED. [Programa de instalación de Windows] Corregido: Es posible que se produzca un error en una actualización local de Windows Server 2016 a Windows Server 2025 durante la comprobación de compatibilidad al usar un medio de instalación que incluye la actualización de octubre de 2026. El error muestra el mensaje \"Lo sentimos, estamos teniendo problemas para determinar si su equipo puede ejecutar Windows Server\" y el código de error 0x80070003 - 0x40008. [Exchange Server] Esta actualización corrige un problema que afecta a los servidores Exchange locales. Este problema podría impedir el inicio de sesión en Outlook en la Web (OWA), hacer que los mensajes de correo electrónico permanezcan en la bandeja de salida de Outlook sin entregarse o impedir que Exchange acceda a los buzones de correo durante la replicación del buzón.",
-      "knownIssuesSummary": "Es posible que los usuarios no puedan iniciar sesión en OWA o enviar correos electrónicos en Exchange Server Síntomas: Después de instalar esta actualización, algunos servidores Exchange locales podrían experimentar problemas para acceder o enviar correo electrónico. Es posible que los usuarios no puedan iniciar sesión en Outlook en la Web (OWA) o que los mensajes de correo electrónico enviados desde Outlook permanezcan en la Bandeja de salida y no se entreguen. Además, Exchange puede experimentar problemas de acceso a los buzones durante la replicación de buzones. En algunas configuraciones afectadas, es posible que se produzca un error MapiExceptionMdbOffline: Unable to make connection to the server. (hr=0x80004005, ec=1142) en Exchange Server OWA con el id. de evento 1006 registrado en el registro de aplicaciones. Otro síntoma notificado es el aumento de las colas de correo electrónico. No es necesario instalar las actualizaciones de seguridad del servidor Exchange de octubre de 2026 para que se produzcan estos problemas. Resolución Este problema se resuelve en las actualizaciones de Windows publicadas el 10 de noviembre de 2026 y después, como (KB5131080). Le recomendamos que instale la actualización de Windows más reciente para el dispositivo, ya que contiene mejoras importantes y soluciones de problemas, incluyendo este. Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070881 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
+      "resolvedIssuesSummary": "[Certificados] Corregido: Se producía un error en la inscripción de certificados de dispositivo porque algunos identificadores de certificado no se conservaban y los indicadores de tipo de clave se establecían incorrectamente, lo que provocaba que las claves se administraran incorrectamente. [Exchange Server] Esta actualización corrige un problema que afecta a los servidores Exchange locales. Este problema podría impedir el inicio de sesión en Outlook en la Web (OWA), hacer que los mensajes de correo electrónico permanezcan en la bandeja de salida de Outlook sin entregarse o impedir que Exchange acceda a los buzones de correo durante la replicación del buzón. [Impresión] Corregido: Agregar una impresora publicada en Active Directory a través de la configuración > Dispositivos > & Bluetooth Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Corregido: La directiva \"Especificar huellas digitales de certificados que representan editores .rdp de confianza\" no se pudo configurar correctamente a través de Microsoft Intune. [Acceso Web de Escritorio remoto] Corregido: Es posible que Acceso web de Escritorio remoto no se cargue y muestre \"No se puede mostrar Acceso web de Escritorio remoto\" en Microsoft Edge o Google Chrome cuando XSLT está deshabilitado por la directiva del explorador. Las páginas de Acceso web de Escritorio remoto ahora se representan en el servidor y ya no dependen de la compatibilidad con XSLT del explorador. Para obtener más información, consulte KB5130994: RD Web Access no se carga cuando XSLT está deshabilitado en Microsoft Edge o Google Chrome . [Servicios de implementación de Windows] Corregido: Después de instalar esta actualización de seguridad, el cmdlet de Import-WdsInstallImage requiere privilegios de administrador. Si se intenta ejecutar el cmdlet como no administrador, se produce un error ACCESS_DENIED. [Programa de instalación de Windows] Corregido: Es posible que se produzca un error en una actualización local de Windows Server 2016 a Windows Server 2025 durante la comprobación de compatibilidad al usar un medio de instalación que incluye la actualización de octubre de 2026. El error muestra el mensaje \"Lo sentimos, estamos teniendo problemas para determinar si su equipo puede ejecutar Windows Server\" y el código de error 0x80070003 - 0x40008.",
+      "knownIssuesSummary": "Es posible que se produzca un error en los comandos de activación y licencia de Windows con 0x80041008 Síntomas Después de instalar la actualización de seguridad de Windows de noviembre de 2026, es posible que se produzcan errores en determinadas operaciones de activación y concesión de licencias de Windows realizadas con la Herramienta de administración de licencias de software . Los dispositivos afectados pueden encontrar el error 0x80041008, parámetro no válido (SWbemObjectEx), al ejecutar comandos para activar Windows, configurar el Servicio de administración de claves (KMS) o administrar claves de producto. El error se ha observado al ejecutar los siguientes comandos: slmgr.vbs /skms-domain <domain> slmgr.vbs /ipk <key> Este problema afecta principalmente a las organizaciones que usan herramientas de línea de comandos o procesos automatizados para administrar la activación y las licencias de Windows. Los dispositivos que ya están activados permanecen activados. No se espera que los clientes cuyos dispositivos ya tengan la clave de cliente KMS y la configuración de KMS adecuadas y que no necesiten ejecutar los comandos afectados Slmgr.vbs , se vean afectados. Los dispositivos que se están configurando para usar la activación KMS pueden encontrar errores al intentar iniciar su activación. Los dispositivos activados por KMS suelen permanecer activados hasta 180 días después de una activación correcta. Los clientes que tienen la clave de cliente KMS ya instalada en su imagen y no la usan slmgr para más configuraciones no se ven afectados. Solución alternativa Existe una solución alternativa para las organizaciones que necesitan una mitigación inmediata. Póngase en contacto con el Soporte técnico de Microsoft para empresas . Estamos trabajando en una resolución que estará disponible en los próximos días. Actualizaremos esta documentación cuando esté disponible Windows Server Update Services (WSUS) no muestra detalles del error Después de instalar KB5070881 o actualizaciones posteriores, Windows Server Update Services (WSUS) no muestra los detalles del error de sincronización en su informe de errores. Esta funcionalidad se quita temporalmente para abordar la vulnerabilidad de ejecución remota de código, CVE-2025-59287 .",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
-          "retrievedAt": "2026-11-11T10:04:57.138416Z"
+          "retrievedAt": "2026-11-12T19:40:49.730066Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
-        "checkedAt": "2026-11-11T10:04:57.138416Z"
+        "checkedAt": "2026-11-12T19:40:49.730066Z"
       }
     },
     {
@@ -249,26 +249,26 @@
       "releaseDate": "2026-11-10",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows . [Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell .",
       "resolvedIssuesSummary": "[Impresión] Corregido: Al agregar una impresora publicada en Active Directory a través de Configuración > , Bluetooth & dispositivos > Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Corregido: La directiva \"Especificar huellas digitales de certificados que representan editores .rdp de confianza\" no se pudo configurar correctamente a través de Microsoft Intune.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que se produzca un error en los comandos de activación y licencia de Windows con 0x80041008 Síntomas Después de instalar la actualización de seguridad de Windows de noviembre de 2026, es posible que se produzcan errores en determinadas operaciones de activación y concesión de licencias de Windows realizadas con la Herramienta de administración de licencias de software . Los dispositivos afectados pueden encontrar el error 0x80041008, parámetro no válido (SWbemObjectEx), al ejecutar comandos para activar Windows, configurar el Servicio de administración de claves (KMS) o administrar claves de producto. El error se ha observado al ejecutar los siguientes comandos: slmgr.vbs /skms-domain <domain> slmgr.vbs /ipk <key> Este problema afecta principalmente a las organizaciones que usan herramientas de línea de comandos o procesos automatizados para administrar la activación y las licencias de Windows. Los dispositivos que ya están activados permanecen activados. No se espera que los clientes cuyos dispositivos ya tengan la clave de cliente KMS y la configuración de KMS adecuadas y que no necesiten ejecutar los comandos afectados Slmgr.vbs , se vean afectados. Los dispositivos que se están configurando para usar la activación KMS pueden encontrar errores al intentar iniciar su activación. Los dispositivos activados por KMS suelen permanecer activados hasta 180 días después de una activación correcta. Los clientes que tienen la clave de cliente KMS ya instalada en su imagen y no la usan slmgr para más configuraciones no se ven afectados. Solución alternativa Existe una solución alternativa para las organizaciones que necesitan una mitigación inmediata. Póngase en contacto con el Soporte técnico de Microsoft para empresas . Estamos trabajando en una resolución que estará disponible en los próximos días. Actualizaremos esta documentación cuando esté disponible",
+      "knownIssuesStatus": "unknown",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
-          "retrievedAt": "2026-11-11T10:04:58.271536Z"
+          "retrievedAt": "2026-11-12T19:40:50.334170Z"
         }
       ],
-      "publicationStatus": "verified",
+      "publicationStatus": "partial",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
-        "checkedAt": "2026-11-11T10:04:58.271536Z"
+        "checkedAt": "2026-11-12T19:40:50.334170Z"
       }
     },
     {
@@ -283,26 +283,26 @@
       "releaseDate": "2026-11-10",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Audio (problema conocido)] - Corregido: los dispositivos de audio USB 1.0 podían no iniciarse y mostrar el código de error 10 en el Administrador de dispositivos después de instalar una actualización de seguridad reciente. [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows . [Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell .",
       "resolvedIssuesSummary": "[Impresión] Corregido: Agregar una impresora publicada en Active Directory a través de la configuración > Dispositivos > & Bluetooth Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Esta actualización soluciona un problema por el que las conexiones del Protocolo de escritorio remoto (RDP) podrían fallar en el cliente debido a una falta de coincidencia de certificados después de la actualización de vista previa no relacionada con la seguridad de octubre de 2026.",
-      "knownIssuesSummary": "Microsoft no está al tanto de ningún problema con respecto a esta actualización.",
-      "knownIssuesStatus": "none",
+      "knownIssuesSummary": "Es posible que la actualización de seguridad de noviembre no se instale en algunos dispositivos Síntomas Al intentar instalar la actualización de seguridad de Windows de noviembre de 2026 KB5127936, es posible que algunos dispositivos no puedan completar la instalación. Los dispositivos afectados pueden intentar instalar la actualización repetidamente o mostrar códigos de error 0x80070306, 0x800f0989 o 0x800f0993. Resolución La solución para este problema se ejecuta automáticamente en los dispositivos afectados conectados a Internet y usa Windows Update en Configuración para instalar actualizaciones. No se requiere ninguna acción manual por parte de los usuarios finales para recibir la reparación. Todos los dispositivos afectados deben repararse en 24 a 48 horas a partir del 11 de noviembre de 2026 a las 10 a. m. PT. Una vez que el dispositivo reciba la reparación, se descargará e instalará automáticamente la actualización de seguridad de noviembre de 2026 a través de Windows Update. También puedes instalar la actualización siguiendo estas instrucciones . Actualizaremos esta documentación una vez que se haya completado el lanzamiento de la resolución. Si sigue teniendo problemas de instalación después de 48 horas, use la ayuda y el aprendizaje de Windows o póngase en contacto con el Soporte técnico de Microsoft .",
+      "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
-          "retrievedAt": "2026-11-11T10:04:59.913872Z"
+          "retrievedAt": "2026-11-12T19:40:51.253077Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
-        "checkedAt": "2026-11-11T10:04:59.913872Z"
+        "checkedAt": "2026-11-12T19:40:51.253077Z"
       }
     },
     {
@@ -324,19 +324,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-11T10:04:51.878934Z"
+          "retrievedAt": "2026-11-12T19:40:46.079117Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
-          "retrievedAt": "2026-11-11T10:04:59.579113Z"
+          "retrievedAt": "2026-11-12T19:40:51.103617Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
-        "checkedAt": "2026-11-11T10:04:59.579113Z"
+        "checkedAt": "2026-11-12T19:40:51.103617Z"
       }
     }
   ]
