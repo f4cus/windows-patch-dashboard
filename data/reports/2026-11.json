@@ -2,7 +2,7 @@
   "schemaVersion": "1.1.0",
   "reportMonth": "2026-11",
   "patchTuesdayDate": "2026-11-10",
-  "generatedAt": "2026-11-18T23:50:28.477020Z",
+  "generatedAt": "2026-11-20T23:37:16.876747Z",
   "status": "partial",
   "updates": [
     {
@@ -24,12 +24,12 @@
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5126835-windows-server-2012-mr",
-          "retrievedAt": "2026-11-18T23:50:22.780770Z"
+          "retrievedAt": "2026-11-20T23:37:13.438289Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
-          "retrievedAt": "2026-11-18T23:50:27.362402Z"
+          "retrievedAt": "2026-11-20T23:37:16.219638Z"
         },
         {
           "type": "lifecycle",
@@ -46,7 +46,7 @@
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/server-2012/2026/10/kb5135580-windows-server-2012-standalone-cbs",
-        "checkedAt": "2026-11-18T23:50:27.362402Z"
+        "checkedAt": "2026-11-20T23:37:16.219638Z"
       },
       "lifecycle": {
         "status": "esu-ended",
@@ -72,12 +72,12 @@
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5126836-windows-8-1-mr",
-          "retrievedAt": "2026-11-18T23:50:23.061040Z"
+          "retrievedAt": "2026-11-20T23:37:13.607446Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
-          "retrievedAt": "2026-11-18T23:50:27.519563Z"
+          "retrievedAt": "2026-11-20T23:37:16.324408Z"
         },
         {
           "type": "lifecycle",
@@ -94,7 +94,7 @@
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-8-1/2026/10/kb5135582-windows-8-1-standalone-cbs",
-        "checkedAt": "2026-11-18T23:50:27.519563Z"
+        "checkedAt": "2026-11-20T23:37:16.324408Z"
       },
       "lifecycle": {
         "status": "esu-ended",
@@ -120,19 +120,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
-          "retrievedAt": "2026-11-18T23:50:26.165401Z"
+          "retrievedAt": "2026-11-20T23:37:15.650675Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131291-windows-10-1607-security-update",
-        "checkedAt": "2026-11-18T23:50:26.165401Z"
+        "checkedAt": "2026-11-20T23:37:15.650675Z"
       }
     },
     {
@@ -154,19 +154,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
-          "retrievedAt": "2026-11-18T23:50:25.486756Z"
+          "retrievedAt": "2026-11-20T23:37:15.244584Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5131085-windows-10-1809-security-update",
-        "checkedAt": "2026-11-18T23:50:25.486756Z"
+        "checkedAt": "2026-11-20T23:37:15.244584Z"
       }
     },
     {
@@ -188,19 +188,19 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-11-18T23:50:22.484550Z"
+          "retrievedAt": "2026-11-20T23:37:13.242465Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5136490-windows-10-1809-update",
-          "retrievedAt": "2026-11-18T23:50:28.414780Z"
+          "retrievedAt": "2026-11-20T23:37:16.783849Z"
         }
       ],
       "publicationStatus": "partial",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-10/2026/11/kb5136490-windows-10-1809-update",
-        "checkedAt": "2026-11-18T23:50:28.414780Z"
+        "checkedAt": "2026-11-20T23:37:16.783849Z"
       }
     },
     {
@@ -222,19 +222,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
-          "retrievedAt": "2026-11-18T23:50:25.981247Z"
+          "retrievedAt": "2026-11-20T23:37:15.531752Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131090-windows-server-2022-security-update",
-        "checkedAt": "2026-11-18T23:50:25.981247Z"
+        "checkedAt": "2026-11-20T23:37:15.531752Z"
       }
     },
     {
@@ -256,19 +256,19 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-11-18T23:50:22.484550Z"
+          "retrievedAt": "2026-11-20T23:37:13.242465Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5136487-windows-server-2022-update",
-          "retrievedAt": "2026-11-18T23:50:27.965783Z"
+          "retrievedAt": "2026-11-20T23:37:16.522645Z"
         }
       ],
       "publicationStatus": "partial",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5136487-windows-server-2022-update",
-        "checkedAt": "2026-11-18T23:50:27.965783Z"
+        "checkedAt": "2026-11-20T23:37:16.522645Z"
       }
     },
     {
@@ -290,19 +290,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
-          "retrievedAt": "2026-11-18T23:50:25.147690Z"
+          "retrievedAt": "2026-11-20T23:37:15.130586Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5131080-windows-server-2025-security-update",
-        "checkedAt": "2026-11-18T23:50:25.147690Z"
+        "checkedAt": "2026-11-20T23:37:15.130586Z"
       }
     },
     {
@@ -324,19 +324,19 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-11-18T23:50:22.484550Z"
+          "retrievedAt": "2026-11-20T23:37:13.242465Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5136489-windows-server-2025-update",
-          "retrievedAt": "2026-11-18T23:50:28.147726Z"
+          "retrievedAt": "2026-11-20T23:37:16.639157Z"
         }
       ],
       "publicationStatus": "partial",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-server/2026/11/kb5136489-windows-server-2025-update",
-        "checkedAt": "2026-11-18T23:50:28.147726Z"
+        "checkedAt": "2026-11-20T23:37:16.639157Z"
       }
     },
     {
@@ -358,19 +358,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
-          "retrievedAt": "2026-11-18T23:50:25.733686Z"
+          "retrievedAt": "2026-11-20T23:37:15.414954Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5131087-windows-11-23h2-security-update",
-        "checkedAt": "2026-11-18T23:50:25.733686Z"
+        "checkedAt": "2026-11-20T23:37:15.414954Z"
       }
     },
     {
@@ -392,19 +392,19 @@
         {
           "type": "release-health",
           "url": "https://learn.microsoft.com/en-us/windows/release-health/windows-message-center",
-          "retrievedAt": "2026-11-18T23:50:22.484550Z"
+          "retrievedAt": "2026-11-20T23:37:13.242465Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5136483-windows-11-22h2-23h2-update",
-          "retrievedAt": "2026-11-18T23:50:27.679422Z"
+          "retrievedAt": "2026-11-20T23:37:16.420727Z"
         }
       ],
       "publicationStatus": "partial",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5136483-windows-11-22h2-23h2-update",
-        "checkedAt": "2026-11-18T23:50:27.679422Z"
+        "checkedAt": "2026-11-20T23:37:16.420727Z"
       }
     },
     {
@@ -419,26 +419,26 @@
       "releaseDate": "2026-11-10",
       "changesSummary": "[Arranque seguro] Esta actualización incluye datos adicionales de segmentación de dispositivos de alta confianza, lo que aumenta la cobertura de los dispositivos elegibles para recibir automáticamente nuevos certificados de arranque seguro . La implementación de certificados a través de actualizaciones de Windows continuará en los PC compatibles y dispositivos empresariales no administrados en los próximos meses. [Audio (problema conocido)] - Corregido: los dispositivos de audio USB 1.0 podían no iniciarse y mostrar el código de error 10 en el Administrador de dispositivos después de instalar una actualización de seguridad reciente. [Seguridad] Esta actualización mejora la seguridad de NTLM al permitir que los clientes ofrezcan firma de mensajes NTLM de forma predeterminada para conexiones no anónimas. Este cambio ayuda a reducir la exposición a ataques de retransmisión NTLM y proporciona auditoría para identificar conexiones que no usan la firma. Para obtener más información, consulte Mejoras de seguridad de firma NTLM en Windows . [Fecha y hora] Esta actualización ajusta las normas del horario de verano (DST) para Cuba durante el período ampliado de horario de verano 2026-2027. Cuba permanece en UTC-04:00 y no observa las transiciones de noviembre de 2026 y marzo de 2027. Vuelve a las UTC-05:00 en noviembre de 2027 y reanuda su horario estacional habitual en 2028. Para conocer las instrucciones más recientes sobre horario de verano y zona horaria, consulte el blog Daylight Saving Time & Time Zone Blog . [Windows PowerShell] Esta actualización refuerza la seguridad de la firma de scripts de PowerShell y la verificación de firmas mediante la introducción de una validación de codificación más estricta. Como resultado, los scripts que contienen codificación UTF-8 no válida podrían fallar en la validación de firmas, incluso si fueron aceptados previamente. Para resolver este problema, revise los scripts afectados, guárdelos con una codificación UTF-8 válida con una marca de orden de bytes (BOM) y vuelva a firmarlos. Para obtener más instrucciones, consulte Guía de codificación para scripts firmados de PowerShell .",
       "resolvedIssuesSummary": "[Impresión] Corregido: Agregar una impresora publicada en Active Directory a través de la configuración > Dispositivos > & Bluetooth Impresoras & escáneres > Es posible que se produzca el error 87, \"El parámetro es incorrecto\". Este problema se introdujo en la actualización de octubre de 2026 y, por lo general, no afecta a las impresoras o impresiones existentes. [Escritorio remoto] Esta actualización soluciona un problema por el que las conexiones del Protocolo de escritorio remoto (RDP) podrían fallar en el cliente debido a una falta de coincidencia de certificados después de la actualización de vista previa no relacionada con la seguridad de octubre de 2026.",
-      "knownIssuesSummary": "Es posible que la actualización de seguridad de noviembre no se instale en algunos dispositivos Síntomas Al intentar instalar la actualización de seguridad de Windows de noviembre de 2026 KB5127936, es posible que algunos dispositivos no puedan completar la instalación. Los dispositivos afectados pueden intentar instalar la actualización repetidamente o mostrar códigos de error 0x80070306, 0x800f0989 o 0x800f0993. Resolución La solución de este problema se ejecutó automáticamente en los dispositivos afectados conectados a Internet y con Windows Update en Configuración para instalar las actualizaciones. No fue necesaria ninguna acción manual por parte de los usuarios finales para recibir la reparación. Todos los dispositivos afectados deberían haberse reparado en un plazo de 24 a 48 horas después de haber encontrado el error, a partir del 11 de noviembre de 2026 a las 10 a. m. PT. Una vez que el dispositivo recibió la reparación, descarga e instala automáticamente la actualización de seguridad de noviembre de 2026 a través de Windows Update. También puedes instalar la actualización siguiendo estas instrucciones . Si sigue teniendo problemas de instalación, use la ayuda y aprendizaje de Windows o póngase en contacto con el Soporte técnico de Microsoft .",
+      "knownIssuesSummary": "Las conexiones de servidor vinculado de SQL Server podrían permanecer abiertas Síntomas Después de instalar las actualizaciones de Windows publicadas el 13 de octubre de 2026 y posteriores en los dispositivos del servidor, las conexiones creadas por las consultas del servidor vinculado de SQL Server podrían permanecer abiertas una vez completadas las consultas. A medida que se realizan consultas adicionales, las conexiones a bases de datos externas pueden acumularse en lugar de cerrarse como se esperaba. Esto puede ralentizar o degradar el rendimiento del servidor después de un tiempo de ejecución prolongado. Este problema afecta a las consultas del servidor vinculado de SQL Server que usan proveedores OLE DB para conectarse a bases de datos externas. Las conexiones de Oracle y PostgreSQL se encuentran entre las que se sabe que se ven afectadas. En los entornos afectados, los administradores podrían observar un número cada vez mayor de conexiones abiertas a bases de datos externas, incluso cuando las consultas del servidor vinculado de SQL Server asociadas ya no se ejecutan. Si se pueden identificar conexiones inactivas, es posible cerrarlas manualmente para aliviar temporalmente la carga del servidor. También es posible restaurar temporalmente la estabilidad del sistema reiniciando el servicio SQL. Sin embargo, estos pasos también pueden interrumpir consultas o transacciones activas y el problema puede resurgir nuevamente después de un tiempo de operación suficiente. Solución alternativa: Hay disponible una mitigación para los dispositivos empresariales afectados. Para aplicar esta mitigación en su organización, póngase en contacto con el Soporte técnico de Microsoft para empresas . Pasos siguientes: Estamos trabajando en una resolución y proporcionaremos una actualización en una próxima versión. Actualizaremos esta documentación cuando la resolución esté disponible Es posible que la actualización de seguridad de noviembre no se instale en algunos dispositivos Síntomas Al intentar instalar la actualización de seguridad de Windows de noviembre de 2026 KB5127936, es posible que algunos dispositivos no puedan completar la instalación. Los dispositivos afectados pueden intentar instalar la actualización repetidamente o mostrar códigos de error 0x80070306, 0x800f0989 o 0x800f0993. Resolución La solución de este problema se ejecutó automáticamente en los dispositivos afectados conectados a Internet y usando Windows Update en Configuración para instalar actualizaciones. No fue necesaria ninguna acción manual por parte de los usuarios finales para recibir la reparación. Todos los dispositivos afectados deberían haberse reparado en un plazo de 24 a 48 horas después de haber encontrado el error, a partir del 11 de noviembre de 2026 a las 10 a. m. PT. Una vez que el dispositivo recibió la reparación, se descarga e instala automáticamente la actualización de seguridad de noviembre de 2026 a través de Windows Update. También puedes instalar la actualización siguiendo estas instrucciones . Si sigue teniendo problemas de instalación, use la ayuda y el aprendizaje de Windows o póngase en contacto con el soporte técnico de Microsoft .",
       "knownIssuesStatus": "open",
       "supersededBy": null,
       "sources": [
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
-          "retrievedAt": "2026-11-18T23:50:26.680821Z"
+          "retrievedAt": "2026-11-20T23:37:15.939700Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132061-windows-11-24h2-25h2-26h2-security-update",
-        "checkedAt": "2026-11-18T23:50:26.680821Z"
+        "checkedAt": "2026-11-20T23:37:15.939700Z"
       }
     },
     {
@@ -460,19 +460,19 @@
         {
           "type": "msrc",
           "url": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-Nov",
-          "retrievedAt": "2026-11-18T23:50:21.451370Z"
+          "retrievedAt": "2026-11-20T23:37:11.964940Z"
         },
         {
           "type": "microsoft-support",
           "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
-          "retrievedAt": "2026-11-18T23:50:26.594006Z"
+          "retrievedAt": "2026-11-20T23:37:15.808967Z"
         }
       ],
       "publicationStatus": "verified",
       "verification": {
         "status": "verified",
         "url": "https://support.microsoft.com/es-es/servicing/os/windows-11/2026/11/kb5132059-windows-11-26h1-security-update",
-        "checkedAt": "2026-11-18T23:50:26.594006Z"
+        "checkedAt": "2026-11-20T23:37:15.808967Z"
       }
     }
   ]
